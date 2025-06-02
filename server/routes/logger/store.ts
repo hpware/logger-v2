@@ -3,23 +3,23 @@ import { getJiStatus } from "~/server/saveQuickAccess/jistatus";
 import { getLedStatus } from "~/server/saveQuickAccess/ledstatus";
 
 async function fastSave(body: any) {
-    const {
-        cwa_type,
-        cwa_location,
-        cwa_temp,
-        cwa_hum,
-        cwa_daliyHigh,
-        cwa_daliyLow,
-        local_temp,
-        local_hum,
-        local_gps_lat,
-        local_gps_long,
-        local_time,
-        local_jistatus,
-        local_detect,
-      } = body;
-    
-      const save = await sql`
+  const {
+    cwa_type,
+    cwa_location,
+    cwa_temp,
+    cwa_hum,
+    cwa_daliyHigh,
+    cwa_daliyLow,
+    local_temp,
+    local_hum,
+    local_gps_lat,
+    local_gps_long,
+    local_time,
+    local_jistatus,
+    local_detect,
+  } = body;
+
+  const save = await sql`
       INSERT INTO logger (
           created_at,  /* Changed from timestamp to created_at */
           cwa_type,
@@ -53,8 +53,7 @@ async function fastSave(body: any) {
           ${getLedStatus() ? true : false},
           ${JSON.stringify(local_detect)} 
       )`;
-      console.log(save);
-
+  console.log(save);
 }
 
 export default defineEventHandler(async (event) => {
@@ -64,5 +63,5 @@ export default defineEventHandler(async (event) => {
     success: true,
     jistatus: getJiStatus(),
     ledstatus: getLedStatus(),
-  }
+  };
 });

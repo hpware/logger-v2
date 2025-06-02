@@ -1,6 +1,5 @@
 var currentStatus = false;
 
-
 export function getJiStatus() {
   return currentStatus;
 }
