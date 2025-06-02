@@ -3,7 +3,42 @@ const password = ref("");
 const deviceId = ref("0");
 const devices = ref([]);
 const router = useRouter();
-const openDevice = async () => {};
+const openDevice = () => {
+        if (password.value === "") {
+          alert("請輸入存取密碼");
+          return;
+        } else {
+          if (deviceId.value !== "0") {
+            getAuthToken();  
+            setTimeout(() => {
+                router.push(`/devices/${deviceId.value}`);
+            }, 2000)
+          } else {
+            alert("請選擇一個連線機器");
+          }
+        }
+}
+
+const getAuthToken = async () => {
+    const req = await fetch("/api/getAuthToken", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        deviceId: deviceId.value,
+        password: password.value,
+      }),
+    });
+    if (!req.ok) {
+      const errorData = await req.json();
+      alert(`錯誤: ${errorData.message}`);
+      return;
+    }
+    const data = await req.json();
+    localStorage.setItem("authToken", data.token);
+}
+
 onMounted(async () => {
   try {
     const response = await fetch("/api/devices");
