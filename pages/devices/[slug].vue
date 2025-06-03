@@ -44,15 +44,15 @@ const fetchDeviceData = async () => {
       }),
     });
 
-    const response = await  nres.json();
+    const response = await res.json();
     if (!res.ok) {
       throw new Error("Network response was not ok");
     }
 
-    if (response.newsItems) {
-      console.log("News items:", response.newsItems);
+    /*if (response.newsItems) {
+      console.log("New items:", response.newsItems);
       getDetectedItems();
-    }
+    }*/
     console.log(response);
     if (response.cached === true) {
       console.log("Using cached data");
@@ -60,6 +60,9 @@ const fetchDeviceData = async () => {
     } else {
       console.log("Fetching new data");
     }
+
+    dataId.value = response.dataid;
+    console.log("Data ID:", dataId.value);
 
     weatherData.value = {
       test_station: response.cwa_location || "N/A",

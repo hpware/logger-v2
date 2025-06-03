@@ -2,7 +2,7 @@
 definePageMeta({
   layout: "main",
 });
-const password = ref("");
+const password = ref("sss");
 const deviceId = ref("0");
 const devices = ref([]);
 const router = useRouter();
@@ -80,7 +80,7 @@ onMounted(async () => {
             {{ device.name }}
           </option>
         </select>
-        <div class="flex flex-row">
+        <!--<div class="flex flex-row">
           <input
             type="password"
             placeholder="輸入存取密碼"
@@ -89,7 +89,7 @@ onMounted(async () => {
             required
           />
         </div>
-        <p class="text-sm text-gray-300 mb-4">請選擇連線機器並輸入存取密碼</p>
+        <p class="text-sm text-gray-300 mb-4">請選擇連線機器並輸入存取密碼</p>-->
         <button
           class="bg-white text-black rounded-md p-2 mb-4 hover:bg-gray-200 transition-all duartion-300"
           @click="openDevice"
