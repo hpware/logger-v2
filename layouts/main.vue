@@ -5,7 +5,7 @@
     id="failback"
   ></div>
   <div
-    class="h-[100dvh] w-full absolute inset-0 bg-[url(/bg.png)] bg-cover bg-no-repeat bg-center"
+    class="h-[100dvh] w-full absolute inset-0 bg-[url(/bg.jpg)] bg-cover bg-no-repeat bg-center"
   ></div>
   <div></div>
   <slot></slot>

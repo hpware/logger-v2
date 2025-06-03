@@ -4,7 +4,7 @@ definePageMeta({
 });
 const route = useRoute();
 const deviceId = route.params.slug;
-
+const dataId = ref(0);
 // Reactive data
 const weatherData = ref({
   test_station: "N/A",
@@ -34,7 +34,32 @@ const ipport = ref("");
 const fetchDeviceData = async () => {
   try {
     // Replace with your actual API endpoint
-    const response = await $fetch(`/api/devices/${deviceId}/data`);
+    const res = await fetch(`/api/devicedata/${deviceId}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        dataid: dataId.value,
+      }),
+    });
+
+    const response = await  nres.json();
+    if (!res.ok) {
+      throw new Error("Network response was not ok");
+    }
+
+    if (response.newsItems) {
+      console.log("News items:", response.newsItems);
+      getDetectedItems();
+    }
+    console.log(response);
+    if (response.cached === true) {
+      console.log("Using cached data");
+      return;
+    } else {
+      console.log("Fetching new data");
+    }
 
     weatherData.value = {
       test_station: response.cwa_location || "N/A",
@@ -60,10 +85,21 @@ const fetchDeviceData = async () => {
       gps_lat: response.local_gps_lat || "N/A",
       gps_long: response.local_gps_long || "N/A",
     };
-
-    detectedItems.value = response.local_detect || [];
   } catch (error) {
     console.error("Failed to fetch device data:", error);
+  }
+};
+
+const getDetectedItems = async () => {
+  try {
+    const res = await fetch(`/api/detecteditems/${deviceId}`);
+    if (!res.ok) {
+      throw new Error("Network response was not ok");
+    }
+    const data = await res.json();
+    detectedItems.value = data.data || [];
+  } catch (error) {
+    console.error("Failed to fetch detected items:", error);
   }
 };
 
@@ -84,7 +120,7 @@ const formatTime = (timeString: string) => {
 onMounted(() => {
   fetchDeviceData();
   // Set up polling for real-time updates
-  setInterval(fetchDeviceData, 30000); // Update every 30 seconds
+  setInterval(fetchDeviceData, 3000);
 });
 </script>
 
