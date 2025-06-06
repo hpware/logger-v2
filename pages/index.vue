@@ -14,7 +14,6 @@ const openDevice = () => {
   } else {
     if (deviceId.value !== "0") {
         loading.value= true;
-
       getAuthToken();
       setTimeout(() => {
         router.push(`/devices/${deviceId.value}`);
@@ -23,7 +22,9 @@ const openDevice = () => {
       alert("請選擇一個連線機器");
     }
   }
-  loading.value= false;
+  setTimeout(() => {
+    loading.value = false;
+  }, 3000);
 };
 
 const getAuthToken = async () => {
