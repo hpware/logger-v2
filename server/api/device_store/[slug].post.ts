@@ -57,7 +57,7 @@ async function fastSave(slug: string, body: any) {
 }
 
 export default defineEventHandler(async (event) => {
-const { slug } = getRouterParam(event, 'slug');
+  const { slug } = getRouterParam(event, "slug");
   const body = await readBody(event);
   fastSave(slug, body);
   return {

@@ -1,7 +1,7 @@
 import sql from "~/server/db/pg";
 export default defineEventHandler(async (event) => {
   const body = await readBody(event);
-  const slug = getRouterParam(event, 'slug');
+  const slug = getRouterParam(event, "slug");
   const { dataid } = body;
   try {
     // Get latest data
@@ -12,7 +12,7 @@ export default defineEventHandler(async (event) => {
     `;
 
     const data = latestData[0];
-    
+
     if (!data || dataid >= data.id) {
       return {
         cached: true,
@@ -45,15 +45,14 @@ export default defineEventHandler(async (event) => {
       local_gps_long: data.local_gps_long,
       local_time: data.local_time,
       // Detected items as JSON
-      local_detect: JSON.parse(data.local_detect || "[]")
+      local_detect: JSON.parse(data.local_detect || "[]"),
     };
-
   } catch (error) {
-    console.error('Database error:', error);
+    console.error("Database error:", error);
     return {
       cached: true,
       dataid: dataid,
-      error: 'Database connection failed'
+      error: "Database connection failed",
     };
   }
 });
