@@ -2,7 +2,7 @@ import sql from "~/server/db/pg";
 import { getJiStatus } from "~/server/saveQuickAccess/jistatus";
 import { getLedStatus } from "~/server/saveQuickAccess/ledstatus";
 
-async function fastSave(body: any) {
+async function fastSave(slug: string, body: any) {
   const {
     cwa_type,
     cwa_location,
@@ -35,8 +35,8 @@ async function fastSave(body: any) {
           local_time,
           local_jistatus,
           local_light,
-          local_detect
-      ) VALUES (
+          local_detect,
+          ) VALUES (
           CURRENT_TIMESTAMP,
           ${cwa_type},
           ${cwa_location},
@@ -46,7 +46,7 @@ async function fastSave(body: any) {
           ${cwa_daliyLow},
           ${local_temp},
           ${local_hum},
-          ${local_gps_lat},sk
+          ${local_gps_lat},
           ${local_gps_long},
           ${local_time},
           ${local_jistatus ? true : false},
@@ -59,7 +59,7 @@ async function fastSave(body: any) {
 export default defineEventHandler(async (event) => {
 const { slug } = getRouterParam(event, 'slug');
   const body = await readBody(event);
-  fastSave(body);
+  fastSave(slug, body);
   return {
     success: true,
     jistatus: getJiStatus(),
