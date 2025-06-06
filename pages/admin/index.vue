@@ -5,13 +5,17 @@
       <NuxtLink
         to="/admin/createmachine"
         class="p-2 bg-sky-300 rounded hover:bg-sky-400 transition-all duration-200"
-        >Create Machine</NuxtLink
+        >加入新機器</NuxtLink
       >
       <NuxtLink
-        to="/admin/manageusers"
+        to="/admin/deletemachines"
         class="p-2 bg-sky-300 rounded hover:bg-sky-400 transition-all duration-200"
-        >Manage Users</NuxtLink
+        >刪除舊機器</NuxtLink
       >
+      <a 
+        href="/createDatabase"
+        class="p-2 bg-sky-300 rounded hover:bg-sky-400 transition-all duration-200"
+        >創立資料庫</a>
     </div>
   </div>
 </template>

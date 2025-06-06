@@ -38,5 +38,21 @@ export default defineEventHandler(async (event) => {
       status boolean not null
   )
   `;
-  return "Database tables created successfully.";
+  const create4 = await sql`
+  create table if not exists machines(
+    name text primary key,
+      created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+      ip text not null,
+      token text not null
+  )`;
+  return {
+    created: true,
+    message: "Database and tables created successfully",
+    tables: {
+      logger: create1,
+      detect: create2,
+      jistatus: create3,
+      machines: create4
+    }
+  }
 });
