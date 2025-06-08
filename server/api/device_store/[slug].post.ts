@@ -36,6 +36,7 @@ async function fastSave(slug: string, body: any) {
           local_jistatus,
           local_light,
           local_detect,
+          device_uuid
           ) VALUES (
           CURRENT_TIMESTAMP,
           ${cwa_type},
@@ -51,13 +52,20 @@ async function fastSave(slug: string, body: any) {
           ${local_time},
           ${local_jistatus ? true : false},
           ${getLedStatus() ? true : false},
-          ${JSON.stringify(local_detect)} 
+          ${JSON.stringify(local_detect)},
+          ${slug}
       )`;
   console.log(save);
 }
 
 export default defineEventHandler(async (event) => {
-  const { slug } = getRouterParam(event, "slug");
+  const slug = getRouterParam(event, "slug");
+  if (!slug) {
+    return {
+      success: false,
+      message: "Device slug is required",
+    };
+  }
   const body = await readBody(event);
   fastSave(slug, body);
   return {

@@ -4,6 +4,7 @@ export default defineEventHandler(async (event) => {
   const create1 = await sql`
   CREATE TABLE IF NOT EXISTS logger (
       id SERIAL PRIMARY KEY,
+      device_uuid TEXT NOT NULL,
       created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
       cwa_type VARCHAR(50),
       cwa_location VARCHAR(100),
@@ -40,7 +41,8 @@ export default defineEventHandler(async (event) => {
   `;
   const create4 = await sql`
   create table if not exists machines(
-    name text primary key,
+    uuid text primary key,
+      name text not null,
       created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
       ip text not null,
       token text not null

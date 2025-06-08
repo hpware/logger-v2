@@ -2,12 +2,12 @@ import sql from "~/server/db/pg";
 export default defineEventHandler(async (event) => {
     const body = await readBody(event);
     const {
-        machine_name,
+        machine_uuid,
         password
     } = body;
 
     const matchPasswordget = await sql`
-        SELECT * FROM machines WHERE name = ${machine_name}`
+        SELECT * FROM machines WHERE uuid = ${machine_uuid}`;
 if (matchPasswordget.length === 0) {
         return {
             success: false,
@@ -22,7 +22,7 @@ if (matchPasswordget.length === 0) {
     }
 
     const deletedResult = await sql`
-        DELETE FROM machines WHERE name = ${machine_name}`;
+        DELETE FROM machines WHERE uuid = ${machine_uuid}`;
     
     console.log(deletedResult);
     return {

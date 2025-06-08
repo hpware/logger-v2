@@ -35,7 +35,8 @@ async function fastSave(body: any) {
           local_time,
           local_jistatus,
           local_light,
-          local_detect
+          local_detect,
+          device_uuid
       ) VALUES (
           CURRENT_TIMESTAMP,
           ${cwa_type},
@@ -51,7 +52,8 @@ async function fastSave(body: any) {
           ${local_time},
           ${local_jistatus ? true : false},
           ${getLedStatus() ? true : false},
-          ${JSON.stringify(local_detect)} 
+          ${JSON.stringify(local_detect)},
+          'c5d96c52-91ba-421a-a723-1001cdc22233'
       )`;
   console.log(save);
 }

@@ -7,6 +7,7 @@ export default defineEventHandler(async (event) => {
     // Get latest data
     const latestData = await sql`
       SELECT * FROM logger 
+      WHERE device_uuid = ${slug}
       ORDER BY id DESC 
       LIMIT 1
     `;

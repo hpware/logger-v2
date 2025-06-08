@@ -80,8 +80,8 @@ onMounted(async () => {
           <option value="0">選擇連線機器</option>
           <option
             v-for="device in devices"
-            :key="device.id"
-            :value="device.endpointid"
+            :key="device.name"
+            :value="device.uuid"
           >
             {{ device.name }}
           </option>

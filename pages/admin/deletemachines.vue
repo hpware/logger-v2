@@ -31,7 +31,7 @@ const deleteMachine = async () => {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      machine_name: machineName.value,
+      machine_uuid: machineName.value,
       password: password.value,
     }),
   });
@@ -70,7 +70,7 @@ const deleteMachine = async () => {
           <option
             v-for="device in devices"
             :key="device.id"
-            :value="device.name"
+            :value="device.uuid"
           >
             {{ device.name }}
           </option>
