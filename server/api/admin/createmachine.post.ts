@@ -5,6 +5,7 @@ export default defineEventHandler(async (event) => {
     const {
         machine_name,
         machine_ip,
+        password
     } = body;
     const uuid = uuidv4();
     const save = await sql`
@@ -19,7 +20,7 @@ export default defineEventHandler(async (event) => {
             ${uuid},
             ${machine_name},
             ${machine_ip},
-            'sss'
+            ${password}
         )`;
     
     console.log(save);
