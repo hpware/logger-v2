@@ -131,6 +131,30 @@ onMounted(() => {
   <div
     class="justify-center align-center text-center selection:opactiy-[50%] p-1 bg-[url(https://raw.githubusercontent.com/hpware/esp32-postgres-logger-view-and-api/refs/heads/main/bg.jpg?raw=true)] bg-cover bg-no-repeat bg-center"
   >
+  <div v-if="dataId === 0" class="h-screen flex items-center justify-center gap-2 text-white backdrop-blur-lg rounded-  ">
+      <h3 class="text-lg">尚未有資料，等待中&nbsp;</h3>
+      <svg
+            class="animate-spin -ml-1 mr-2 h-5 w-5 text-white"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+          >
+            <circle
+              class="opacity-25"
+              cx="12"
+              cy="12"
+              r="10"
+              stroke="currentColor"
+              stroke-width="4"
+            ></circle>
+            <path
+              class="opacity-75"
+              fill="currentColor"
+              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+            ></path>
+          </svg>
+  </div>
+  <div v-else>
     <h1
       class="text-4xl bg-white m-4 p-2 text-transparent text-center align-middle justify-center bg-clip-text backdrop-blur-lg shadow-lg shadown-gray-200 border border-white rounded-3xl flex flex-col"
     >
@@ -234,4 +258,5 @@ onMounted(() => {
       </ul>
     </section>
   </div>
+</div>
 </template>

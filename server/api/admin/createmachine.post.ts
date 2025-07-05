@@ -22,10 +22,10 @@ export default defineEventHandler(async (event) => {
             ${machine_ip},
             ${password}
         )`;
-    
     console.log(save);
     return {
         success: true,
+        uuid: uuid,
         message: "Machine created successfully",
     };
 });

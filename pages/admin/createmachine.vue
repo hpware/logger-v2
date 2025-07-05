@@ -2,7 +2,13 @@
 const machineName = ref("");
 const password = ref("");
 const camIp = ref("");
+const errorv = ref("");
+const success = ref(false);
+const deviceId = ref("");
 const createMachine = async () => {
+  success.value = false;
+  errorv.value = "";
+  deviceId.value = "";
   const res = await fetch("/api/admin/createmachine", {
     method: "POST",
     headers: {
@@ -11,7 +17,7 @@ const createMachine = async () => {
     body: JSON.stringify({
       machine_name: machineName.value,
       machine_ip: camIp.value,
-      password: password.value || "sss",
+      password: password.value,
     }),
   });
   if (!res.ok) {
@@ -21,18 +27,30 @@ const createMachine = async () => {
   }
   const data = await res.json();
   if (data.success) {
-    alert("Machine created successfully!");
+    success.value = true;
+    errorv.value = "";
+    deviceId.value = data.uuid; // Assuming the response contains the UUID of the created machine
     machineName.value = "";
     camIp.value = "";
     password.value = "";
   } else {
-    alert("Failed to create machine.");
+    errorv.value = "Failed to create machine.";
   }
   console.log(data);
 };
 </script>
 <template>
   <div class="flex flex-col items-center justify-center h-screen">
+    <div>
+      <div v-if="success" class="text-green-500 mb-4">
+        機器 {{ machineName }} 已成功加入，UUID: {{ deviceId }}
+        <br/>
+        連線地址: https://logger-v2.sch2.top/device_store/{{ deviceId }}
+      </div>
+      <div v-if="errorv" class="text-red-500 mb-4">
+        {{ errorv }}
+        </div>
+    </div>
     <div
       class="container mx-auto p-4 bg-gray-200/70 rounded-lg shadow-md border border-gray-300"
     >

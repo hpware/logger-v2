@@ -62,7 +62,7 @@ onMounted(async () => {
 </script>
 <template>
   <div
-    class="justify-center align-center text-center selection:opactiy-[50%] absolute inset-0 flex flex-col p-10 md:p-20 lg:p-40 xl:p-60 2xl:p-80"
+    class="justify-center select-none   align-center text-center selection:opactiy-[50%] absolute inset-0 flex flex-col p-10 md:p-20 lg:p-40 xl:p-60 2xl:p-80"
   >
     <div
       class="flex flex-col justify-center items-center bg-gray-300/5 backdrop-blur-sm z-10 p-3 rounded-lg shadow-lg py-10 border-2 border-gray-400/40"
