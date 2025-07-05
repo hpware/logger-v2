@@ -2,6 +2,7 @@
 definePageMeta({
   layout: false,
 });
+import "animate.css"
 const route = useRoute();
 const deviceId = route.params.slug;
 const dataId = ref(0);
@@ -153,10 +154,13 @@ onMounted(() => {
               d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
             ></path>
           </svg>
-  </div>
-  <div v-else>
+        </div>
+        <Transition       enter-active-class="animate__animated animate__fadeIn"
+      leave-active-class="animate__animated animate__fadeOut"
+      appear>
+          <div v-if="dataId !== 0" class="flex flex-col items-center justify-center">
     <h1
-      class="text-4xl bg-white m-4 p-2 text-transparent text-center align-middle justify-center bg-clip-text backdrop-blur-lg shadow-lg shadown-gray-200 border border-white rounded-3xl flex flex-col"
+      class="text-4xl bg-white m-4 p-2 text-transparent text-center align-middle justify-center bg-clip-text shadow-lg shadow-gray-20 flex flex-col"
     >
       顯示資料
     </h1>
@@ -258,5 +262,6 @@ onMounted(() => {
       </ul>
     </section>
   </div>
+        </Transition>
 </div>
 </template>
