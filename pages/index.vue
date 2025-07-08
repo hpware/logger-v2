@@ -62,12 +62,14 @@ onMounted(async () => {
 </script>
 <template>
   <div
-    class="justify-center select-none   align-center text-center selection:opactiy-[50%] absolute inset-0 flex flex-col p-10 md:p-20 lg:p-40 xl:p-60 2xl:p-80"
+    class="justify-center select-none align-center text-center selection:opactiy-[50%] absolute inset-0 flex flex-col p-10 md:p-20 lg:p-40 xl:p-60 2xl:p-80"
   >
     <div
       class="flex flex-col justify-center items-center bg-gray-300/5 backdrop-blur-sm z-10 p-3 rounded-lg shadow-lg py-10 border-2 border-gray-400/40"
     >
-      <h1 class="text-xl sm:text-2xl md:text-4xl font-bold text-white mb-4 text-border">
+      <h1
+        class="text-xl sm:text-2xl md:text-4xl font-bold text-white mb-4 text-border"
+      >
         AIOT 生態物種即時監測回報裝置網頁系統
       </h1>
       <p class="text-lg text-white mb-8">歡迎使用管理系統</p>

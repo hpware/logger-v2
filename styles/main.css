@@ -1,5 +1,29 @@
 @import "tailwindcss";
 
 .text-border {
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
-  }
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+}
+
+body {
+  @apply bg-gray-100 text-gray-800;
+}
+
+.btn {
+  @apply py-2 px-4 rounded-md font-semibold transition-all duration-300;
+}
+
+.btn-primary {
+  @apply bg-blue-500 text-white hover:bg-blue-600;
+}
+
+.btn-danger {
+  @apply bg-red-500 text-white hover:bg-red-600;
+}
+
+.form-input {
+  @apply mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm;
+}
+
+.card {
+  @apply bg-white rounded-lg shadow-lg p-6;
+}

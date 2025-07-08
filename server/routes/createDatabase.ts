@@ -54,7 +54,7 @@ export default defineEventHandler(async (event) => {
       logger: create1,
       detect: create2,
       jistatus: create3,
-      machines: create4
-    }
-  }
+      machines: create4,
+    },
+  };
 });

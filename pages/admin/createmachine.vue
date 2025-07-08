@@ -1,4 +1,7 @@
 <script setup lang="ts">
+definePageMeta({
+  layout: "admin",
+});
 const machineName = ref("");
 const password = ref("");
 const camIp = ref("");
@@ -40,53 +43,79 @@ const createMachine = async () => {
 };
 </script>
 <template>
-  <div class="flex flex-col items-center justify-center h-screen">
-    <div>
-      <div v-if="success" class="text-green-500 mb-4">
-        機器 {{ machineName }} 已成功加入，UUID: {{ deviceId }}
-        <br/>
-        連線地址: https://logger-v2.sch2.top/device_store/{{ deviceId }}
+  <div class="min-h-screen bg-gray-100 flex items-center justify-center">
+    <div class="max-w-md w-full p-6 bg-white rounded-lg shadow-lg">
+      <h1 class="text-3xl font-bold text-center text-gray-800 mb-6">
+        加入新機器
+      </h1>
+      <div
+        v-if="success"
+        class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-4 rounded-md"
+      >
+        <p class="font-bold">成功</p>
+        <p>機器 {{ machineName }} 已成功加入，UUID: {{ deviceId }}</p>
+        <p>
+          連線地址:
+          <a
+            :href="`https://logger-v2.sch2.top/device_store/${deviceId}`"
+            class="text-blue-500 hover:underline"
+            >https://logger-v2.sch2.top/device_store/{{ deviceId }}</a
+          >
+        </p>
       </div>
-      <div v-if="errorv" class="text-red-500 mb-4">
-        {{ errorv }}
+      <div
+        v-if="errorv"
+        class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-4 rounded-md"
+      >
+        <p class="font-bold">錯誤</p>
+        <p>{{ errorv }}</p>
+      </div>
+      <form @submit.prevent="createMachine">
+        <div class="mb-4">
+          <label
+            for="machineName"
+            class="block text-sm font-medium text-gray-700"
+            >機器名稱</label
+          >
+          <input
+            type="text"
+            id="machineName"
+            v-model="machineName"
+            class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+            required
+          />
         </div>
-    </div>
-    <div
-      class="container mx-auto p-4 bg-gray-200/70 rounded-lg shadow-md border border-gray-300"
-    >
-      <h1 class="text-2xl font-bold mb-4">加入新機器</h1>
-      <div class="mb-4">
-        <span class="block text-sm font-medium text-gray-700"
-          >機器名稱</span
-        >
-        <input
-          type="text"
-          id="name"
-          v-model="machineName"
-          class="mt-1 block w-full border-gray-300 rounded-md shadow-sm p-2 transition-all duration-200"
-        />
-        <span class="block text-sm font-medium text-gray-700"
-          >8735 鏡頭 IP 位置</span
-        >
-        <input
-          type="text"
-          id="name"
-          v-model="camIp"
-          class="mt-1 block w-full border-gray-300 rounded-md shadow-sm p-2 transition-all duration-200"
-        />
-        <span class="block text-sm font-medium text-gray-700">Password:</span>
-        <input
-          type="password"
-          v-model="password"
-          class="mt-1 block w-full border-gray-300 rounded-md shadow-sm p-2 transition-all duration-200"
-        />
+        <div class="mb-4">
+          <label for="camIp" class="block text-sm font-medium text-gray-700"
+            >8735 鏡頭 IP 位置</label
+          >
+          <input
+            type="text"
+            id="camIp"
+            v-model="camIp"
+            class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+            required
+          />
+        </div>
+        <div class="mb-6">
+          <label for="password" class="block text-sm font-medium text-gray-700"
+            >Password</label
+          >
+          <input
+            type="password"
+            id="password"
+            v-model="password"
+            class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+            required
+          />
+        </div>
         <button
-          class="p-2 bg-sky-300 hover:bg-sky-500 rounded mt-2 hover:cursor-pointer transition-all duration-200"
-          @click="createMachine"
+          type="submit"
+          class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
         >
           Submit
         </button>
-      </div>
+      </form>
     </div>
   </div>
 </template>

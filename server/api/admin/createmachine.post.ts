@@ -1,14 +1,10 @@
 import sql from "~/server/db/pg";
 import { v4 as uuidv4 } from "uuid";
 export default defineEventHandler(async (event) => {
-    const body = await readBody(event);
-    const {
-        machine_name,
-        machine_ip,
-        password
-    } = body;
-    const uuid = uuidv4();
-    const save = await sql`
+  const body = await readBody(event);
+  const { machine_name, machine_ip, password } = body;
+  const uuid = uuidv4();
+  const save = await sql`
         INSERT INTO machines (
             created_at, 
             uuid,
@@ -22,10 +18,10 @@ export default defineEventHandler(async (event) => {
             ${machine_ip},
             ${password}
         )`;
-    console.log(save);
-    return {
-        success: true,
-        uuid: uuid,
-        message: "Machine created successfully",
-    };
+  console.log(save);
+  return {
+    success: true,
+    uuid: uuid,
+    message: "Machine created successfully",
+  };
 });

@@ -1,4 +1,7 @@
 <script setup lang="ts">
+definePageMeta({
+  layout: "admin",
+});
 const machineName = ref("");
 const password = ref("");
 const camIp = ref("");
@@ -18,11 +21,11 @@ const getDevices = async () => {
 };
 onMounted(async () => {
   const getDevice = await getDevices();
-    if (getDevice.length === 0) {
-        alert("目前沒有任何機器可以刪除。");
-    } else {
-        devices.value = getDevice;
-    }
+  if (getDevice.length === 0) {
+    alert("目前沒有任何機器可以刪除。");
+  } else {
+    devices.value = getDevice;
+  }
 });
 const deleteMachine = async () => {
   const res = await fetch("/api/admin/deletemachine", {
@@ -53,41 +56,54 @@ const deleteMachine = async () => {
 };
 </script>
 <template>
-  <div class="flex flex-col items-center justify-center h-screen">
-    <div
-      class="container mx-auto p-4 bg-gray-200/70 rounded-lg shadow-md border border-gray-300"
-    >
-      <h1 class="text-2xl font-bold mb-4">刪除舊機器</h1>
-      <div class="mb-4">
-        <span class="block text-sm font-medium text-gray-700"
-          >機器名稱</span
-        >
-        <select
-          class="bg-white text-black border border-gray-300 rounded-md p-2 mb-4 mt-1 block w-full border-gray-300 rounded-md shadow-sm p-2 transition-all duration-200"
-          v-model="machineName"
-          :disabled="loading"
-        >
-          <option
-            v-for="device in devices"
-            :key="device.id"
-            :value="device.uuid"
+  <div class="min-h-screen bg-gray-100 flex items-center justify-center">
+    <div class="max-w-md w-full p-6 bg-white rounded-lg shadow-lg">
+      <h1 class="text-3xl font-bold text-center text-gray-800 mb-6">
+        刪除舊機器
+      </h1>
+      <form @submit.prevent="deleteMachine">
+        <div class="mb-4">
+          <label
+            for="machineName"
+            class="block text-sm font-medium text-gray-700"
+            >機器名稱</label
           >
-            {{ device.name }}
-          </option>
-        </select>
-        <span class="block text-sm font-medium text-gray-700">密碼:</span>
-        <input
-          type="password"
-          v-model="password"
-          class="mt-1 block w-full border-gray-300 rounded-md shadow-sm p-2 transition-all duration-200"
-        />
+          <select
+            id="machineName"
+            v-model="machineName"
+            class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+            :disabled="loading"
+            required
+          >
+            <option disabled value="">Please select one</option>
+            <option
+              v-for="device in devices"
+              :key="device.id"
+              :value="device.uuid"
+            >
+              {{ device.name }}
+            </option>
+          </select>
+        </div>
+        <div class="mb-6">
+          <label for="password" class="block text-sm font-medium text-gray-700"
+            >密碼</label
+          >
+          <input
+            type="password"
+            id="password"
+            v-model="password"
+            class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+            required
+          />
+        </div>
         <button
-          class="p-2 bg-sky-300 hover:bg-sky-500 rounded mt-2 hover:cursor-pointer transition-all duration-200"
-          @click="deleteMachine"
+          type="submit"
+          class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
         >
           刪除
         </button>
-      </div>
+      </form>
     </div>
   </div>
 </template>

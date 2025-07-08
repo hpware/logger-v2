@@ -1,6 +1,9 @@
 import sql from "~/server/db/pg";
 import { getJiStatus } from "~/server/saveQuickAccess/jistatus";
 import { getLedStatus } from "~/server/saveQuickAccess/ledstatus";
+import { GoogleGenAI } from "@google/genai";
+import { S3Client } from "@aws-sdk/client-s3";
+import { Upload } from "@aws-sdk/lib-storage";
 
 async function fastSave(slug: string, body: any) {
   const {
@@ -56,6 +59,51 @@ async function fastSave(slug: string, body: any) {
           ${slug}
       )`;
   console.log(save);
+}
+
+async function Decode_Image_File_And_Upload_To_S3(
+  base64ImageString: string,
+  date: string,
+) {
+  const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+  const base64Data = base64ImageString.replace(/^data:image\/\w+;base64,/, "");
+  const buffer = Buffer.from(base64Data, "base64");
+  const fileName = `image_${date}.jpg`;
+
+  try {
+    // Prepare image data for Gemini
+    const imageParts = [
+      {
+        inlineData: {
+          data: base64Data,
+          mimeType: "image/jpeg",
+        },
+      },
+    ];
+    // Generate content analysis
+    const response = await ai.models.generateContent({
+      model: "gemini-2.5-flash",
+      contents: [
+        "What animals or objects do you see in this image? Please be specific but concise.",
+        ...imageParts,
+      ],
+    });
+    const analysis = response.text;
+
+    return {
+      fileName,
+      analysis,
+      success: true,
+    };
+  } catch (error: any) {
+    console.error("Error analyzing image with Gemini:", error);
+    return {
+      fileName,
+      analysis: null,
+      success: false,
+      error: error.message,
+    };
+  }
 }
 
 export default defineEventHandler(async (event) => {
