@@ -1,0 +1,16 @@
+// Testing only
+{
+    "cwa_type": "陰有雨",
+    "cwa_location": "臺北市士林區",
+    "cwa_temp": 23.5,
+    "cwa_hum": 89,
+    "cwa_daliyHigh": 28,
+    "cwa_daliyLow": 22,
+    "local_temp": 25,
+    "local_hum": 75,
+    "local_gps_lat": "25.134393",
+    "local_gps_long": "121.469968",
+    "local_time": "2024-03-20 15:30:00",
+    "local_jistatus": false,
+    "local_detect": []
+}

@@ -24,7 +24,7 @@ async function fastSave(slug: string, body: any) {
 
   const save = await sql`
       INSERT INTO logger (
-          created_at,  /* Changed from timestamp to created_at */
+          created_at,
           cwa_type,
           cwa_location,
           cwa_temp,
@@ -71,6 +71,31 @@ async function Decode_Image_File_And_Upload_To_S3(
   const fileName = `image_${date}.jpg`;
 
   try {
+    const s3Client = new S3Client({
+
+    region: "tw-home-1",
+    endpoint: process.env.MINIO_ENDPOINT,
+    credentials: {
+      accessKeyId: process.env.MINIO_ACCESS_KEY!,
+      secretAccessKey: process.env.MINIO_SECRET_KEY!,
+    },
+    forcePathStyle: true, 
+  });
+
+  // Upload to MinIO
+  const upload = new Upload({
+    client: s3Client,
+    params: {
+      Bucket: process.env.MINIO_BUCKET_NAME!,
+      Key: `uploads/${fileName}`,
+      Body: buffer,
+      ContentType: "image/jpeg",
+    },
+  });
+
+  await upload.done();
+  const imageUrl = `${process.env.MINIO_ENDPOINT}/${process.env.MINIO_BUCKET_NAME}/uploads/${fileName}`;
+
     // Prepare image data for Gemini
     const imageParts = [
       {
@@ -84,25 +109,30 @@ async function Decode_Image_File_And_Upload_To_S3(
     const response = await ai.models.generateContent({
       model: "gemini-2.5-flash",
       contents: [
-        "What animals or objects do you see in this image? Please be specific but concise.",
+        `What animals do you see in this image? Please be specific but concise, and it REQUIRES to be an animal, no trees, no branches. And return with the JSON format, { "item": "animal_name", "found_timestamp": "the_current_time" }, the current time is aprox: ${new Date().toUTCString()}`,
         ...imageParts,
       ],
     });
     const analysis = response.text;
-
-    return {
+    const jsonRes = JSON.parse(analysis || "{}");
+    if (!jsonRes.item) {
+      throw new Error("No animal found in the image.");
+    }
+    console.log({
       fileName,
+      imageUrl,
       analysis,
       success: true,
-    };
+    });
   } catch (error: any) {
     console.error("Error analyzing image with Gemini:", error);
-    return {
+     console.log({
       fileName,
+      imageUrl: null,
       analysis: null,
       success: false,
       error: error.message,
-    };
+    });
   }
 }
 
@@ -116,6 +146,15 @@ export default defineEventHandler(async (event) => {
   }
   const body = await readBody(event);
   fastSave(slug, body);
+  if (Array.isArray(body?.image) && body.image.length > 0) {
+    for (const image of body.image) {
+      Decode_Image_File_And_Upload_To_S3(
+        image,
+        new Date().toUTCString()
+      );
+    }
+  }
+
   return {
     success: true,
     jistatus: getJiStatus(),
