@@ -4,6 +4,7 @@ import { getLedStatus } from "~/server/saveQuickAccess/ledstatus";
 import { GoogleGenAI } from "@google/genai";
 import { S3Client } from "@aws-sdk/client-s3";
 import { Upload } from "@aws-sdk/lib-storage";
+import { v4 as uuidv4 } from "uuid";
 
 async function fastSave(slug: string, body: any) {
   const {
@@ -64,11 +65,12 @@ async function fastSave(slug: string, body: any) {
 async function Decode_Image_File_And_Upload_To_S3(
   base64ImageString: string,
   date: string,
+  deviceId: string
 ) {
   const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
   const base64Data = base64ImageString.replace(/^data:image\/\w+;base64,/, "");
   const buffer = Buffer.from(base64Data, "base64");
-  const fileName = `image_${date}.jpg`;
+  const fileName = `image_${uuidv4()}.jpg`;
 
   try {
     const s3Client = new S3Client({
@@ -87,7 +89,7 @@ async function Decode_Image_File_And_Upload_To_S3(
     client: s3Client,
     params: {
       Bucket: process.env.MINIO_BUCKET_NAME!,
-      Key: `uploads/${fileName}`,
+      Key: `${deviceId}/${fileName}`,
       Body: buffer,
       ContentType: "image/jpeg",
     },
@@ -109,7 +111,7 @@ async function Decode_Image_File_And_Upload_To_S3(
     const response = await ai.models.generateContent({
       model: "gemini-2.5-flash",
       contents: [
-        `What animals do you see in this image? Please be specific but concise, and it REQUIRES to be an animal, no trees, no branches. And return with the JSON format, { "item": "animal_name", "found_timestamp": "the_current_time" }, the current time is aprox: ${new Date().toUTCString()}`,
+        `What animals do you see in this image? Please be specific but concise, and it REQUIRES to be an animal, no trees, no branches. And return with the JSON format, { "item": "animal_name", "found_timestamp": "the_current_time" }, the current time is aprox: ${new Date().toUTCString()}, and JUST RETURN THE JSON FILE, NO OTHER TEXT, AND NO MARKDOWN. If you cannot find anything, please just return null on the item json.`,
         ...imageParts,
       ],
     });
@@ -122,6 +124,7 @@ async function Decode_Image_File_And_Upload_To_S3(
       fileName,
       imageUrl,
       analysis,
+      jsonRes,
       success: true,
     });
   } catch (error: any) {
@@ -131,10 +134,31 @@ async function Decode_Image_File_And_Upload_To_S3(
       imageUrl: null,
       analysis: null,
       success: false,
+      jsonRes: null,
       error: error.message,
     });
   }
 }
+
+async function uploadImages(body: any, slug: string) {
+  const checkIfDeviceIdExists = await sql`
+  SELECT * FROM machines WHERE uuid = ${slug} LIMIT 1;
+  `
+  if (checkIfDeviceIdExists.length === 0) {
+    console.error("Device ID does not exist in the database.");
+    return;
+  }
+  if (Array.isArray(body?.image) && body.image.length > 0) {
+    for (const image of body.image) {
+      Decode_Image_File_And_Upload_To_S3(
+        image,
+        new Date().toUTCString(),
+        slug
+      );
+    }
+  }
+}
+
 
 export default defineEventHandler(async (event) => {
   const slug = getRouterParam(event, "slug");
@@ -146,14 +170,7 @@ export default defineEventHandler(async (event) => {
   }
   const body = await readBody(event);
   fastSave(slug, body);
-  if (Array.isArray(body?.image) && body.image.length > 0) {
-    for (const image of body.image) {
-      Decode_Image_File_And_Upload_To_S3(
-        image,
-        new Date().toUTCString()
-      );
-    }
-  }
+  uploadImages(body, slug);
 
   return {
     success: true,
