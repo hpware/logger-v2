@@ -30,7 +30,6 @@ const gpsData = ref({
 
 const detectedItems = ref([]);
 const ipport = ref("");
-
 // Fetch data functions
 const fetchDeviceData = async () => {
   try {
@@ -132,10 +131,12 @@ onMounted(() => {
   <div
     class="justify-center align-center text-center selection:opactiy-[50%] p-1 bg-[url(https://raw.githubusercontent.com/hpware/esp32-postgres-logger-view-and-api/refs/heads/main/bg.jpg?raw=true)] bg-cover bg-no-repeat bg-center"
   >
+  <div v-if="/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/.test(deviceId)">
     <div
       v-if="dataId === 0"
-      class="h-screen flex items-center justify-center gap-2 text-white backdrop-blur-lg rounded-"
+      class="h-screen flex flex-col items-center justify-center gap-2 text-white backdrop-blur-lg rounded-lg"
     >
+    <div class="flex flex-gap">
       <h3 class="text-lg">尚未有資料，等待中&nbsp;</h3>
       <svg
         class="animate-spin -ml-1 mr-2 h-5 w-5 text-white"
@@ -157,6 +158,13 @@ onMounted(() => {
           d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
         ></path>
       </svg>
+    </div>
+      <span>請複製以下程式到 // API 網址底下:
+        <br/>
+        <code>
+          const char *deviceId = "{{ deviceId }}";
+        </code>
+      </span>
     </div>
     <Transition
       enter-active-class="animate__animated animate__fadeIn"
@@ -273,5 +281,9 @@ onMounted(() => {
         </section>
       </div>
     </Transition>
+  </div>
+  <div v-else class="h-screen flex items-center justify-center text-white text-bold text-xl backdrop-blur-lg rounded-lg">
+    <h3>此 ID 無法使用在此平台！</h3>
+  </div>
   </div>
 </template>
