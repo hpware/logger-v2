@@ -62,6 +62,13 @@ async function Decode_Image_File_And_Upload_To_S3(
     if (!jsonRes.item) {
       throw new Error("No animal found in the image.");
     }
+    if (!deviceId || !fileName || !imageUrl || !jsonRes.item || !jsonRes.date) {
+      throw new Error("One or more required values are undefined.");
+    }
+    await sql`
+    INSERT INTO detect (device_id, imageURL, item, detected_at)
+    VALUES (${deviceId}, ${fileName}, ${imageUrl}, ${jsonRes.item}, ${date})
+    `
     console.log({
       fileName,
       imageUrl,
@@ -69,6 +76,7 @@ async function Decode_Image_File_And_Upload_To_S3(
       jsonRes,
       success: true,
     });
+    return;
   } catch (error: any) {
     console.error("Error analyzing image with Gemini:", error);
      console.log({
@@ -79,6 +87,7 @@ async function Decode_Image_File_And_Upload_To_S3(
       jsonRes: null,
       error: error.message,
     });
+    return;
   }
 }
 
@@ -113,3 +122,13 @@ export default defineEventHandler(async (event) => {
     uploadImages(body, body.deviceid as string);
     return "uploading";
 })
+
+/**
+ * json
+ * {
+ *   "deviceid": "UUID",
+ *   "image": [
+ *     "data:image/jpeg;base64,/9j/4AAQSkZJRg
+ *   ]
+ * }
+ */
