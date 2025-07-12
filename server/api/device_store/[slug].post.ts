@@ -23,6 +23,8 @@ async function fastSave(slug: string, body: any) {
     local_detect,
   } = body;
 
+  console.log(body);
+
   const save = await sql`
       INSERT INTO logger (
           created_at,
@@ -49,8 +51,8 @@ async function fastSave(slug: string, body: any) {
           ${cwa_hum},
           ${cwa_daliyHigh},
           ${cwa_daliyLow},
-          ${local_temp},
-          ${local_hum},
+          ${local_temp !== 2147483647 ? local_temp : null},
+          ${local_hum !== 2147483647 ? local_hum : null},
           ${local_gps_lat},
           ${local_gps_long},
           ${local_time},
