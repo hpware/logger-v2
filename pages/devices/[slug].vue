@@ -88,6 +88,7 @@ const fetchDeviceData = async () => {
       gps_lat: response.local_gps_lat || "N/A",
       gps_long: response.local_gps_long || "N/A",
     };
+    ipport.value = response.device_live_link || "";
   } catch (error) {
     console.error("Failed to fetch device data:", error);
   }
@@ -181,7 +182,7 @@ onMounted(() => {
           顯示資料
         </h1>
 
-        <a :href="`http://${ipport}`">
+        <a :href="`http://${ipport }`">
           <button
             class="bg-blue-200/70 p-2 rounded-xl hover:bg-blue-300/40 transition-all duration-300"
           >

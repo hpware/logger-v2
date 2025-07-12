@@ -20,6 +20,18 @@ export default defineEventHandler(async (event) => {
         dataid: dataid,
       };
     }
+    const deviceExists = await sql`
+      SELECT * FROM machines
+      WHERE uuid = ${slug}
+      LIMIT 1
+    `;
+    if (deviceExists.length === 0) {
+      return {
+        cached: true,
+        dataid: dataid,
+        error: "Device not found",
+      };
+    }
 
     // Get detected items count
     const detectedCount = await sql`
@@ -47,6 +59,7 @@ export default defineEventHandler(async (event) => {
       local_time: data.local_time,
       // Detected items as JSON
       local_detect: JSON.parse(data.local_detect || "[]"),
+      device_live_link: deviceExists[0].ip,
     };
   } catch (error) {
     console.error("Database error:", error);
