@@ -2,7 +2,6 @@ import sql from "~/server/db/pg";
 import { getJiStatus } from "~/server/saveQuickAccess/jistatus";
 import { getLedStatus } from "~/server/saveQuickAccess/ledstatus";
 import { GoogleGenAI } from "@google/genai";
-import OpenAI from 'openai';
 import { S3Client } from "@aws-sdk/client-s3";
 import { Upload } from "@aws-sdk/lib-storage";
 import { v4 as uuidv4 } from "uuid";
@@ -71,14 +70,6 @@ async function Decode_Image_File_And_Upload_To_S3(
   deviceId: string
 ) {
   const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
-  const openai = new OpenAI({
-    baseURL: 'https://openrouter.ai/api/v1',
-    apiKey: process.env.OPENROUTER_API_KEY,
-    defaultHeaders: {
-      'HTTP-Referer': 'https://v5.yuanhau.com/pages/logger-v2-image-ai-service-ai-usage', // Optional. Site URL for rankings on openrouter.ai.
-      'X-Title': 'LOGGER-V2-IMAGE-AI-SERVICE', // Optional. Site title for rankings on openrouter.ai.
-    },
-  });
   const base64Data = base64ImageString.replace(/^data:image\/\w+;base64,/, "");
   const buffer = Buffer.from(base64Data, "base64");
   const fileName = `image_${uuidv4()}.jpg`;
@@ -107,7 +98,7 @@ async function Decode_Image_File_And_Upload_To_S3(
   });
 
   await upload.done();
-  const imageUrl = `${process.env.MINIO_ENDPOINT}/${process.env.MINIO_BUCKET_NAME}/${deviceId}/${fileName}`;
+  const imageUrl = `${process.env.MINIO_ENDPOINT}/${process.env.MINIO_BUCKET_NAME}/uploads/${fileName}`;
 
     // Prepare image data for Gemini
     const imageParts = [
@@ -126,19 +117,8 @@ async function Decode_Image_File_And_Upload_To_S3(
         ...imageParts,
       ],
     });
-    const completion = await openai.chat.completions.create({
-      model: 'openai/gpt-4o',
-      messages: [
-        {
-          role: 'user',
-          content: 'What is the meaning of life?',
-        },
-      ],
-    });
-    const analysis = completion.choices[0].message;
-    console.log(analysis);
-    const jsonRes = JSON.parse(analysis?.content || "{}");
-
+    const analysis = response.text;
+    const jsonRes = JSON.parse(analysis || "{}");
     if (!jsonRes.item) {
       throw new Error("No animal found in the image.");
     }
@@ -191,7 +171,6 @@ export default defineEventHandler(async (event) => {
     };
   }
   const body = await readBody(event);
-  console.log(body.testing)
   fastSave(slug, body);
   uploadImages(body, slug);
 
