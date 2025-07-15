@@ -98,7 +98,7 @@ async function Decode_Image_File_And_Upload_To_S3(
   });
 
   await upload.done();
-  const imageUrl = `${process.env.MINIO_ENDPOINT}/${process.env.MINIO_BUCKET_NAME}/uploads/${fileName}`;
+  const imageUrl = `${process.env.MINIO_ENDPOINT}/${process.env.MINIO_BUCKET_NAME}/${deviceId}/${fileName}`;
 
     // Prepare image data for Gemini
     const imageParts = [
