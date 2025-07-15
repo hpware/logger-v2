@@ -132,159 +132,170 @@ onMounted(() => {
   <div
     class="justify-center align-center text-center selection:opactiy-[50%] p-1 bg-[url(https://raw.githubusercontent.com/hpware/esp32-postgres-logger-view-and-api/refs/heads/main/bg.jpg?raw=true)] bg-cover bg-no-repeat bg-center"
   >
-  <div v-if="/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/.test(deviceId)">
     <div
-      v-if="dataId === 0"
-      class="h-screen flex flex-col items-center justify-center gap-2 text-white backdrop-blur-lg rounded-lg"
-    >
-    <div class="flex flex-gap">
-      <h3 class="text-lg">尚未有資料，等待中&nbsp;</h3>
-      <svg
-        class="animate-spin -ml-1 mr-2 h-5 w-5 text-white"
-        xmlns="http://www.w3.org/2000/svg"
-        fill="none"
-        viewBox="0 0 24 24"
-      >
-        <circle
-          class="opacity-25"
-          cx="12"
-          cy="12"
-          r="10"
-          stroke="currentColor"
-          stroke-width="4"
-        ></circle>
-        <path
-          class="opacity-75"
-          fill="currentColor"
-          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-        ></path>
-      </svg>
-    </div>
-      <span>請複製以下程式到 // API 網址底下:
-        <br/>
-        <code>
-          const char *deviceId = "{{ deviceId }}";
-        </code>
-      </span>
-    </div>
-    <Transition
-      enter-active-class="animate__animated animate__fadeIn"
-      leave-active-class="animate__animated animate__fadeOut"
-      appear
+      v-if="
+        /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/.test(
+          deviceId,
+        )
+      "
     >
       <div
-        v-if="dataId !== 0"
-        class="flex flex-col items-center justify-center"
+        v-if="dataId === 0"
+        class="h-screen flex flex-col items-center justify-center gap-2 text-white backdrop-blur-lg rounded-lg"
       >
-        <h1
-          class="text-4xl bg-white m-4 p-2 text-transparent text-center align-middle justify-center bg-clip-text shadow-lg shadow-gray-20 flex flex-col"
-        >
-          顯示資料
-        </h1>
-
-        <a :href="`http://${ipport }`">
-          <button
-            class="bg-blue-200/70 p-2 rounded-xl hover:bg-blue-300/40 transition-all duration-300"
+        <div class="flex flex-gap">
+          <h3 class="text-lg">尚未有資料，等待中&nbsp;</h3>
+          <svg
+            class="animate-spin -ml-1 mr-2 h-5 w-5 text-white"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
           >
-            即時影像
-          </button>
-        </a>
-
-        <section
-          class="bg-gray-200/70 p-4 m-4 min-w-1/3 md:w-fit w-full mx-auto rounded-lg shadow-lg backdrop-blur-sm gap-2 m-3"
-        >
-          <h3 class="text-3xl text-bold">氣象局</h3>
-          <hr />
-          <p class="p-2 bg-white/60 rounded-2xl m-3 backdrop-blur-sm">
-            測站:
-            <span class="text-yellow-800">{{ weatherData.test_station }}</span>
-          </p>
-          <p class="p-2 bg-white/60 rounded-2xl m-3 backdrop-blur-sm">
-            天氣狀態:
-            <span class="text-yellow-800">{{ weatherData.type }}</span>
-          </p>
-          <p class="p-2 bg-white/60 rounded-2xl m-3 backdrop-blur-sm">
-            氣溫: <span class="text-yellow-800">{{ weatherData.temp }}</span>
-          </p>
-          <p class="p-2 bg-white/60 rounded-2xl m-3 backdrop-blur-sm">
-            濕度: <span class="text-yellow-800">{{ weatherData.hum }}</span>
-          </p>
-          <p class="p-2 bg-white/60 rounded-2xl m-3 backdrop-blur-sm">
-            最高氣溫:
-            <span class="text-yellow-800">{{ weatherData.daily_high }}</span>
-          </p>
-          <p class="p-2 bg-white/60 rounded-2xl m-3 backdrop-blur-sm">
-            最低氣溫:
-            <span class="text-yellow-800">{{ weatherData.daily_low }}</span>
-          </p>
-        </section>
-
-        <section
-          class="bg-gray-200/70 p-4 m-4 min-w-1/3 md:w-fit w-full mx-auto rounded-lg shadow-lg backdrop-blur-sm gap-2 m-3"
-        >
-          <h3 class="text-3xl text-bold">本地</h3>
-          <hr />
-          <p class="p-2 bg-white/60 rounded-2xl m-3 backdrop-blur-sm">
-            氣溫:
-            <span class="text-yellow-800">{{ localData.local_temp }}</span>
-          </p>
-          <p class="p-2 bg-white/60 rounded-2xl m-3 backdrop-blur-sm">
-            濕度: <span class="text-yellow-800">{{ localData.local_hum }}</span>
-          </p>
-          <p class="p-2 bg-white/60 rounded-2xl m-3 backdrop-blur-sm">
-            蠕動馬達
-            <button
-              @click="toggleJiStatus"
-              class="p-2 bg-lime-400 hover:bg-lime-600 rounded-xl m-1 transition-all duration-100"
-            >
-              {{ localData.local_jistatus ? "關" : "開" }}
-            </button>
-          </p>
-          <p class="p-2 bg-white/60 rounded-2xl m-3 backdrop-blur-sm">
-            紅外線
-            <button
-              @click="toggleLight"
-              class="p-2 bg-lime-400 hover:bg-lime-600 rounded-xl m-1 transition-all duration-100"
-            >
-              {{ localData.light ? "關" : "開" }}
-            </button>
-          </p>
-        </section>
-
-        <section
-          class="bg-gray-200/70 p-4 m-4 min-w-1/3 md:w-fit w-full mx-auto rounded-lg shadow-lg backdrop-blur-sm gap-2 m-3"
-        >
-          <h3 class="text-3xl text-bold">GPS 定位</h3>
-          <hr />
-          <p class="p-2 bg-white/60 rounded-2xl m-3 backdrop-blur-sm">
-            經度: <span class="text-yellow-800">{{ gpsData.gps_lat }}</span>
-          </p>
-          <p class="p-2 bg-white/60 rounded-2xl m-3 backdrop-blur-sm">
-            緯度: <span class="text-yellow-800">{{ gpsData.gps_long }}</span>
-          </p>
-        </section>
-
-        <section
-          class="bg-gray-200/70 p-4 m-4 min-w-1/3 md:w-fit w-full mx-auto rounded-lg shadow-lg backdrop-blur-sm gap-2 m-3"
-        >
-          <ul>
-            <li v-if="detectedItems.length === 0">尚未偵測到物種</li>
-            <li v-for="item in detectedItems" :key="item.id">
-              <a :href="item.imageURL">
-                <div>
-                  <span>{{ item.item }}</span>
-                  <br />
-                  偵測時間: {{ formatTime(item.detected_at) }}
-                </div>
-              </a>
-            </li>
-          </ul>
-        </section>
+            <circle
+              class="opacity-25"
+              cx="12"
+              cy="12"
+              r="10"
+              stroke="currentColor"
+              stroke-width="4"
+            ></circle>
+            <path
+              class="opacity-75"
+              fill="currentColor"
+              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+            ></path>
+          </svg>
+        </div>
+        <span
+          >請複製以下程式到 // API 網址底下:
+          <br />
+          <code> const char *deviceId = "{{ deviceId }}"; </code>
+        </span>
       </div>
-    </Transition>
-  </div>
-  <div v-else class="h-screen flex items-center justify-center text-white text-bold text-xl backdrop-blur-lg rounded-lg">
-    <h3>此 ID 無法使用在此平台！</h3>
-  </div>
+      <Transition
+        enter-active-class="animate__animated animate__fadeIn"
+        leave-active-class="animate__animated animate__fadeOut"
+        appear
+      >
+        <div
+          v-if="dataId !== 0"
+          class="flex flex-col items-center justify-center"
+        >
+          <h1
+            class="text-4xl bg-white m-4 p-2 text-transparent text-center align-middle justify-center bg-clip-text shadow-lg shadow-gray-20 flex flex-col"
+          >
+            顯示資料
+          </h1>
+
+          <a :href="`http://${ipport}`">
+            <button
+              class="bg-blue-200/70 p-2 rounded-xl hover:bg-blue-300/40 transition-all duration-300"
+            >
+              即時影像
+            </button>
+          </a>
+
+          <section
+            class="bg-gray-200/70 p-4 m-4 min-w-1/3 md:w-fit w-full mx-auto rounded-lg shadow-lg backdrop-blur-sm gap-2 m-3"
+          >
+            <h3 class="text-3xl text-bold">氣象局</h3>
+            <hr />
+            <p class="p-2 bg-white/60 rounded-2xl m-3 backdrop-blur-sm">
+              測站:
+              <span class="text-yellow-800">{{
+                weatherData.test_station
+              }}</span>
+            </p>
+            <p class="p-2 bg-white/60 rounded-2xl m-3 backdrop-blur-sm">
+              天氣狀態:
+              <span class="text-yellow-800">{{ weatherData.type }}</span>
+            </p>
+            <p class="p-2 bg-white/60 rounded-2xl m-3 backdrop-blur-sm">
+              氣溫: <span class="text-yellow-800">{{ weatherData.temp }}</span>
+            </p>
+            <p class="p-2 bg-white/60 rounded-2xl m-3 backdrop-blur-sm">
+              濕度: <span class="text-yellow-800">{{ weatherData.hum }}</span>
+            </p>
+            <p class="p-2 bg-white/60 rounded-2xl m-3 backdrop-blur-sm">
+              最高氣溫:
+              <span class="text-yellow-800">{{ weatherData.daily_high }}</span>
+            </p>
+            <p class="p-2 bg-white/60 rounded-2xl m-3 backdrop-blur-sm">
+              最低氣溫:
+              <span class="text-yellow-800">{{ weatherData.daily_low }}</span>
+            </p>
+          </section>
+
+          <section
+            class="bg-gray-200/70 p-4 m-4 min-w-1/3 md:w-fit w-full mx-auto rounded-lg shadow-lg backdrop-blur-sm gap-2 m-3"
+          >
+            <h3 class="text-3xl text-bold">本地</h3>
+            <hr />
+            <p class="p-2 bg-white/60 rounded-2xl m-3 backdrop-blur-sm">
+              氣溫:
+              <span class="text-yellow-800">{{ localData.local_temp }}</span>
+            </p>
+            <p class="p-2 bg-white/60 rounded-2xl m-3 backdrop-blur-sm">
+              濕度:
+              <span class="text-yellow-800">{{ localData.local_hum }}</span>
+            </p>
+            <p class="p-2 bg-white/60 rounded-2xl m-3 backdrop-blur-sm">
+              蠕動馬達
+              <button
+                @click="toggleJiStatus"
+                class="p-2 bg-lime-400 hover:bg-lime-600 rounded-xl m-1 transition-all duration-100"
+              >
+                {{ localData.local_jistatus ? "關" : "開" }}
+              </button>
+            </p>
+            <p class="p-2 bg-white/60 rounded-2xl m-3 backdrop-blur-sm">
+              紅外線
+              <button
+                @click="toggleLight"
+                class="p-2 bg-lime-400 hover:bg-lime-600 rounded-xl m-1 transition-all duration-100"
+              >
+                {{ localData.light ? "關" : "開" }}
+              </button>
+            </p>
+          </section>
+
+          <section
+            class="bg-gray-200/70 p-4 m-4 min-w-1/3 md:w-fit w-full mx-auto rounded-lg shadow-lg backdrop-blur-sm gap-2 m-3"
+          >
+            <h3 class="text-3xl text-bold">GPS 定位</h3>
+            <hr />
+            <p class="p-2 bg-white/60 rounded-2xl m-3 backdrop-blur-sm">
+              經度: <span class="text-yellow-800">{{ gpsData.gps_lat }}</span>
+            </p>
+            <p class="p-2 bg-white/60 rounded-2xl m-3 backdrop-blur-sm">
+              緯度: <span class="text-yellow-800">{{ gpsData.gps_long }}</span>
+            </p>
+          </section>
+
+          <section
+            class="bg-gray-200/70 p-4 m-4 min-w-1/3 md:w-fit w-full mx-auto rounded-lg shadow-lg backdrop-blur-sm gap-2 m-3"
+          >
+            <ul>
+              <li v-if="detectedItems.length === 0">尚未偵測到物種</li>
+              <li v-for="item in detectedItems" :key="item.id">
+                <a :href="item.imageURL">
+                  <div>
+                    <span>{{ item.item }}</span>
+                    <br />
+                    偵測時間: {{ formatTime(item.detected_at) }}
+                  </div>
+                </a>
+              </li>
+            </ul>
+          </section>
+        </div>
+      </Transition>
+    </div>
+    <div
+      v-else
+      class="h-screen flex items-center justify-center text-white text-bold text-xl backdrop-blur-lg rounded-lg"
+    >
+      <h3>此 ID 無法使用在此平台！</h3>
+    </div>
   </div>
 </template>

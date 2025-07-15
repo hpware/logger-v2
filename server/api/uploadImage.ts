@@ -7,7 +7,7 @@ import { v4 as uuidv4 } from "uuid";
 async function Decode_Image_File_And_Upload_To_S3(
   base64ImageString: string,
   date: string,
-  deviceId: string
+  deviceId: string,
 ) {
   const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
   const base64Data = base64ImageString.replace(/^data:image\/\w+;base64,/, "");
@@ -16,29 +16,28 @@ async function Decode_Image_File_And_Upload_To_S3(
 
   try {
     const s3Client = new S3Client({
+      region: "tw-home-1",
+      endpoint: process.env.MINIO_ENDPOINT,
+      credentials: {
+        accessKeyId: process.env.MINIO_ACCESS_KEY!,
+        secretAccessKey: process.env.MINIO_SECRET_KEY!,
+      },
+      forcePathStyle: true,
+    });
 
-    region: "tw-home-1",
-    endpoint: process.env.MINIO_ENDPOINT,
-    credentials: {
-      accessKeyId: process.env.MINIO_ACCESS_KEY!,
-      secretAccessKey: process.env.MINIO_SECRET_KEY!,
-    },
-    forcePathStyle: true, 
-  });
+    // Upload to MinIO
+    const upload = new Upload({
+      client: s3Client,
+      params: {
+        Bucket: process.env.MINIO_BUCKET_NAME!,
+        Key: `${deviceId}/${fileName}`,
+        Body: buffer,
+        ContentType: "image/jpeg",
+      },
+    });
 
-  // Upload to MinIO
-  const upload = new Upload({
-    client: s3Client,
-    params: {
-      Bucket: process.env.MINIO_BUCKET_NAME!,
-      Key: `${deviceId}/${fileName}`,
-      Body: buffer,
-      ContentType: "image/jpeg",
-    },
-  });
-
-  await upload.done();
-  const imageUrl = `${process.env.MINIO_ENDPOINT}/${process.env.MINIO_BUCKET_NAME}/uploads/${fileName}`;
+    await upload.done();
+    const imageUrl = `${process.env.MINIO_ENDPOINT}/${process.env.MINIO_BUCKET_NAME}/uploads/${fileName}`;
 
     // Prepare image data for Gemini
     const imageParts = [
@@ -68,7 +67,7 @@ async function Decode_Image_File_And_Upload_To_S3(
     await sql`
     INSERT INTO detect (device_id, imageURL, item, detected_at)
     VALUES (${deviceId}, ${fileName}, ${imageUrl}, ${jsonRes.item}, ${date})
-    `
+    `;
     console.log({
       fileName,
       imageUrl,
@@ -79,7 +78,7 @@ async function Decode_Image_File_And_Upload_To_S3(
     return;
   } catch (error: any) {
     console.error("Error analyzing image with Gemini:", error);
-     console.log({
+    console.log({
       fileName,
       imageUrl: null,
       analysis: null,
@@ -94,34 +93,30 @@ async function Decode_Image_File_And_Upload_To_S3(
 async function uploadImages(body: any, slug: string) {
   const checkIfDeviceIdExists = await sql`
   SELECT * FROM machines WHERE uuid = ${slug} LIMIT 1;
-  `
+  `;
   if (checkIfDeviceIdExists.length === 0) {
     console.error("Device ID does not exist in the database.");
     return;
   }
   if (Array.isArray(body?.image) && body.image.length > 0) {
     for (const image of body.image) {
-      Decode_Image_File_And_Upload_To_S3(
-        image,
-        new Date().toUTCString(),
-        slug
-      );
+      Decode_Image_File_And_Upload_To_S3(image, new Date().toUTCString(), slug);
     }
   }
 }
 
 export default defineEventHandler(async (event) => {
-    const body = await readBody(event);
-    if (!body || !body.deviceid) {
-      throw createError({
-        statusCode: 400,
-        statusMessage: "Bad Request",
-        message: "Device ID is required.",
-      });
-    }
-    uploadImages(body, body.deviceid as string);
-    return "uploading";
-})
+  const body = await readBody(event);
+  if (!body || !body.deviceid) {
+    throw createError({
+      statusCode: 400,
+      statusMessage: "Bad Request",
+      message: "Device ID is required.",
+    });
+  }
+  uploadImages(body, body.deviceid as string);
+  return "uploading";
+});
 
 /**
  * json
