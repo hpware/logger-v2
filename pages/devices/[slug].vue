@@ -2,6 +2,9 @@
 definePageMeta({
   layout: false,
 });
+useSeoMeta({
+  title: "AIOT 生態物種即時監測回報裝置網頁系統",
+})
 import "animate.css";
 const route = useRoute();
 const deviceId = route.params.slug;
