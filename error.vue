@@ -1,9 +1,9 @@
 <script lang="ts" setup>
-useSeoMeta({
-  title: "404 Not Found",
-  description: "對不起，這個的頁面不存在或已被移除。",
-});
 const error = useError();
+useSeoMeta({
+  title: `${ error.statusCode } ${ error.statusMessage }`,
+  description: `${error.statusCode === 404 ? "對不起，這個的頁面不存在或已被移除。" : error.message}`,
+});
 </script>
 <template>
   <div
