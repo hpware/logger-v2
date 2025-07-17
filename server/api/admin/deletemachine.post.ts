@@ -1,4 +1,4 @@
-import sql from "~/server/db/pg";
+import sql from "~/../server/db/pg";
 export default defineEventHandler(async (event) => {
   const body = await readBody(event);
   const { machine_uuid, password } = body;
