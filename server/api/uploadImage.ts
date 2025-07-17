@@ -1,4 +1,4 @@
-import sql from "~/../server/db/pg";
+import sql from "~/server/db/pg";
 import { GoogleGenAI } from "@google/genai";
 import { S3Client } from "@aws-sdk/client-s3";
 import { Upload } from "@aws-sdk/lib-storage";
