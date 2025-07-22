@@ -77,6 +77,7 @@ async function Decode_Image_File_And_Upload_To_S3(
   try {
     const s3Client = new S3Client({
 
+  region: "auto",
     endpoint: process.env.MINIO_ENDPOINT,
     credentials: {
       accessKeyId: process.env.MINIO_ACCESS_KEY!,
