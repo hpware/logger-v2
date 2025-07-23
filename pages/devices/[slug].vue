@@ -95,24 +95,11 @@ const fetchDeviceData = async () => {
       gps_long: response.local_gps_long || "N/A",
     };
     ipport.value = response.device_live_link || "";
+    detectedItems.value = response.local_detect || [];
   } catch (error) {
     console.error("Failed to fetch device data:", error);
   }
 };
-
-const getDetectedItems = async () => {
-  try {
-    const res = await fetch(`/api/detecteditems/${deviceId}`);
-    if (!res.ok) {
-      throw new Error("Network response was not ok");
-    }
-    const data = await res.json();
-    detectedItems.value = data.data || [];
-  } catch (error) {
-    console.error("Failed to fetch detected items:", error);
-  }
-};
-
 const toggleJiStatus = async () => {
   // Toggle logic here
   localData.value.local_jistatus = !localData.value.local_jistatus;
@@ -284,10 +271,12 @@ onMounted(() => {
           <section
             class="bg-gray-200/70 p-4 m-4 min-w-1/3 md:w-fit w-full mx-auto rounded-lg shadow-lg backdrop-blur-sm gap-2 m-3"
           >
+          <h3 class="text-3xl text-bold">偵測紀錄</h3> 
+            <hr />
             <ul>
-              <li v-if="detectedItems.length === 0">尚未偵測到物種</li>
+              <li v-if="detectedItems.length === 0">尚未有偵測紀錄</li>
               <li v-for="item in detectedItems" :key="item.id">
-                <a :href="item.imageURL">
+                <a :href="item.imageurl" target="_blank">
                   <div>
                     <span>{{ item.item }}</span>
                     <br />

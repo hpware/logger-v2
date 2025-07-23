@@ -35,7 +35,9 @@ export default defineEventHandler(async (event) => {
 
     // Get detected items count
     const detectedCount = await sql`
-      SELECT COUNT(*) as count FROM detect
+      SELECT * FROM detect 
+      WHERE device_id = ${slug}
+      ORDER BY detected_at DESC
     `;
 
     return {
@@ -58,7 +60,7 @@ export default defineEventHandler(async (event) => {
       local_gps_long: data.local_gps_long,
       local_time: data.local_time,
       // Detected items as JSON
-      local_detect: JSON.parse(data.local_detect || "[]"),
+      local_detect:detectedCount,
       device_live_link: deviceExists[0].ip,
     };
   } catch (error) {

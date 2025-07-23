@@ -129,6 +129,19 @@ async function Decode_Image_File_And_Upload_To_S3(
       jsonRes,
       success: true,
     });
+    await sql`
+    INSERT INTO detect (
+      device_id,
+      item,
+      imageurl,
+      detected_at
+      )
+      VALUES (
+      ${deviceId},
+      ${jsonRes.item},
+      ${imageUrl},
+      ${new Date().toISOString()}
+    )`;
   } catch (error: any) {
     console.error("Error analyzing image with Gemini:", error);
      console.log({
