@@ -31,6 +31,8 @@ const gpsData = ref({
   gps_long: "N/A",
 });
 
+const hiddenPage = ref(false);
+
 const detectedItems = ref([]);
 const ipport = ref("");
 // Fetch data functions
@@ -66,6 +68,7 @@ const fetchDeviceData = async () => {
 
     dataId.value = response.dataid;
     console.log("Data ID:", dataId.value);
+    const hiddenPage = ref(false);
 
     weatherData.value = {
       test_station: response.cwa_location || "N/A",
@@ -123,6 +126,10 @@ const toggleLight = async () => {
 const formatTime = (timeString: string) => {
   return new Date(timeString).toLocaleString();
 };
+
+const getErrorHandlerImage = () => {
+  hiddenPage.value = true;
+}
 
 onMounted(() => {
   fetchDeviceData();
@@ -189,15 +196,12 @@ onMounted(() => {
           >
             顯示資料
           </h1>
-
-          <a :href="`http://${ipport}`">
-            <button
-              class="bg-blue-200/70 p-2 rounded-xl hover:bg-blue-300/40 transition-all duration-300"
-            >
-              即時影像
-            </button>
-          </a>
-
+          <section
+            class="bg-gray-200/70 p-4 m-4 min-w-1/3 md:w-fit w-full mx-auto rounded-lg shadow-lg backdrop-blur-sm gap-2 m-3"
+          >
+          <img :src="`http://${ipport}`" class="rounded-xl" v-on:error="getErrorHandlerImage" v-if="hiddenPage === false" />
+          <p class="p-2 text-red-500 text-bold" v-if="hiddenPage">無法顯示圖片</p>
+          </section>
           <section
             class="bg-gray-200/70 p-4 m-4 min-w-1/3 md:w-fit w-full mx-auto rounded-lg shadow-lg backdrop-blur-sm gap-2 m-3"
           >
@@ -252,18 +256,20 @@ onMounted(() => {
               </button>
             </p>
             <p class="p-2 bg-white/60 rounded-2xl m-3 backdrop-blur-sm">
-              紅外線
-              <button
-                @click="toggleLight"
-                class="p-2 bg-lime-400 hover:bg-lime-600 rounded-xl m-1 transition-all duration-100"
-              >
-                {{ localData.light ? "關" : "開" }}
-              </button>
+               燈光
+               <input
+    type="range"
+    min="0"
+    max="8"
+    step="1"
+    v-model="localData.light"
+    class="w-full h-2 bg-gray-300 rounded-lg accent-lime-400"
+  />
             </p>
           </section>
 
           <section
-            class="bg-gray-200/70 p-4 m-4 min-w-1/3 md:w-fit w-full mx-auto rounded-lg shadow-lg backdrop-blur-sm gap-2 m-3"
+            class="bg-gray-200/70 p-4 m-4 min-w-1/  3 md:w-fit w-full mx-auto rounded-lg shadow-lg backdrop-blur-sm gap-2 m-3"
           >
             <h3 class="text-3xl text-bold">GPS 定位</h3>
             <hr />
