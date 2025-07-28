@@ -60,7 +60,7 @@ export default defineEventHandler(async (event) => {
       local_gps_long: data.local_gps_long,
       local_time: data.local_time,
       // Detected items as JSON
-      local_detect:detectedCount,
+      local_detect: detectedCount,
       device_live_link: deviceExists[0].ip,
     };
   } catch (error) {

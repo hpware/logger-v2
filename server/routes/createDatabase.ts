@@ -1,35 +1,38 @@
 import sql from "~/server/db/pg";
 
 export default defineEventHandler(async (event) => {
-
-  const authHeader = getRequestHeader(event, 'authorization');
+  const authHeader = getRequestHeader(event, "authorization");
 
   if (!process.env.ADMIN_USERNAME || !process.env.ADMIN_PASSWORD) {
     throw createError({
       statusCode: 500,
-      message: 'Server configuration error: Missing credentials'
+      message: "Server configuration error: Missing credentials",
     });
   }
 
-  if (!authHeader || !authHeader.startsWith('Basic ')) {
-    setResponseHeader(event, 'WWW-Authenticate', 'Basic realm="Admin Access"');
+  if (!authHeader || !authHeader.startsWith("Basic ")) {
+    setResponseHeader(event, "WWW-Authenticate", 'Basic realm="Admin Access"');
     throw createError({
       statusCode: 401,
-      message: 'Authorization required',
+      message: "Authorization required",
     });
   }
-    const base64Credentials = authHeader.split(' ')[1];
-  const credentials = Buffer.from(base64Credentials, 'base64').toString('utf-8');
-  const [username, password] = credentials.split(':');
+  const base64Credentials = authHeader.split(" ")[1];
+  const credentials = Buffer.from(base64Credentials, "base64").toString(
+    "utf-8",
+  );
+  const [username, password] = credentials.split(":");
 
-  if (username !== process.env.ADMIN_USERNAME || 
-      password !== process.env.ADMIN_PASSWORD) {
+  if (
+    username !== process.env.ADMIN_USERNAME ||
+    password !== process.env.ADMIN_PASSWORD
+  ) {
     throw createError({
       statusCode: 401,
-      message: 'Invalid credentials',
+      message: "Invalid credentials",
       headers: {
-        'WWW-Authenticate': 'Basic realm="Admin Access"'
-      }
+        "WWW-Authenticate": 'Basic realm="Admin Access"',
+      },
     });
   }
 

@@ -5,7 +5,7 @@ definePageMeta({
 useSeoMeta({
   title: "AIOT 生態物種即時監測回報裝置網頁系統",
   description: "歡迎使用管理系統",
-})
+});
 const password = ref("sss");
 const deviceId = ref("0");
 const devices = ref([]);

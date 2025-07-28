@@ -4,7 +4,7 @@ definePageMeta({
 });
 useSeoMeta({
   title: "AIOT 生態物種即時監測回報裝置網頁系統",
-})
+});
 import "animate.css";
 const route = useRoute();
 const deviceId = route.params.slug;
@@ -116,7 +116,7 @@ const formatTime = (timeString: string) => {
 
 const getErrorHandlerImage = () => {
   hiddenPage.value = true;
-}
+};
 
 onMounted(() => {
   fetchDeviceData();
@@ -186,8 +186,15 @@ onMounted(() => {
           <section
             class="bg-gray-200/70 p-4 m-4 min-w-1/3 md:w-fit w-full mx-auto rounded-lg shadow-lg backdrop-blur-sm gap-2 m-3"
           >
-          <img :src="`http://${ipport}`" class="rounded-xl" v-on:error="getErrorHandlerImage" v-if="hiddenPage === false" />
-          <p class="p-2 text-red-500 text-bold" v-if="hiddenPage">無法顯示圖片</p>
+            <img
+              :src="`http://${ipport}`"
+              class="rounded-xl"
+              v-on:error="getErrorHandlerImage"
+              v-if="hiddenPage === false"
+            />
+            <p class="p-2 text-red-500 text-bold" v-if="hiddenPage">
+              無法顯示圖片
+            </p>
           </section>
           <section
             class="bg-gray-200/70 p-4 m-4 min-w-1/3 md:w-fit w-full mx-auto rounded-lg shadow-lg backdrop-blur-sm gap-2 m-3"
@@ -243,20 +250,20 @@ onMounted(() => {
               </button>
             </p>
             <p class="p-2 bg-white/60 rounded-2xl m-3 backdrop-blur-sm">
-               燈光
-               <input
-    type="range"
-    min="0"
-    max="8"
-    step="1"
-    v-model="localData.light"
-    class="w-full h-2 bg-gray-300 rounded-lg accent-lime-400"
-  />
+              燈光
+              <input
+                type="range"
+                min="0"
+                max="8"
+                step="1"
+                v-model="localData.light"
+                class="w-full h-2 bg-gray-300 rounded-lg accent-lime-400"
+              />
             </p>
           </section>
 
           <section
-            class="bg-gray-200/70 p-4 m-4 min-w-1/  3 md:w-fit w-full mx-auto rounded-lg shadow-lg backdrop-blur-sm gap-2 m-3"
+            class="bg-gray-200/70 p-4 m-4 min-w-1/ 3 md:w-fit w-full mx-auto rounded-lg shadow-lg backdrop-blur-sm gap-2 m-3"
           >
             <h3 class="text-3xl text-bold">GPS 定位</h3>
             <hr />
@@ -271,7 +278,7 @@ onMounted(() => {
           <section
             class="bg-gray-200/70 p-4 m-4 min-w-1/3 md:w-fit w-full mx-auto rounded-lg shadow-lg backdrop-blur-sm gap-2 m-3"
           >
-          <h3 class="text-3xl text-bold">偵測紀錄</h3> 
+            <h3 class="text-3xl text-bold">偵測紀錄</h3>
             <hr />
             <ul>
               <li v-if="detectedItems.length === 0">尚未有偵測紀錄</li>
