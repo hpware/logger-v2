@@ -83,6 +83,12 @@ export default defineEventHandler(async (event) => {
       ip text not null,
       token text not null
   )`;
+  const create5 = await sql`
+  create table if not exists device_status(
+    device_uuid text primary key not null,
+    jistatus boolean not null,
+    lightstatus int not null
+    )`
   return {
     created: true,
     message: "Database and tables created successfully",
@@ -91,6 +97,7 @@ export default defineEventHandler(async (event) => {
       detect: create2,
       jistatus: create3,
       machines: create4,
+      device_status: create5,
     },
   };
 });

@@ -1,3 +1,4 @@
+import sql from "../../db/pg";
 interface DeviceStatus {
   ji: string;
   led: string;
@@ -57,7 +58,11 @@ export default defineEventHandler(async (event) => {
   }
 
   if (slug === "jistatus") {
-    updateDeviceStatus(deviceId, "ji", body.status);
+    await sql`
+      UPDATE device_status
+      SET jiStatus = ${body.status}
+      WHERE device_uuid = ${deviceId}
+    `;
     return {
       success: true,
       message: `JI status updated to: ${body.status}`,
@@ -65,7 +70,11 @@ export default defineEventHandler(async (event) => {
   }
 
   if (slug === "ledstatus") {
-    updateDeviceStatus(deviceId, "led", body.status);
+    await sql`
+      UPDATE device_status
+      SET lightStatus = ${body.status}
+      WHERE device_uuid = ${deviceId}
+    `;
     return {
       success: true,
       message: `LED status updated to: ${body.status}`,
@@ -73,14 +82,18 @@ export default defineEventHandler(async (event) => {
   }
 
   if (slug === "status") {
-    const status = getDeviceStatus(deviceId);
-    if (!status) {
+    const status = await sql`
+    SELECT * FROM device_status
+    WHERE device_uuid = ${deviceId}
+    LIMIT 1
+    `
+    if (status.length === 0) {
       throw createError({
         statusCode: 404,
         message: `No status found for device: ${deviceId}`,
       });
     }
-    return status;
+    return status[0];
   }
 
   throw createError({

@@ -181,9 +181,17 @@ export default defineEventHandler(async (event) => {
   fastSave(slug, body);
   uploadImages(body, slug);
 
+  const deviceData = await sql`
+    SELECT * FROM machines WHERE uuid = ${slug} LIMIT 1;`
+  if (deviceData.length === 0) {
+    return {
+      success: false,
+      message: "Device not found",
+    }
+  }
   return {
     success: true,
-    jistatus: getJiStatus(),
-    newledstatus: 5,
+    jistatus: deviceData[0].jistatus,
+    newledstatus: deviceData[0].lightstatus,
   };
 });

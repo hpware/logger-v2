@@ -18,7 +18,18 @@ export default defineEventHandler(async (event) => {
             ${machine_ip},
             ${password}
         )`;
+  const saveSomeMore  = await sql`
+  INSERT INTO device_status (
+    device_uuid,
+    jistatus,
+    lightstatus
+  ) VALUES (
+    ${uuid},
+    false,
+    0
+  )`;
   console.log(save);
+  console.log(saveSomeMore);
   return {
     success: true,
     uuid: uuid,
