@@ -49,6 +49,7 @@ export default defineEventHandler(async (event) => {
   const body = await readBody(event);
   const slug = getRouterParams(event).slug;
   const deviceId = body.deviceId;
+  
 
   if (!deviceId) {
     throw createError({
@@ -70,6 +71,13 @@ export default defineEventHandler(async (event) => {
   }
 
   if (slug === "ledstatus") {
+    const ledStatus = body.ledStatus;
+    if (ledStatus < 0 || ledStatus > 8) {
+      throw createError({
+        statusCode: 400,
+        message: "LED status must be between 0 and 8",
+      });
+    }
     await sql`
       UPDATE device_status
       SET lightStatus = ${body.status}
