@@ -3,9 +3,11 @@
 ## 裝置相關 API
 
 ### GET /api/devices
+
 取得所有已註冊的裝置清單
 
 **回應格式：**
+
 ```json
 {
   "endpoint": "/logger/devicedata/",
@@ -22,12 +24,15 @@
 ```
 
 ### POST /api/device_store/[slug]
+
 IoT 裝置上傳感測器資料和圖片
 
 **請求參數：**
+
 - `slug`: 裝置 UUID
 
 **請求內容：**
+
 ```json
 {
   "cwa_type": "天氣類型",
@@ -36,7 +41,7 @@ IoT 裝置上傳感測器資料和圖片
   "cwa_hum": 60,
   "local_temp": 26.0,
   "local_hum": 65,
-  "local_gps_lat": 25.0330,
+  "local_gps_lat": 25.033,
   "local_gps_long": 121.5654,
   "local_detect": "base64圖片資料",
   "local_jistatus": true
@@ -44,9 +49,11 @@ IoT 裝置上傳感測器資料和圖片
 ```
 
 ### POST /api/devicedata/[slug]
+
 取得裝置最新資料
 
 **請求內容：**
+
 ```json
 {
   "dataid": 123
@@ -54,6 +61,7 @@ IoT 裝置上傳感測器資料和圖片
 ```
 
 **回應格式：**
+
 ```json
 {
   "cached": false,
@@ -68,9 +76,11 @@ IoT 裝置上傳感測器資料和圖片
 ## 管理 API
 
 ### POST /api/admin/createmachine
+
 新增裝置
 
 **請求內容：**
+
 ```json
 {
   "machine_name": "裝置名稱",
@@ -80,9 +90,11 @@ IoT 裝置上傳感測器資料和圖片
 ```
 
 ### POST /api/getAuthToken
+
 取得認證令牌
 
 **請求內容：**
+
 ```json
 {
   "deviceId": "device-uuid",
@@ -93,9 +105,11 @@ IoT 裝置上傳感測器資料和圖片
 ## 圖片上傳 API
 
 ### POST /api/uploadImage
+
 獨立圖片上傳和分析
 
 **請求內容：**
+
 ```json
 {
   "image": "base64圖片資料",

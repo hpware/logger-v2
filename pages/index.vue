@@ -18,7 +18,7 @@ const openDevice = () => {
   } else {
     if (deviceId.value !== "0") {
       loading.value = true;
-      getAuthToken();
+      //getAuthToken();
       setTimeout(() => {
         router.push(`/devices/${deviceId.value}`);
       }, 2000);

@@ -3,6 +3,7 @@
 ## Docker 部署
 
 ### Dockerfile 說明
+
 使用多階段建置優化映像大小：
 
 ```dockerfile
@@ -24,6 +25,7 @@ CMD ["bun", "run", "preview"]
 ```
 
 ### 建置和執行
+
 ```bash
 # 建置映像
 docker build -t aiot-monitor .
@@ -39,19 +41,23 @@ docker run -p 3000:3000 \
 ## GitHub Actions CI/CD
 
 ### 自動化流程
+
 位於 `.github/workflows/build_docker_compose.yml`
 
 **觸發條件：**
+
 - 推送到 master 分支
 - 手動觸發
 
 **流程步驟：**
+
 1. 檢出程式碼
 2. 登入 GitHub Container Registry
 3. 提取中繼資料
 4. 建置和推送 Docker 映像
 
 ### 映像標籤
+
 - `latest` - 最新版本
 - `master` - master 分支
 - `sha-{commit}` - 特定提交
@@ -59,6 +65,7 @@ docker run -p 3000:3000 \
 ## 環境變數設定
 
 ### 必要環境變數
+
 ```env
 # 資料庫
 DATABASE_URL=postgresql://user:password@host:port/database
@@ -77,16 +84,19 @@ R2_URL=your_r2_url
 ## 生產環境建議
 
 ### 效能優化
+
 - 使用 PostgreSQL 連線池
 - 設定適當的記憶體限制
 - 啟用 gzip 壓縮
 
 ### 安全性
+
 - 使用 HTTPS
 - 設定防火牆規則
 - 定期更新依賴套件
 
 ### 監控
+
 - 設定健康檢查端點
 - 監控資料庫效能
 - 記錄應用程式日誌
@@ -94,8 +104,9 @@ R2_URL=your_r2_url
 ## 擴展部署
 
 ### Docker Compose 範例
+
 ```yaml
-version: '3.8'
+version: "3.8"
 services:
   app:
     image: ghcr.io/your-repo/aiot-monitor:latest

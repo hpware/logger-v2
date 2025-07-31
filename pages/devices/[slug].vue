@@ -22,8 +22,11 @@ const weatherData = ref({
 const localData = ref({
   local_temp: "N/A",
   local_hum: "N/A",
+});
+
+const clientUpdateValues = ref({
   local_jistatus: false,
-  light: false,
+  light: 0,
 });
 
 const gpsData = ref({
@@ -86,8 +89,6 @@ const fetchDeviceData = async () => {
     localData.value = {
       local_temp: response.local_temp ? `${response.local_temp}°C` : "N/A°C",
       local_hum: response.local_hum ? `${response.local_hum}%` : "N/A%",
-      local_jistatus: response.local_jistatus || false,
-      light: response.local_light || false,
     };
 
     gpsData.value = {
@@ -100,14 +101,26 @@ const fetchDeviceData = async () => {
     console.error("Failed to fetch device data:", error);
   }
 };
-const toggleJiStatus = async () => {
-  // Toggle logic here
-  localData.value.local_jistatus = !localData.value.local_jistatus;
-};
 
-const toggleLight = async () => {
-  // Toggle logic here
-  localData.value.light = !localData.value.light;
+
+const onValueChange = async () => {
+  
+  const req = await fetch("/api/update_device", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      deviceId: deviceId,
+      local_jistatus: clientUpdateValues.value.local_jistatus,
+      light: clientUpdateValues.value.light,
+    }),
+  });
+  const res = await req.json();
+  if (!req.ok || !res.success) {
+    alert("更新失敗，請稍後再試");
+    return;
+  }
 };
 
 const formatTime = (timeString: string) => {
@@ -243,10 +256,10 @@ onMounted(() => {
             <p class="p-2 bg-white/60 rounded-2xl m-3 backdrop-blur-sm">
               蠕動馬達
               <button
-                @click="toggleJiStatus"
+                @click="() => {onValueChange(); clientUpdateValues.local_jistatus = !clientUpdateValues.local_jistatus}"
                 class="p-2 bg-lime-400 hover:bg-lime-600 rounded-xl m-1 transition-all duration-100"
               >
-                {{ localData.local_jistatus ? "關" : "開" }}
+                {{ clientUpdateValues.local_jistatus ? "OFF" : "ON" }}
               </button>
             </p>
             <p class="p-2 bg-white/60 rounded-2xl m-3 backdrop-blur-sm">
@@ -256,7 +269,8 @@ onMounted(() => {
                 min="0"
                 max="8"
                 step="1"
-                v-model="localData.light"
+                v-model="clientUpdateValues.light"
+                @change="onValueChange"
                 class="w-full h-2 bg-gray-300 rounded-lg accent-lime-400"
               />
             </p>

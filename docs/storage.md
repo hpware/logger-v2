@@ -5,6 +5,7 @@
 系統使用 MinIO 作為物件儲存，相容 S3 API。
 
 ### 環境變數
+
 ```env
 MINIO_ENDPOINT=your_minio_endpoint
 MINIO_ACCESS_KEY=your_access_key
@@ -18,6 +19,7 @@ R2_URL=your_r2_url
 ### 兩種儲存設定
 
 #### 1. uploadImage.ts 設定
+
 ```typescript
 const s3Client = new S3Client({
   region: "tw-home-1",
@@ -31,11 +33,13 @@ const s3Client = new S3Client({
 ```
 
 **圖片 URL 格式：**
+
 ```
 ${process.env.MINIO_ENDPOINT}/${process.env.MINIO_BUCKET_NAME}/uploads/${fileName}
 ```
 
 #### 2. device_store 設定
+
 ```typescript
 const s3Client = new S3Client({
   region: "auto",
@@ -49,6 +53,7 @@ const s3Client = new S3Client({
 ```
 
 **圖片 URL 格式：**
+
 ```
 ${process.env.R2_URL}/${deviceId}/${fileName}
 ```
@@ -56,16 +61,19 @@ ${process.env.R2_URL}/${deviceId}/${fileName}
 ## 檔案上傳流程
 
 ### 1. 圖片處理
+
 - 接收 base64 編碼圖片
 - 移除 data URL 前綴
 - 轉換為 Buffer
 
 ### 2. 檔案命名
+
 ```typescript
 const fileName = `image_${uuidv4()}.jpg`;
 ```
 
 ### 3. 上傳參數
+
 ```typescript
 const upload = new Upload({
   client: s3Client,

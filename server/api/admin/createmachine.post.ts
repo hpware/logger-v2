@@ -18,7 +18,7 @@ export default defineEventHandler(async (event) => {
             ${machine_ip},
             ${password}
         )`;
-  const saveSomeMore  = await sql`
+  const saveSomeMore = await sql`
   INSERT INTO device_status (
     device_uuid,
     jistatus,

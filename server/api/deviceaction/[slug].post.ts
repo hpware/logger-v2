@@ -20,18 +20,18 @@ export default defineEventHandler(async (event) => {
         message: "Status must be a boolean value",
       });
     }
-    
+
     try {
       await sql`
         UPDATE device_status
         SET jistatus = ${status}
         WHERE device_uuid = ${deviceId}
       `;
-      
+
       // Also update the quick access cache
       const { setJiStatus } = await import("~/server/saveQuickAccess/jistatus");
       setJiStatus(status);
-      
+
       return {
         success: true,
         message: `JI status updated to: ${status}`,
@@ -54,18 +54,20 @@ export default defineEventHandler(async (event) => {
         message: "LED status must be a number between 0 and 8",
       });
     }
-    
+
     try {
       await sql`
         UPDATE device_status
         SET lightstatus = ${ledStatus}
         WHERE device_uuid = ${deviceId}
       `;
-      
+
       // Also update the quick access cache
-      const { setLedStatus } = await import("~/server/saveQuickAccess/ledstatus");
+      const { setLedStatus } = await import(
+        "~/server/saveQuickAccess/ledstatus"
+      );
       setLedStatus(ledStatus > 0);
-      
+
       return {
         success: true,
         message: `LED status updated to: ${ledStatus}`,
@@ -87,14 +89,14 @@ export default defineEventHandler(async (event) => {
         WHERE device_uuid = ${deviceId}
         LIMIT 1
       `;
-      
+
       if (status.length === 0) {
         throw createError({
           statusCode: 404,
           message: `No status found for device: ${deviceId}`,
         });
       }
-      
+
       return {
         success: true,
         data: status[0],

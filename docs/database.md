@@ -3,6 +3,7 @@
 ## 資料表結構
 
 ### logger
+
 主要感測器資料記錄表
 
 ```sql
@@ -28,6 +29,7 @@ CREATE TABLE logger (
 ```
 
 ### machines
+
 裝置註冊表
 
 ```sql
@@ -41,6 +43,7 @@ CREATE TABLE machines (
 ```
 
 ### detect
+
 動物偵測記錄表
 
 ```sql
@@ -54,6 +57,7 @@ CREATE TABLE detect (
 ```
 
 ### device_status
+
 裝置狀態控制表
 
 ```sql

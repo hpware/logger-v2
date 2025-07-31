@@ -5,22 +5,26 @@
 系統使用 Google Gemini AI 進行圖片分析和動物識別。
 
 ### 環境變數
+
 ```env
 GEMINI_API_KEY=your_gemini_api_key
 ```
 
 ### AI 模型
+
 使用 `gemini-2.5-flash` 模型進行圖片分析
 
 ## 圖片分析流程
 
 ### 1. 圖片預處理
+
 ```typescript
 const base64Data = base64ImageString.replace(/^data:image\/\w+;base64,/, "");
 const buffer = Buffer.from(base64Data, "base64");
 ```
 
 ### 2. AI 分析請求
+
 ```typescript
 const response = await ai.models.generateContent({
   model: "gemini-2.5-flash",
@@ -36,7 +40,9 @@ const response = await ai.models.generateContent({
 ```
 
 ### 3. 回應格式
+
 AI 回傳 JSON 格式的分析結果：
+
 ```json
 {
   "item": "Passer montanus",
@@ -55,11 +61,14 @@ AI 回傳 JSON 格式的分析結果：
 ## 整合端點
 
 ### 主要整合點
+
 1. `/api/device_store/[slug].post.ts` - IoT 裝置上傳
 2. `/api/uploadImage.ts` - 獨立圖片上傳
 
 ### 資料儲存
+
 分析結果儲存在 `detect` 資料表：
+
 - `device_id`: 裝置 UUID
 - `item`: 動物學名
 - `imageurl`: 圖片 URL

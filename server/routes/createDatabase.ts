@@ -88,7 +88,7 @@ export default defineEventHandler(async (event) => {
     device_uuid text primary key not null,
     jistatus boolean not null,
     lightstatus int not null
-    )`
+    )`;
   return {
     created: true,
     message: "Database and tables created successfully",
