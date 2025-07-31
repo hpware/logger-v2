@@ -64,7 +64,10 @@ const createMachine = async () => {
             class="bg-green-500/20 backdrop-blur-lg border-l-4 border-green-500 text-green-200 p-4 mb-4 rounded-md"
           >
             <p class="font-bold text-green-300">成功</p>
-            <p class="text-white">機器已成功加入，UUID: <span class="text-yellow-300">{{ deviceId }}</span></p>
+            <p class="text-white">
+              機器已成功加入，UUID:
+              <span class="text-yellow-300">{{ deviceId }}</span>
+            </p>
             <p class="text-white">
               連線地址:
               <a
@@ -97,7 +100,9 @@ const createMachine = async () => {
               />
             </div>
             <div>
-              <label for="camIp" class="block text-sm font-medium text-white mb-2"
+              <label
+                for="camIp"
+                class="block text-sm font-medium text-white mb-2"
                 >8735 鏡頭 IP 位置</label
               >
               <input
@@ -109,7 +114,9 @@ const createMachine = async () => {
               />
             </div>
             <div>
-              <label for="password" class="block text-sm font-medium text-white mb-2"
+              <label
+                for="password"
+                class="block text-sm font-medium text-white mb-2"
                 >Password</label
               >
               <input

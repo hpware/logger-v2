@@ -16,9 +16,10 @@ const error = useError();
         <div
           class="bg-gray-300/5 backdrop-blur-sm z-10 p-8 rounded-lg shadow-lg border-2 border-gray-400/40 w-full max-w-fit"
         >
-        <div
-        class="text-2xl sm:text-4xl md:text-6xl font-bold text-white mb-4 text-border"
-      >            {{ error.statusCode }} {{ error.statusMessage }}
+          <div
+            class="text-2xl sm:text-4xl md:text-6xl font-bold text-white mb-4 text-border"
+          >
+            {{ error.statusCode }} {{ error.statusMessage }}
           </div>
           <div class="text-2xl text-white mt-4 text-border">
             {{
@@ -27,7 +28,9 @@ const error = useError();
                 : error.message
             }}
           </div>
-          <div class="text-lg text-white mt-4 text-border">如果您認為這是錯誤，請聯繫網站管理員。</div>
+          <div class="text-lg text-white mt-4 text-border">
+            如果您認為這是錯誤，請聯繫網站管理員。
+          </div>
         </div>
       </div>
     </div>

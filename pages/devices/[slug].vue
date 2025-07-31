@@ -6,6 +6,14 @@ useSeoMeta({
   title: "AIOT 生態物種即時監測回報裝置網頁系統",
 });
 import "animate.css";
+
+// Define the type for detected items
+interface DetectedItem {
+  id: number;
+  item: string;
+  detected_at: string;
+  imageurl: string;
+}
 const route = useRoute();
 const deviceId = route.params.slug;
 const dataId = ref(0);
@@ -36,8 +44,12 @@ const gpsData = ref({
 
 const hiddenPage = ref(false);
 
-const detectedItems = ref([]);
+const detectedItems = ref<DetectedItem[]>([]);
 const ipport = ref("");
+
+// Popup related refs
+const showPopup = ref(false);
+const popupImageUrl = ref("");
 // Fetch data functions
 const fetchDeviceData = async () => {
   try {
@@ -97,14 +109,24 @@ const fetchDeviceData = async () => {
     };
     ipport.value = response.device_live_link || "";
     detectedItems.value = response.local_detect || [];
+    detectedItems.value.forEach((item) => {
+      if (item.imageurl) {
+        const img = new Image();
+        img.src = item.imageurl;
+        img.onload = () => {
+          console.log(`Image loaded: ${item.imageurl}`);
+        };
+        img.onerror = () => {
+          console.error(`Error loading image: ${item.imageurl}`);
+        };
+      }
+    });
   } catch (error) {
     console.error("Failed to fetch device data:", error);
   }
 };
 
-
 const onValueChange = async () => {
-  
   const req = await fetch("/api/update_device", {
     method: "POST",
     headers: {
@@ -131,10 +153,16 @@ const getErrorHandlerImage = () => {
   hiddenPage.value = true;
 };
 
+const showImagePopup = (imageUrl: string) => {
+  popupImageUrl.value = imageUrl;
+  showPopup.value = true;
+};
+
 onMounted(() => {
   fetchDeviceData();
   // Set up polling for real-time updates
   setInterval(fetchDeviceData, 3000);
+  // Fetch all images first
 });
 </script>
 
@@ -144,181 +172,260 @@ onMounted(() => {
       class="fixed inset-0 w-full h-full bg-[url(https://raw.githubusercontent.com/hpware/esp32-postgres-logger-view-and-api/refs/heads/main/bg.jpg?raw=true)] bg-cover bg-no-repeat bg-center z-[-1]"
     ></div>
     <div class="relative z-[1] justify-center text-center">
-    <div
-      v-if="
-        /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/.test(
-          deviceId,
-        )
-      "
-    >
       <div
-        v-if="dataId === 0"
-        class="h-screen flex flex-col items-center justify-center gap-2 text-white backdrop-blur-lg rounded-lg"
+        v-if="
+          /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/.test(
+            deviceId,
+          )
+        "
       >
-        <div class="flex flex-gap">
-          <h3 class="text-lg">尚未有資料，等待中&nbsp;</h3>
-          <svg
-            class="animate-spin -ml-1 mr-2 h-5 w-5 text-white"
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-          >
-            <circle
-              class="opacity-25"
-              cx="12"
-              cy="12"
-              r="10"
-              stroke="currentColor"
-              stroke-width="4"
-            ></circle>
-            <path
-              class="opacity-75"
-              fill="currentColor"
-              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-            ></path>
-          </svg>
+        <div
+          v-if="dataId === 0"
+          class="h-screen flex flex-col items-center justify-center gap-2 text-white backdrop-blur-lg rounded-lg"
+        >
+          <div class="flex flex-gap">
+            <h3 class="text-lg">尚未有資料，等待中&nbsp;</h3>
+            <svg
+              class="animate-spin -ml-1 mr-2 h-5 w-5 text-white"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <circle
+                class="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                stroke-width="4"
+              ></circle>
+              <path
+                class="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+              ></path>
+            </svg>
+          </div>
+          <span
+            >請複製以下程式到 // API 網址底下:
+            <br />
+            <code> const char *deviceId = "{{ deviceId }}"; </code>
+          </span>
         </div>
-        <span
-          >請複製以下程式到 // API 網址底下:
-          <br />
-          <code> const char *deviceId = "{{ deviceId }}"; </code>
-        </span>
+        <Transition
+          enter-active-class="animate__animated animate__fadeIn"
+          leave-active-class="animate__animated animate__fadeOut"
+          appear
+        >
+          <div
+            v-if="dataId !== 0"
+            class="flex flex-col items-center justify-center"
+          >
+            <h1
+              class="text-4xl bg-white m-4 p-2 text-transparent text-center align-middle justify-center bg-clip-text shadow-lg shadow-gray-20 flex flex-col"
+            >
+              顯示資料
+            </h1>
+            <section
+              class="bg-gray-300/5 backdrop-blur-sm z-10 p-3 rounded-lg shadow-lg py-10 border-2 border-gray-400/40 p-4 m-4 min-w-1/3 md:w-fit w-full mx-auto rounded-lg shadow-lg backdrop-blur-sm gap-2 m-3"
+            >
+              <img
+                :src="`http://${ipport}`"
+                class="rounded-xl"
+                v-on:error="getErrorHandlerImage"
+                v-if="hiddenPage === false"
+              />
+              <p class="p-2 text-red-500 text-bold" v-if="hiddenPage">
+                無法顯示圖片
+              </p>
+            </section>
+            <section
+              class="bg-gray-300/5 backdrop-blur-sm z-10 p-3 rounded-lg shadow-lg py-10 border-2 border-gray-400/40 p-4 m-4 min-w-1/3 md:w-fit w-full mx-auto rounded-lg shadow-lg backdrop-blur-sm gap-2 m-3"
+            >
+              <h3 class="text-3xl text-bold text-white">氣象局</h3>
+              <hr class="text-white" />
+              <p
+                class="bg-gray-300/5 backdrop-blur-lg rounded-lg shadow-lg p-2 border-2 border-gray-400/40 text-white m-2"
+              >
+                測站:
+                <span class="text-yellow-300">{{
+                  weatherData.test_station
+                }}</span>
+              </p>
+              <p
+                class="bg-gray-300/5 backdrop-blur-lg rounded-lg shadow-lg p-2 border-2 border-gray-400/40 text-white m-2"
+              >
+                天氣狀態:
+                <span class="text-yellow-300">{{ weatherData.type }}</span>
+              </p>
+              <p
+                class="bg-gray-300/5 backdrop-blur-lg rounded-lg shadow-lg p-2 border-2 border-gray-400/40 text-white m-2"
+              >
+                氣溫:
+                <span class="text-yellow-300">{{ weatherData.temp }}</span>
+              </p>
+              <p
+                class="bg-gray-300/5 backdrop-blur-lg rounded-lg shadow-lg p-2 border-2 border-gray-400/40 text-white m-2"
+              >
+                濕度: <span class="text-yellow-300">{{ weatherData.hum }}</span>
+              </p>
+              <p
+                class="bg-gray-300/5 backdrop-blur-lg rounded-lg shadow-lg p-2 border-2 border-gray-400/40 text-white m-2"
+              >
+                最高氣溫:
+                <span class="text-yellow-300">{{
+                  weatherData.daily_high
+                }}</span>
+              </p>
+              <p
+                class="bg-gray-300/5 backdrop-blur-lg rounded-lg shadow-lg p-2 border-2 border-gray-400/40 text-white m-2"
+              >
+                最低氣溫:
+                <span class="text-yellow-300">{{ weatherData.daily_low }}</span>
+              </p>
+            </section>
+
+            <section
+              class="bg-gray-300/5 backdrop-blur-sm z-10 p-3 rounded-lg shadow-lg py-10 border-2 border-gray-400/40 p-4 m-4 min-w-1/3 md:w-fit w-full mx-auto rounded-lg shadow-lg backdrop-blur-sm gap-2 m-3"
+            >
+              <h3 class="text-3xl text-bold text-white">本地</h3>
+              <hr class="text-white" />
+              <p
+                class="bg-gray-300/5 backdrop-blur-lg rounded-lg shadow-lg p-2 border-2 border-gray-400/40 text-white m-2"
+              >
+                氣溫:
+                <span class="text-yellow-300">{{ localData.local_temp }}</span>
+              </p>
+              <p
+                class="bg-gray-300/5 backdrop-blur-lg rounded-lg shadow-lg p-2 border-2 border-gray-400/40 text-white m-2"
+              >
+                濕度:
+                <span class="text-yellow-300">{{ localData.local_hum }}</span>
+              </p>
+              <p
+                class="bg-gray-300/5 backdrop-blur-lg rounded-lg shadow-lg p-2 border-2 border-gray-400/40 text-white m-2"
+              >
+                蠕動馬達
+                <button
+                  @click="
+                    () => {
+                      onValueChange();
+                      clientUpdateValues.local_jistatus =
+                        !clientUpdateValues.local_jistatus;
+                    }
+                  "
+                  class="p-2 bg-yellow-300/50 hover:bg-yellow-300/80 rounded-xl m-1 transition-all duration-300"
+                >
+                  {{ clientUpdateValues.local_jistatus ? "OFF" : "ON" }}
+                </button>
+              </p>
+              <p
+                class="bg-gray-300/5 backdrop-blur-lg rounded-lg shadow-lg p-2 border-2 border-gray-400/40 text-white m-2"
+              >
+                燈光
+                <input
+                  type="range"
+                  min="0"
+                  max="8"
+                  step="1"
+                  v-model="clientUpdateValues.light"
+                  @change="onValueChange"
+                  class="w-full h-2 bg-gray-300/80 rounded-lg accent-yellow-300 hover:border-none transition-all duration-300"
+                />
+              </p>
+            </section>
+
+            <section
+              class="bg-gray-300/5 backdrop-blur-sm z-10 p-3 rounded-lg shadow-lg py-10 border-2 border-gray-400/40 p-4 m-4 min-w-1/3 md:w-fit w-full mx-auto rounded-lg shadow-lg backdrop-blur-sm gap-2 m-3"
+            >
+              <h3 class="text-3xl text-bold text-white">GPS 定位</h3>
+              <hr class="text-white" />
+              <p
+                class="bg-gray-300/5 backdrop-blur-lg rounded-lg shadow-lg p-2 border-2 border-gray-400/40 text-white m-2"
+              >
+                經度: <span class="text-yellow-300">{{ gpsData.gps_lat }}</span>
+              </p>
+              <p
+                class="bg-gray-300/5 backdrop-blur-lg rounded-lg shadow-lg p-2 border-2 border-gray-400/40 text-white m-2"
+              >
+                緯度:
+                <span class="text-yellow-300">{{ gpsData.gps_long }}</span>
+              </p>
+            </section>
+
+            <section
+              class="bg-gray-300/5 backdrop-blur-sm z-10 p-3 rounded-lg shadow-lg py-10 border-2 border-gray-400/40 p-4 m-4 min-w-1/3 md:w-fit w-full mx-auto rounded-lg shadow-lg backdrop-blur-sm gap-2 m-3"
+            >
+              <h3 class="text-3xl text-bold text-white">偵測紀錄</h3>
+              <hr class="text-white" />
+              <ul class="text-white">
+                <li v-if="detectedItems.length === 0">尚未有偵測紀錄</li>
+
+                <li
+                  v-for="item in detectedItems"
+                  :key="item.id"
+                  class="bg-gray-300/5 backdrop-blur-lg rounded-lg shadow-lg p-2 border-2 border-gray-400/40 text-white m-2 hover:bg-gray-400/20 transition-all duration-500"
+                >
+                  <div
+                    @click="showImagePopup(item.imageurl)"
+                    class="cursor-pointer"
+                  >
+                    <div>
+                      <span>{{ item.item }}</span>
+                      <br />
+                      偵測時間: {{ formatTime(item.detected_at) }}
+                    </div>
+                  </div>
+                </li>
+              </ul>
+            </section>
+          </div>
+        </Transition>
       </div>
+      <div
+        v-else
+        class="h-screen flex items-center justify-center text-white text-bold text-xl backdrop-blur-lg rounded-lg"
+      >
+        <h3>此 ID 無法使用在此平台！</h3>
+      </div>
+
+      <!-- Image Popup Modal -->
       <Transition
         enter-active-class="animate__animated animate__fadeIn"
         leave-active-class="animate__animated animate__fadeOut"
         appear
       >
         <div
-          v-if="dataId !== 0"
-          class="flex flex-col items-center justify-center"
+          v-if="showPopup"
+          class="fixed inset-0 bg-gray-300/30 backdrop-blur-lg flex items-center justify-center z-50 transition-all duration-500"
         >
-          <h1
-            class="text-4xl bg-white m-4 p-2 text-transparent text-center align-middle justify-center bg-clip-text shadow-lg shadow-gray-20 flex flex-col"
-          >
-            顯示資料
-          </h1>
-          <section
-            class=" bg-gray-300/5 backdrop-blur-sm z-10 p-3 rounded-lg shadow-lg py-10 border-2 border-gray-400/40 p-4 m-4 min-w-1/3 md:w-fit w-full mx-auto rounded-lg shadow-lg backdrop-blur-sm gap-2 m-3"
-          >
-            <img
-              :src="`http://${ipport}`"
-              class="rounded-xl"
-              v-on:error="getErrorHandlerImage"
-              v-if="hiddenPage === false"
-            />
-            <p class="p-2 text-red-500 text-bold" v-if="hiddenPage">
-              無法顯示圖片
-            </p>
-          </section>
-          <section
-            class=" bg-gray-300/5 backdrop-blur-sm z-10 p-3 rounded-lg shadow-lg py-10 border-2 border-gray-400/40 p-4 m-4 min-w-1/3 md:w-fit w-full mx-auto rounded-lg shadow-lg backdrop-blur-sm gap-2 m-3"
-          >
-            <h3 class="text-3xl text-bold text-white">氣象局</h3>
-            <hr class="text-white" />
-            <p class=" bg-gray-300/5 backdrop-blur-lg rounded-lg shadow-lg p-2 border-2 border-gray-400/40 text-white m-2">
-              測站:
-              <span class="text-yellow-300">{{
-                weatherData.test_station
-              }}</span>
-            </p>
-            <p class=" bg-gray-300/5 backdrop-blur-lg rounded-lg shadow-lg p-2 border-2 border-gray-400/40 text-white m-2">
-              天氣狀態:
-              <span class="text-yellow-300">{{ weatherData.type }}</span>
-            </p>
-            <p class=" bg-gray-300/5 backdrop-blur-lg rounded-lg shadow-lg p-2 border-2 border-gray-400/40 text-white m-2">
-              氣溫: <span class="text-yellow-300">{{ weatherData.temp }}</span>
-            </p>
-            <p class=" bg-gray-300/5 backdrop-blur-lg rounded-lg shadow-lg p-2 border-2 border-gray-400/40 text-white m-2">
-              濕度: <span class="text-yellow-300">{{ weatherData.hum }}</span>
-            </p>
-            <p class=" bg-gray-300/5 backdrop-blur-lg rounded-lg shadow-lg p-2 border-2 border-gray-400/40 text-white m-2">
-              最高氣溫:
-              <span class="text-yellow-300">{{ weatherData.daily_high }}</span>
-            </p>
-            <p class=" bg-gray-300/5 backdrop-blur-lg rounded-lg shadow-lg p-2 border-2 border-gray-400/40 text-white m-2">
-              最低氣溫:
-              <span class="text-yellow-300">{{ weatherData.daily_low }}</span>
-            </p>
-          </section>
-
-          <section
-            class=" bg-gray-300/5 backdrop-blur-sm z-10 p-3 rounded-lg shadow-lg py-10 border-2 border-gray-400/40 p-4 m-4 min-w-1/3 md:w-fit w-full mx-auto rounded-lg shadow-lg backdrop-blur-sm gap-2 m-3"
-          >
-             <h3 class="text-3xl text-bold text-white">本地</h3>
-            <hr class="text-white" />
-            <p class=" bg-gray-300/5 backdrop-blur-lg rounded-lg shadow-lg p-2 border-2 border-gray-400/40 text-white m-2">
-              氣溫:
-              <span class="text-yellow-300">{{ localData.local_temp }}</span>
-            </p>
-            <p class=" bg-gray-300/5 backdrop-blur-lg rounded-lg shadow-lg p-2 border-2 border-gray-400/40 text-white m-2">
-              濕度:
-              <span class="text-yellow-300">{{ localData.local_hum }}</span>
-            </p>
-            <p class=" bg-gray-300/5 backdrop-blur-lg rounded-lg shadow-lg p-2 border-2 border-gray-400/40 text-white m-2">
-              蠕動馬達
-              <button
-                @click="() => {onValueChange(); clientUpdateValues.local_jistatus = !clientUpdateValues.local_jistatus}"
-                class="p-2 bg-yellow-300/50 hover:bg-yellow-300/80 rounded-xl m-1 transition-all duration-300"
+          <div class="relative">
+            <button
+              @click="showPopup = false"
+              class="absolute top-2 right-2 bg-white rounded-full p-2 shadow-lg hover:bg-gray-200"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="h-6 w-6 text-black"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
               >
-                {{ clientUpdateValues.local_jistatus ? "OFF" : "ON" }}
-              </button>
-            </p>
-            <p class=" bg-gray-300/5 backdrop-blur-lg rounded-lg shadow-lg p-2 border-2 border-gray-400/40 text-white m-2">
-              燈光
-              <input
-                type="range"
-                min="0"
-                max="8"
-                step="1"
-                v-model="clientUpdateValues.light"
-                @change="onValueChange"
-                class="w-full h-2 bg-gray-300/80 rounded-lg accent-yellow-300 hover:border-none transition-all duration-300"
-              />
-            </p>
-          </section>
-
-          <section
-            class="bg-gray-300/5 backdrop-blur-sm z-10 p-3 rounded-lg shadow-lg py-10 border-2 border-gray-400/40 p-4 m-4 min-w-1/3 md:w-fit w-full mx-auto rounded-lg shadow-lg backdrop-blur-sm gap-2 m-3"
-          >
-             <h3 class="text-3xl text-bold text-white">GPS 定位</h3>
-            <hr class="text-white" />
-            <p class=" bg-gray-300/5 backdrop-blur-lg rounded-lg shadow-lg p-2 border-2 border-gray-400/40 text-white m-2">
-              經度: <span class="text-yellow-300">{{ gpsData.gps_lat }}</span>
-            </p>
-            <p class=" bg-gray-300/5 backdrop-blur-lg rounded-lg shadow-lg p-2 border-2 border-gray-400/40 text-white m-2">
-              緯度: <span class="text-yellow-300">{{ gpsData.gps_long }}</span>
-            </p>
-          </section>
-
-          <section
-            class="bg-gray-300/5 backdrop-blur-sm z-10 p-3 rounded-lg shadow-lg py-10 border-2 border-gray-400/40 p-4 m-4 min-w-1/3 md:w-fit w-full mx-auto rounded-lg shadow-lg backdrop-blur-sm gap-2 m-3"
-          >
-             <h3 class="text-3xl text-bold text-white">偵測紀錄</h3>
-            <hr class="text-white" />
-            <ul class="text-white">
-              <li v-if="detectedItems.length === 0">尚未有偵測紀錄</li>
-
-              <li v-for="item in detectedItems" :key="item.id" class="bg-gray-300/5 backdrop-blur-lg rounded-lg shadow-lg p-2 border-2 border-gray-400/40 text-white m-2 hover:bg-gray-400/20 transition-all duration-500">
-                <a :href="item.imageurl" target="_blank">
-                  <div>
-                    <span>{{ item.item }}</span>
-                    <br />
-                    偵測時間: {{ formatTime(item.detected_at) }}
-                  </div>
-                </a>
-              </li>
-            </ul>
-          </section>
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              </svg>
+            </button>
+            <img
+              :src="popupImageUrl"
+              class="max-w-screen-md max-h-screen-md object-contain"
+            />
+          </div>
         </div>
       </Transition>
-    </div>
-    <div
-      v-else
-      class="h-screen flex items-center justify-center text-white text-bold text-xl backdrop-blur-lg rounded-lg"
-    >
-      <h3>此 ID 無法使用在此平台！</h3>
-    </div>
     </div>
   </div>
 </template>

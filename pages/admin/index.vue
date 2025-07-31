@@ -17,7 +17,9 @@ useSeoMeta({
         <div
           class="bg-gray-300/5 backdrop-blur-sm z-10 p-8 rounded-lg shadow-lg border-2 border-gray-400/40 w-full max-w-4xl"
         >
-          <h1 class="text-4xl font-bold text-center text-white mb-8">管理中心</h1>
+          <h1 class="text-4xl font-bold text-center text-white mb-8">
+            管理中心
+          </h1>
           <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
             <NuxtLink
               to="/admin/createmachine"

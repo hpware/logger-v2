@@ -6,7 +6,9 @@ export default defineEventHandler(async (event) => {
 
     if (
       !body ||
-      !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/.test(body.deviceId) ||
+      !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/.test(
+        body.deviceId,
+      ) ||
       typeof body.light === "undefined" ||
       typeof body.local_jistatus === "undefined"
     ) {
@@ -18,10 +20,14 @@ export default defineEventHandler(async (event) => {
 
     const deviceId = body.deviceId;
     // Convert to correct types if needed
-    const light = typeof body.light === "string" ? parseInt(body.light, 10) : body.light;
-    const local_jistatus = typeof body.local_jistatus === "boolean"
-      ? (body.local_jistatus ? 1 : 0)
-      : body.local_jistatus;
+    const light =
+      typeof body.light === "string" ? parseInt(body.light, 10) : body.light;
+    const local_jistatus =
+      typeof body.local_jistatus === "boolean"
+        ? body.local_jistatus
+          ? 1
+          : 0
+        : body.local_jistatus;
 
     await sql`
       UPDATE device_status

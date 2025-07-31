@@ -91,7 +91,9 @@ const deleteMachine = async () => {
                 :disabled="loading"
                 required
               >
-                <option disabled value="" class="text-gray-500">Please select one</option>
+                <option disabled value="" class="text-gray-500">
+                  Please select one
+                </option>
                 <option
                   v-for="device in devices"
                   :key="device.id"
@@ -103,7 +105,9 @@ const deleteMachine = async () => {
               </select>
             </div>
             <div>
-              <label for="password" class="block text-sm font-medium text-white mb-2"
+              <label
+                for="password"
+                class="block text-sm font-medium text-white mb-2"
                 >密碼</label
               >
               <input
