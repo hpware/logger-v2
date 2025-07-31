@@ -139,9 +139,11 @@ onMounted(() => {
 </script>
 
 <template>
-  <div
-    class="justify-center align-center text-center selection:opactiy-[50%] p-1 bg-[url(https://raw.githubusercontent.com/hpware/esp32-postgres-logger-view-and-api/refs/heads/main/bg.jpg?raw=true)] bg-cover bg-no-repeat bg-center"
-  >
+  <div>
+    <div
+      class="fixed inset-0 w-full h-full bg-[url(https://raw.githubusercontent.com/hpware/esp32-postgres-logger-view-and-api/refs/heads/main/bg.jpg?raw=true)] bg-cover bg-no-repeat bg-center z-[-1]"
+    ></div>
+    <div class="relative z-[1] justify-center text-center">
     <div
       v-if="
         /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/.test(
@@ -213,30 +215,30 @@ onMounted(() => {
             class=" bg-gray-300/5 backdrop-blur-sm z-10 p-3 rounded-lg shadow-lg py-10 border-2 border-gray-400/40 p-4 m-4 min-w-1/3 md:w-fit w-full mx-auto rounded-lg shadow-lg backdrop-blur-sm gap-2 m-3"
           >
             <h3 class="text-3xl text-bold text-white">氣象局</h3>
-            <hr />
-            <p class="p-2 bg-white/60 rounded-2xl m-3 backdrop-blur-sm">
+            <hr class="text-white" />
+            <p class=" bg-gray-300/5 backdrop-blur-lg rounded-lg shadow-lg p-2 border-2 border-gray-400/40 text-white m-2">
               測站:
-              <span class="text-yellow-800">{{
+              <span class="text-yellow-300">{{
                 weatherData.test_station
               }}</span>
             </p>
-            <p class="p-2 bg-white/60 rounded-2xl m-3 backdrop-blur-sm">
+            <p class=" bg-gray-300/5 backdrop-blur-lg rounded-lg shadow-lg p-2 border-2 border-gray-400/40 text-white m-2">
               天氣狀態:
-              <span class="text-yellow-800">{{ weatherData.type }}</span>
+              <span class="text-yellow-300">{{ weatherData.type }}</span>
             </p>
-            <p class="p-2 bg-white/60 rounded-2xl m-3 backdrop-blur-sm">
-              氣溫: <span class="text-yellow-800">{{ weatherData.temp }}</span>
+            <p class=" bg-gray-300/5 backdrop-blur-lg rounded-lg shadow-lg p-2 border-2 border-gray-400/40 text-white m-2">
+              氣溫: <span class="text-yellow-300">{{ weatherData.temp }}</span>
             </p>
-            <p class="p-2 bg-white/60 rounded-2xl m-3 backdrop-blur-sm">
-              濕度: <span class="text-yellow-800">{{ weatherData.hum }}</span>
+            <p class=" bg-gray-300/5 backdrop-blur-lg rounded-lg shadow-lg p-2 border-2 border-gray-400/40 text-white m-2">
+              濕度: <span class="text-yellow-300">{{ weatherData.hum }}</span>
             </p>
-            <p class="p-2 bg-white/60 rounded-2xl m-3 backdrop-blur-sm">
+            <p class=" bg-gray-300/5 backdrop-blur-lg rounded-lg shadow-lg p-2 border-2 border-gray-400/40 text-white m-2">
               最高氣溫:
-              <span class="text-yellow-800">{{ weatherData.daily_high }}</span>
+              <span class="text-yellow-300">{{ weatherData.daily_high }}</span>
             </p>
-            <p class="p-2 bg-white/60 rounded-2xl m-3 backdrop-blur-sm">
+            <p class=" bg-gray-300/5 backdrop-blur-lg rounded-lg shadow-lg p-2 border-2 border-gray-400/40 text-white m-2">
               最低氣溫:
-              <span class="text-yellow-800">{{ weatherData.daily_low }}</span>
+              <span class="text-yellow-300">{{ weatherData.daily_low }}</span>
             </p>
           </section>
 
@@ -244,25 +246,25 @@ onMounted(() => {
             class=" bg-gray-300/5 backdrop-blur-sm z-10 p-3 rounded-lg shadow-lg py-10 border-2 border-gray-400/40 p-4 m-4 min-w-1/3 md:w-fit w-full mx-auto rounded-lg shadow-lg backdrop-blur-sm gap-2 m-3"
           >
              <h3 class="text-3xl text-bold text-white">本地</h3>
-            <hr />
-            <p class="p-2 bg-white/60 rounded-2xl m-3 backdrop-blur-sm">
+            <hr class="text-white" />
+            <p class=" bg-gray-300/5 backdrop-blur-lg rounded-lg shadow-lg p-2 border-2 border-gray-400/40 text-white m-2">
               氣溫:
-              <span class="text-yellow-800">{{ localData.local_temp }}</span>
+              <span class="text-yellow-300">{{ localData.local_temp }}</span>
             </p>
-            <p class="p-2 bg-white/60 rounded-2xl m-3 backdrop-blur-sm">
+            <p class=" bg-gray-300/5 backdrop-blur-lg rounded-lg shadow-lg p-2 border-2 border-gray-400/40 text-white m-2">
               濕度:
-              <span class="text-yellow-800">{{ localData.local_hum }}</span>
+              <span class="text-yellow-300">{{ localData.local_hum }}</span>
             </p>
-            <p class="p-2 bg-white/60 rounded-2xl m-3 backdrop-blur-sm">
+            <p class=" bg-gray-300/5 backdrop-blur-lg rounded-lg shadow-lg p-2 border-2 border-gray-400/40 text-white m-2">
               蠕動馬達
               <button
                 @click="() => {onValueChange(); clientUpdateValues.local_jistatus = !clientUpdateValues.local_jistatus}"
-                class="p-2 bg-lime-400 hover:bg-lime-600 rounded-xl m-1 transition-all duration-100"
+                class="p-2 bg-yellow-300/50 hover:bg-yellow-300/80 rounded-xl m-1 transition-all duration-300"
               >
                 {{ clientUpdateValues.local_jistatus ? "OFF" : "ON" }}
               </button>
             </p>
-            <p class="p-2 bg-white/60 rounded-2xl m-3 backdrop-blur-sm">
+            <p class=" bg-gray-300/5 backdrop-blur-lg rounded-lg shadow-lg p-2 border-2 border-gray-400/40 text-white m-2">
               燈光
               <input
                 type="range"
@@ -271,32 +273,33 @@ onMounted(() => {
                 step="1"
                 v-model="clientUpdateValues.light"
                 @change="onValueChange"
-                class="w-full h-2 bg-gray-300 rounded-lg accent-lime-400"
+                class="w-full h-2 bg-gray-300 rounded-lg accent-yellow-300"
               />
             </p>
           </section>
 
           <section
-            class="bg-gray-200/70 p-4 m-4 min-w-1/ 3 md:w-fit w-full mx-auto rounded-lg shadow-lg backdrop-blur-sm gap-2 m-3"
+            class="bg-gray-300/5 backdrop-blur-sm z-10 p-3 rounded-lg shadow-lg py-10 border-2 border-gray-400/40 p-4 m-4 min-w-1/3 md:w-fit w-full mx-auto rounded-lg shadow-lg backdrop-blur-sm gap-2 m-3"
           >
              <h3 class="text-3xl text-bold text-white">GPS 定位</h3>
-            <hr />
-            <p class="p-2 bg-white/60 rounded-2xl m-3 backdrop-blur-sm">
-              經度: <span class="text-yellow-800">{{ gpsData.gps_lat }}</span>
+            <hr class="text-white" />
+            <p class=" bg-gray-300/5 backdrop-blur-lg rounded-lg shadow-lg p-2 border-2 border-gray-400/40 text-white m-2">
+              經度: <span class="text-yellow-300">{{ gpsData.gps_lat }}</span>
             </p>
-            <p class="p-2 bg-white/60 rounded-2xl m-3 backdrop-blur-sm">
-              緯度: <span class="text-yellow-800">{{ gpsData.gps_long }}</span>
+            <p class=" bg-gray-300/5 backdrop-blur-lg rounded-lg shadow-lg p-2 border-2 border-gray-400/40 text-white m-2">
+              緯度: <span class="text-yellow-300">{{ gpsData.gps_long }}</span>
             </p>
           </section>
 
           <section
-            class=" bg-gray-300/5 backdrop-blur-sm z-10 p-3 rounded-lg shadow-lg py-10 border-2 border-gray-400/40 p-4 m-4 min-w-1/3 md:w-fit w-full mx-auto rounded-lg shadow-lg backdrop-blur-sm gap-2 m-3"
+            class="bg-gray-300/5 backdrop-blur-sm z-10 p-3 rounded-lg shadow-lg py-10 border-2 border-gray-400/40 p-4 m-4 min-w-1/3 md:w-fit w-full mx-auto rounded-lg shadow-lg backdrop-blur-sm gap-2 m-3"
           >
              <h3 class="text-3xl text-bold text-white">偵測紀錄</h3>
-            <hr />
-            <ul>
+            <hr class="text-white" />
+            <ul class="text-white">
               <li v-if="detectedItems.length === 0">尚未有偵測紀錄</li>
-              <li v-for="item in detectedItems" :key="item.id">
+
+              <li v-for="item in detectedItems" :key="item.id" class="bg-gray-300/5 backdrop-blur-lg rounded-lg shadow-lg p-2 border-2 border-gray-400/40 text-white m-2 hover:bg-gray-400/20 transition-all duration-500">
                 <a :href="item.imageurl" target="_blank">
                   <div>
                     <span>{{ item.item }}</span>
@@ -315,6 +318,7 @@ onMounted(() => {
       class="h-screen flex items-center justify-center text-white text-bold text-xl backdrop-blur-lg rounded-lg"
     >
       <h3>此 ID 無法使用在此平台！</h3>
+    </div>
     </div>
   </div>
 </template>
