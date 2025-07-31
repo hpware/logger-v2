@@ -197,7 +197,7 @@ onMounted(() => {
             顯示資料
           </h1>
           <section
-            class="bg-gray-200/70 p-4 m-4 min-w-1/3 md:w-fit w-full mx-auto rounded-lg shadow-lg backdrop-blur-sm gap-2 m-3"
+            class=" bg-gray-300/5 backdrop-blur-sm z-10 p-3 rounded-lg shadow-lg py-10 border-2 border-gray-400/40 p-4 m-4 min-w-1/3 md:w-fit w-full mx-auto rounded-lg shadow-lg backdrop-blur-sm gap-2 m-3"
           >
             <img
               :src="`http://${ipport}`"
@@ -210,9 +210,9 @@ onMounted(() => {
             </p>
           </section>
           <section
-            class="bg-gray-200/70 p-4 m-4 min-w-1/3 md:w-fit w-full mx-auto rounded-lg shadow-lg backdrop-blur-sm gap-2 m-3"
+            class=" bg-gray-300/5 backdrop-blur-sm z-10 p-3 rounded-lg shadow-lg py-10 border-2 border-gray-400/40 p-4 m-4 min-w-1/3 md:w-fit w-full mx-auto rounded-lg shadow-lg backdrop-blur-sm gap-2 m-3"
           >
-            <h3 class="text-3xl text-bold">氣象局</h3>
+            <h3 class="text-3xl text-bold text-white">氣象局</h3>
             <hr />
             <p class="p-2 bg-white/60 rounded-2xl m-3 backdrop-blur-sm">
               測站:
@@ -241,9 +241,9 @@ onMounted(() => {
           </section>
 
           <section
-            class="bg-gray-200/70 p-4 m-4 min-w-1/3 md:w-fit w-full mx-auto rounded-lg shadow-lg backdrop-blur-sm gap-2 m-3"
+            class=" bg-gray-300/5 backdrop-blur-sm z-10 p-3 rounded-lg shadow-lg py-10 border-2 border-gray-400/40 p-4 m-4 min-w-1/3 md:w-fit w-full mx-auto rounded-lg shadow-lg backdrop-blur-sm gap-2 m-3"
           >
-            <h3 class="text-3xl text-bold">本地</h3>
+             <h3 class="text-3xl text-bold text-white">本地</h3>
             <hr />
             <p class="p-2 bg-white/60 rounded-2xl m-3 backdrop-blur-sm">
               氣溫:
@@ -279,7 +279,7 @@ onMounted(() => {
           <section
             class="bg-gray-200/70 p-4 m-4 min-w-1/ 3 md:w-fit w-full mx-auto rounded-lg shadow-lg backdrop-blur-sm gap-2 m-3"
           >
-            <h3 class="text-3xl text-bold">GPS 定位</h3>
+             <h3 class="text-3xl text-bold text-white">GPS 定位</h3>
             <hr />
             <p class="p-2 bg-white/60 rounded-2xl m-3 backdrop-blur-sm">
               經度: <span class="text-yellow-800">{{ gpsData.gps_lat }}</span>
@@ -290,9 +290,9 @@ onMounted(() => {
           </section>
 
           <section
-            class="bg-gray-200/70 p-4 m-4 min-w-1/3 md:w-fit w-full mx-auto rounded-lg shadow-lg backdrop-blur-sm gap-2 m-3"
+            class=" bg-gray-300/5 backdrop-blur-sm z-10 p-3 rounded-lg shadow-lg py-10 border-2 border-gray-400/40 p-4 m-4 min-w-1/3 md:w-fit w-full mx-auto rounded-lg shadow-lg backdrop-blur-sm gap-2 m-3"
           >
-            <h3 class="text-3xl text-bold">偵測紀錄</h3>
+             <h3 class="text-3xl text-bold text-white">偵測紀錄</h3>
             <hr />
             <ul>
               <li v-if="detectedItems.length === 0">尚未有偵測紀錄</li>
