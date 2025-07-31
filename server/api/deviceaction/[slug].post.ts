@@ -1,55 +1,9 @@
-import sql from "../../db/pg";
-interface DeviceStatus {
-  ji: string;
-  led: string;
-  lastUpdated: Date;
-}
-
-// In-memory cache
-const statusCache = new Map<string, DeviceStatus>();
-
-export async function getDeviceStatus(
-  deviceId: string,
-): Promise<DeviceStatus | null> {
-  try {
-    return statusCache.get(deviceId) || null;
-  } catch (error) {
-    console.error("Database error, falling back to cache:", error);
-    return statusCache.get(deviceId) || null;
-  }
-}
-
-export async function updateDeviceStatus(
-  deviceId: string,
-  type: "ji" | "led",
-  status: string,
-): Promise<void> {
-  const now = new Date();
-  const currentStatus = (await getDeviceStatus(deviceId)) || {
-    ji: "",
-    led: "",
-    lastUpdated: now,
-  };
-
-  const updatedStatus = {
-    ...currentStatus,
-    [type]: status,
-    lastUpdated: now,
-  };
-
-  try {
-    statusCache.set(deviceId, updatedStatus);
-  } catch (error) {
-    console.error("Database error, updating cache only:", error);
-    statusCache.set(deviceId, updatedStatus);
-  }
-}
+import sql from "~/server/db/pg";
 
 export default defineEventHandler(async (event) => {
   const body = await readBody(event);
-  const slug = getRouterParams(event).slug;
+  const slug = getRouterParam(event, "slug");
   const deviceId = body.deviceId;
-  
 
   if (!deviceId) {
     throw createError({
@@ -59,49 +13,99 @@ export default defineEventHandler(async (event) => {
   }
 
   if (slug === "jistatus") {
-    await sql`
-      UPDATE device_status
-      SET jiStatus = ${body.status}
-      WHERE device_uuid = ${deviceId}
-    `;
-    return {
-      success: true,
-      message: `JI status updated to: ${body.status}`,
-    };
+    const { status } = body;
+    if (typeof status !== "boolean") {
+      throw createError({
+        statusCode: 400,
+        message: "Status must be a boolean value",
+      });
+    }
+    
+    try {
+      await sql`
+        UPDATE device_status
+        SET jistatus = ${status}
+        WHERE device_uuid = ${deviceId}
+      `;
+      
+      // Also update the quick access cache
+      const { setJiStatus } = await import("~/server/saveQuickAccess/jistatus");
+      setJiStatus(status);
+      
+      return {
+        success: true,
+        message: `JI status updated to: ${status}`,
+        jistatus: status,
+      };
+    } catch (error) {
+      console.error("Database error updating JI status:", error);
+      throw createError({
+        statusCode: 500,
+        message: "Failed to update JI status",
+      });
+    }
   }
 
   if (slug === "ledstatus") {
-    const ledStatus = body.ledStatus;
-    if (ledStatus < 0 || ledStatus > 8) {
+    const { ledStatus } = body;
+    if (typeof ledStatus !== "number" || ledStatus < 0 || ledStatus > 8) {
       throw createError({
         statusCode: 400,
-        message: "LED status must be between 0 and 8",
+        message: "LED status must be a number between 0 and 8",
       });
     }
-    await sql`
-      UPDATE device_status
-      SET lightStatus = ${body.status}
-      WHERE device_uuid = ${deviceId}
-    `;
-    return {
-      success: true,
-      message: `LED status updated to: ${body.status}`,
-    };
+    
+    try {
+      await sql`
+        UPDATE device_status
+        SET lightstatus = ${ledStatus}
+        WHERE device_uuid = ${deviceId}
+      `;
+      
+      // Also update the quick access cache
+      const { setLedStatus } = await import("~/server/saveQuickAccess/ledstatus");
+      setLedStatus(ledStatus > 0);
+      
+      return {
+        success: true,
+        message: `LED status updated to: ${ledStatus}`,
+        lightstatus: ledStatus,
+      };
+    } catch (error) {
+      console.error("Database error updating LED status:", error);
+      throw createError({
+        statusCode: 500,
+        message: "Failed to update LED status",
+      });
+    }
   }
 
   if (slug === "status") {
-    const status = await sql`
-    SELECT * FROM device_status
-    WHERE device_uuid = ${deviceId}
-    LIMIT 1
-    `
-    if (status.length === 0) {
+    try {
+      const status = await sql`
+        SELECT * FROM device_status
+        WHERE device_uuid = ${deviceId}
+        LIMIT 1
+      `;
+      
+      if (status.length === 0) {
+        throw createError({
+          statusCode: 404,
+          message: `No status found for device: ${deviceId}`,
+        });
+      }
+      
+      return {
+        success: true,
+        data: status[0],
+      };
+    } catch (error) {
+      console.error("Database error fetching status:", error);
       throw createError({
-        statusCode: 404,
-        message: `No status found for device: ${deviceId}`,
+        statusCode: 500,
+        message: "Failed to fetch device status",
       });
     }
-    return status[0];
   }
 
   throw createError({
