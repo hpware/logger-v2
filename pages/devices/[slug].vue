@@ -273,7 +273,7 @@ onMounted(() => {
                 step="1"
                 v-model="clientUpdateValues.light"
                 @change="onValueChange"
-                class="w-full h-2 bg-gray-300 rounded-lg accent-yellow-300"
+                class="w-full h-2 bg-gray-300/80 rounded-lg accent-yellow-300 hover:border-none transition-all duration-300"
               />
             </p>
           </section>
