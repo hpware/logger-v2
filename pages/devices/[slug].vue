@@ -397,12 +397,12 @@ onMounted(() => {
       >
         <div
           v-if="showPopup"
-          class="fixed inset-0 bg-gray-300/30 backdrop-blur-lg flex items-center justify-center z-50 transition-all duration-500"
+          class="fixed inset-0 bg-gray-300/30 backdrop-blur-lg flex items-center justify-center z-50 transition-all duration-500 max-w-full p-2"
         >
           <div class="relative">
             <button
               @click="showPopup = false"
-              class="absolute top-2 right-2 bg-white rounded-full p-2 shadow-lg hover:bg-gray-200"
+              class="absolute top-2 right-2 bg-white rounded-full p-2 shadow-lg hover:bg-gray-200 max-w-full p-2"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -421,7 +421,7 @@ onMounted(() => {
             </button>
             <img
               :src="popupImageUrl"
-              class="max-w-screen-md max-h-screen-md object-contain"
+              class="max-w-screen-md max-h-screen-md object-contain p-1"
             />
           </div>
         </div>
