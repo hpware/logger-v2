@@ -182,7 +182,7 @@ export default defineEventHandler(async (event) => {
   uploadImages(body, slug);
 
   const deviceData = await sql`
-    SELECT * FROM machines WHERE uuid = ${slug} LIMIT 1;`;
+    SELECT * FROM device_status WHERE device_uuid = ${slug} LIMIT 1;`;
   if (deviceData.length === 0) {
     return {
       success: false,
