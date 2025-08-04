@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ImageOffIcon, CircleOffIcon, DatabaseIcon } from "lucide-vue-next"
+import { ImageOffIcon, CircleOffIcon, DatabaseIcon, TriangleAlertIcon } from "lucide-vue-next"
 definePageMeta({
   layout: false,
 });
@@ -193,10 +193,8 @@ onMounted(() => {
     ></div>
     <div class="relative z-[1] justify-center text-center">
       <div
-  v-if="(
-    (/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/.test(deviceId) && watchZeroCount)
-    || (machineDoesNotExist && watchZeroCount)
-  )"
+  v-if="
+    !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/.test(deviceId)"
      class="h-screen flex items-center justify-center text-white text-bold text-xl backdrop-blur-lg rounded-lg flex flex-col"
       >
       <CircleOffIcon class="inline-block text-white text-2xl w-12 h-12 p-1" />
@@ -266,9 +264,10 @@ onMounted(() => {
                 v-on:error="getErrorHandlerImage"
                 v-if="hiddenPage === false"
               />
-              <p class="p-2 text-red-500 text-bold" v-if="hiddenPage">
-                無法顯示圖片
-              </p>
+              <div class="text-red-500 text-bold flex flex-col justify-center text-center" v-if="hiddenPage">
+                <TriangleAlertIcon class="inline-block text-2xl w-12 h-12 p-1 text-center justify-center align-center align-middle" />
+                <span class="text-red-300 p-2">無法顯示圖片</span>
+              </div>
             </section>
             <section
               class="bg-gray-300/5 backdrop-blur-sm z-10 p-3 rounded-lg shadow-lg py-10 border-2 border-gray-400/40 p-4 m-4 min-w-1/3 md:w-fit w-full mx-auto rounded-lg shadow-lg backdrop-blur-sm gap-2 m-3"
