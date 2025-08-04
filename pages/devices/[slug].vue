@@ -43,6 +43,25 @@ const gpsData = ref({
   gps_long: "N/A",
 });
 
+const machineDoesNotExist = ref(false);
+onMounted(async () => {
+  // Fetch device info
+  const req = await fetch(`/api/device_info/${deviceId}`);
+  const res = await req.json();
+  if (JSON.stringify(res) === "{}") {
+    machineDoesNotExist.value = true;
+    return;
+  }
+})
+
+const watchZeroCount = ref(false);
+const watchZeroCountMainValue = ref(0);
+watch(() => watchZeroCountMainValue.value, async () => {
+  if (watchZeroCountMainValue.value > 70) {
+    watchZeroCount.value = true;
+  }
+});
+
 const hiddenPage = ref(false);
 
 const detectedItems = ref<DetectedItem[]>([]);
@@ -174,12 +193,17 @@ onMounted(() => {
     ></div>
     <div class="relative z-[1] justify-center text-center">
       <div
-        v-if="
-          /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/.test(
-            deviceId,
-          )
-        "
+  v-if="(
+    (/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/.test(deviceId) && watchZeroCount)
+    || (machineDoesNotExist && watchZeroCount)
+  )"
+     class="h-screen flex items-center justify-center text-white text-bold text-xl backdrop-blur-lg rounded-lg flex flex-col"
       >
+      <CircleOffIcon class="inline-block text-white text-2xl w-12 h-12 p-1" />
+        <h3 class="text-gray-300">暫時無法顯示資料！</h3>
+      </div>
+      <div
+      v-else>
         <div
           v-if="dataId === 0"
           class="h-screen flex flex-col items-center justify-center gap-2 text-white backdrop-blur-lg rounded-lg"
@@ -393,13 +417,6 @@ onMounted(() => {
             </section>
           </div>
         </Transition>
-      </div>
-      <div
-        v-else
-        class="h-screen flex items-center justify-center text-white text-bold text-xl backdrop-blur-lg rounded-lg flex flex-col"
-      >
-      <CircleOffIcon class="inline-block text-white text-2xl w-12 h-12 p-1" />
-        <h3 class="text-gray-300">此 ID 無法使用在此平台！</h3>
       </div>
 
       <!-- Image Popup Modal -->
