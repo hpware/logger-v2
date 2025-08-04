@@ -11,6 +11,7 @@ const camIp = ref("");
 const errorv = ref("");
 const success = ref(false);
 const deviceId = ref("");
+const specifiedUuid = ref("");
 const createMachine = async () => {
   success.value = false;
   errorv.value = "";
@@ -24,6 +25,7 @@ const createMachine = async () => {
       machine_name: machineName.value,
       machine_ip: camIp.value,
       password: password.value,
+      specified_uuid: specifiedUuid.value || '',
     }),
   });
   if (!res.ok) {
@@ -61,20 +63,12 @@ const createMachine = async () => {
           </h1>
           <div
             v-if="success"
-            class="bg-green-500/20 backdrop-blur-lg border-l-4 border-green-500 text-green-200 p-4 mb-4 rounded-md"
+            class="bg-green-500/20 backdrop-blur-lg text-left border-l-4 border-green-500 text-green-200 p-4 mb-4 rounded-md"
           >
             <p class="font-bold text-green-300">成功</p>
             <p class="text-white">
               機器已成功加入，UUID:
               <span class="text-yellow-300">{{ deviceId }}</span>
-            </p>
-            <p class="text-white">
-              連線地址:
-              <a
-                :href="`https://logger-v2.sch2.top/device_store/${deviceId}`"
-                class="text-blue-300 hover:text-blue-500 hover:underline transition-all duration-300"
-                >https://logger-v2.sch2.top/device_store/{{ deviceId }}</a
-              >
             </p>
           </div>
           <div
@@ -88,8 +82,8 @@ const createMachine = async () => {
             <div>
               <label
                 for="machineName"
-                class="block text-sm font-medium text-white mb-2"
-                >機器名稱</label
+                class="block text-sm font-medium text-white mb-2 text-left ml-3"
+                >機器名稱<span className="text-red-400">*</span></label
               >
               <input
                 type="text"
@@ -102,8 +96,8 @@ const createMachine = async () => {
             <div>
               <label
                 for="camIp"
-                class="block text-sm font-medium text-white mb-2"
-                >8735 鏡頭 IP 位置</label
+                class="block text-sm font-medium text-white mb-2 text-left ml-3"
+                >8735 鏡頭 IP 位置<span className="text-red-400">*</span></label
               >
               <input
                 type="text"
@@ -116,8 +110,8 @@ const createMachine = async () => {
             <div>
               <label
                 for="password"
-                class="block text-sm font-medium text-white mb-2"
-                >Password</label
+                class="block text-sm font-medium text-white mb-2 text-left ml-3"
+                >Password<span className="text-red-400">*</span></label
               >
               <input
                 type="password"
@@ -125,6 +119,19 @@ const createMachine = async () => {
                 v-model="password"
                 class="mt-1 block w-full px-3 py-2 bg-gray-300/10 backdrop-blur-lg border border-gray-400/40 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-300 focus:border-yellow-300 sm:text-sm text-white"
                 required
+              />
+            </div>
+            <div>
+              <label
+                for="camIp"
+                class="block text-sm font-medium text-white mb-2 text-left ml-3"
+                >指定 UUID</label
+              >
+              <input
+                type="text"
+                id="camIp"
+                v-model="specifiedUuid"
+                class="mt-1 block w-full px-3 py-2 bg-gray-300/10 backdrop-blur-lg border border-gray-400/40 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-300 focus:border-yellow-300 sm:text-sm text-white"
               />
             </div>
             <button
