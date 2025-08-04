@@ -56,6 +56,8 @@ function onSelectChange() {
   }
 }
 
+const adminPassword = ref(""); // New field for auth
+
 async function save() {
   if (!selectedUuid.value) {
     error.value = "Please select a machine first";
@@ -71,7 +73,7 @@ async function save() {
         uuid: selectedUuid.value,
         name: form.name,
         ip: form.ip,
-        token: form.token,
+        admin_password: adminPassword.value, // Use admin_password for auth
       },
     });
     if ((res as any).success) {
@@ -84,10 +86,12 @@ async function save() {
           uuid: cur.uuid,
           name: form.name,
           ip: form.ip,
-          token: form.token,
+          token: cur.token, // Do not update token in local cache
           created_at: cur.created_at,
         } as Machine;
       }
+      // Clear password field after successful update
+      adminPassword.value = "";
     } else {
       error.value = (res as any).message || "Update failed";
     }
@@ -192,20 +196,20 @@ onMounted(loadDevices);
                 />
               </div>
 
-              <div>
-                <label
-                  for="token"
-                  class="block text-sm font-medium text-white mb-2 text-left ml-3"
-                  >密碼</label
-                >
-                <input
-                  type="password"
-                  id="token"
-                  v-model="form.token"
-                  class="mt-1 block w-full px-3 py-2 bg-gray-300/10 backdrop-blur-lg border border-gray-400/40 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-300 focus:border-yellow-300 sm:text-sm text-white"
-                  required
-                />
-              </div>
+            <div>
+              <label
+                for="adminPassword"
+                class="block text-sm font-medium text-white mb-2 text-left ml-3"
+                >管理密碼</label
+              >
+              <input
+                type="password"
+                id="adminPassword"
+                v-model="adminPassword"
+                class="mt-1 block w-full px-3 py-2 bg-gray-300/10 backdrop-blur-lg border border-gray-400/40 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-300 focus:border-yellow-300 sm:text-sm text-white"
+                required
+              />
+            </div>
 
               <button
                 type="submit"

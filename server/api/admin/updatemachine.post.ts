@@ -3,7 +3,7 @@ import sql from "~/server/db/pg";
 export default defineEventHandler(async (event) => {
   try {
     const body = await readBody(event);
-    const { uuid, name, ip, token } = body || {};
+    const { uuid, name, ip, admin_password } = body || {};
 
     if (
       !uuid ||
@@ -15,7 +15,23 @@ export default defineEventHandler(async (event) => {
       });
     }
 
-    // Build update statement using pg-template-tag style to avoid sql.raw
+    // 1. Authenticate using admin_password against the machine's current token
+    const matchPasswordget = await sql`
+        SELECT * FROM machines WHERE uuid = ${uuid}`;
+    if (matchPasswordget.length === 0) {
+      return {
+        success: false,
+        message: "MACHINE_NOT_FOUND",
+      };
+    }
+    if (matchPasswordget[0].token !== admin_password) {
+      return {
+        success: false,
+        message: "REQUEST_NOT_ALLOWED",
+      };
+    }
+
+    // 2. Build update statement for name/ip only (not token/password)
     const setClauses: string[] = [];
     const values: any[] = [];
 
@@ -26,10 +42,6 @@ export default defineEventHandler(async (event) => {
     if (typeof ip === "string") {
       setClauses.push(`ip = $${setClauses.length + 1}`);
       values.push(ip);
-    }
-    if (typeof token === "string") {
-      setClauses.push(`token = $${setClauses.length + 1}`);
-      values.push(token);
     }
 
     if (setClauses.length === 0) {
