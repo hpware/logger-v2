@@ -2,6 +2,15 @@ import sql from "~/server/db/pg";
 export default defineEventHandler(async (event) => {
   const body = await readBody(event);
   const slug = getRouterParam(event, "slug");
+  
+  // Validate slug
+  if (!slug) {
+    return {
+      cached: true,
+      error: "Device slug is required",
+    };
+  }
+  
   const { dataid } = body;
   try {
     // Get latest data
@@ -33,8 +42,8 @@ export default defineEventHandler(async (event) => {
       };
     }
 
-    // Get detected items count
-    const detectedCount = await sql`
+    // Get detected items
+    const detectedItems = await sql`
       SELECT * FROM detect 
       WHERE device_id = ${slug}
       ORDER BY detected_at DESC
@@ -43,7 +52,7 @@ export default defineEventHandler(async (event) => {
     return {
       cached: false,
       dataid: data.id,
-      newsItems: detectedCount[0].count > 0,
+      newsItems: detectedItems.length > 0,
       // Weather data
       cwa_location: data.cwa_location,
       cwa_type: data.cwa_type,
@@ -60,7 +69,7 @@ export default defineEventHandler(async (event) => {
       local_gps_long: data.local_gps_long,
       local_time: data.local_time,
       // Detected items as JSON
-      local_detect: detectedCount,
+      local_detect: detectedItems,
       device_live_link: deviceExists[0].ip,
     };
   } catch (error) {

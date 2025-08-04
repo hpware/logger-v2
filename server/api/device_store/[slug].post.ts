@@ -21,10 +21,14 @@ async function fastSave(slug: string, body: any) {
     local_time,
     local_jistatus,
     local_detect,
+    image,
   } = body;
 
   console.log(body);
 
+  // Handle undefined local_detect by providing a default value
+  const detectData = local_detect || image || null;
+  
   const save = await sql`
       INSERT INTO logger (
           created_at,
@@ -58,7 +62,7 @@ async function fastSave(slug: string, body: any) {
           ${local_time},
           ${local_jistatus ? true : false},
           ${getLedStatus() ? true : false},
-          ${JSON.stringify(local_detect)},
+          ${detectData ? JSON.stringify(detectData) : null},
           ${slug}
       )`;
   console.log(save);

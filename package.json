@@ -19,6 +19,7 @@
     "@tailwindcss/postcss": "^4.1.8",
     "@tailwindcss/vite": "^4.1.8",
     "animate.css": "^4.1.1",
+    "lucide-vue-next": "^0.536.0",
     "nuxt": "^3.17.4",
     "openai": "^5.9.0",
     "postcss": "^8.5.4",

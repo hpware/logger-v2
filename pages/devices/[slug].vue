@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { ImageOffIcon, CircleOffIcon, DatabaseIcon } from "lucide-vue-next"
 definePageMeta({
   layout: false,
 });
@@ -183,10 +184,8 @@ onMounted(() => {
           v-if="dataId === 0"
           class="h-screen flex flex-col items-center justify-center gap-2 text-white backdrop-blur-lg rounded-lg"
         >
-          <div class="flex flex-gap">
-            <h3 class="text-lg">尚未有資料，等待中&nbsp;</h3>
-            <svg
-              class="animate-spin -ml-1 mr-2 h-5 w-5 text-white"
+        <svg
+              class="animate-spin -ml-1 mr-2 h-12 w-12 text-white justify-center align-center text-center"
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
               viewBox="0 0 24 24"
@@ -204,8 +203,8 @@ onMounted(() => {
                 fill="currentColor"
                 d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
               ></path>
-            </svg>
-          </div>
+            </svg>    
+            <h3 class="text-lg">等待資料中</h3>
           <span
             >請複製以下程式到 // API 網址底下:
             <br />
@@ -218,14 +217,22 @@ onMounted(() => {
           appear
         >
           <div
-            v-if="dataId !== 0"
             class="flex flex-col items-center justify-center"
           >
-            <h1
-              class="text-4xl bg-white m-4 p-2 text-transparent text-center align-middle justify-center bg-clip-text shadow-lg shadow-gray-20 flex flex-col"
+          <section
+              class="bg-gray-300/5 p-2 m-0 backdrop-blur-sm z-10 flex flex-col rounded-lg min-w-1/3 md:w-fit w-full mx-auto rounded-lg shadow-lg backdrop-blur-sm m-3"
             >
-              顯示資料
+            <h1
+              class="text-4xl bg-white flex flex-row p-0 m-0 text-transparent text-center align-middle justify-center bg-clip-text flex flex-col"
+            >
+              <DatabaseIcon class="inline-block text-white text-2xl w-12 h-12 p-1" />&nbsp;顯示資料
             </h1>
+            <div class="flex flex-row text-center justify-center">
+              <p class="text-white text-sm text-center">
+              ID: <span class="text-yellow-300 p-1 m-1">{{ deviceId }}</span>
+            </p>
+            </div>
+            </section>
             <section
               class="bg-gray-300/5 backdrop-blur-sm z-10 p-3 rounded-lg shadow-lg py-10 border-2 border-gray-400/40 p-4 m-4 min-w-1/3 md:w-fit w-full mx-auto rounded-lg shadow-lg backdrop-blur-sm gap-2 m-3"
             >
@@ -359,7 +366,12 @@ onMounted(() => {
               <h3 class="text-3xl text-bold text-white">偵測紀錄</h3>
               <hr class="text-white" />
               <ul class="text-white">
-                <li v-if="detectedItems.length === 0">尚未有偵測紀錄</li>
+                <li v-if="detectedItems.length === 0">
+                  <div class="text-gray-300/80 p-4 flex flex-col items-center">
+                    <ImageOffIcon class="inline-block text-gray-300/90 text-2xl w-12 h-12 p-1" />
+                    <span>尚未有偵測紀錄</span>
+                  </div>
+                </li>
 
                 <li
                   v-for="item in detectedItems"
@@ -384,9 +396,10 @@ onMounted(() => {
       </div>
       <div
         v-else
-        class="h-screen flex items-center justify-center text-white text-bold text-xl backdrop-blur-lg rounded-lg"
+        class="h-screen flex items-center justify-center text-white text-bold text-xl backdrop-blur-lg rounded-lg flex flex-col"
       >
-        <h3>此 ID 無法使用在此平台！</h3>
+      <CircleOffIcon class="inline-block text-white text-2xl w-12 h-12 p-1" />
+        <h3 class="text-gray-300">此 ID 無法使用在此平台！</h3>
       </div>
 
       <!-- Image Popup Modal -->
