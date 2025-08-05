@@ -186,6 +186,23 @@ onMounted(() => {
   setInterval(fetchDeviceData, 3000);
   // Fetch all images first
 });
+const changeJiStatus = () => {
+  clientUpdateValues.value.local_jistatus = !clientUpdateValues.value.local_jistatus;
+}
+
+// Update other values
+onMounted(() => {
+  PullDataFromApiEndpointAboutGetDeviceStatus();
+
+  setInterval(PullDataFromApiEndpointAboutGetDeviceStatus, 100000)
+})
+
+const PullDataFromApiEndpointAboutGetDeviceStatus = async () => {
+  const req = await fetch(`/api/getDeviceStatus/${deviceId}`);
+  const res = await req.json();
+  clientUpdateValues.value.local_jistatus = res.jistatus;
+  clientUpdateValues.value.light = res.lightstatus;
+}
 </script>
 
 <template>
@@ -341,9 +358,8 @@ onMounted(() => {
                 <button
                   @click="
                     () => {
+                      changeJiStatus();
                       onValueChange();
-                      clientUpdateValues.local_jistatus =
-                        !clientUpdateValues.local_jistatus;
                     }
                   "
                   class="p-2 bg-yellow-300/50 hover:bg-yellow-300/80 rounded-xl m-1 transition-all duration-300"

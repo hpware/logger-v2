@@ -10,7 +10,7 @@ export default defineEventHandler(async (event) => {
         body.deviceId,
       ) ||
       typeof body.light === "undefined" ||
-      typeof body.local_jistatus === "undefined"
+      typeof body.local_jistatus !== "boolean"
     ) {
       return {
         success: false,
@@ -22,16 +22,9 @@ export default defineEventHandler(async (event) => {
     // Convert to correct types if needed
     const light =
       typeof body.light === "string" ? parseInt(body.light, 10) : body.light;
-    const local_jistatus =
-      typeof body.local_jistatus === "boolean"
-        ? body.local_jistatus
-          ? 1
-          : 0
-        : body.local_jistatus;
-
     await sql`
       UPDATE device_status
-      SET lightstatus = ${light}, jistatus = ${local_jistatus}
+      SET lightstatus = ${light}, jistatus = ${body.local_jistatus}
       WHERE device_uuid = ${deviceId}
     `;
 
