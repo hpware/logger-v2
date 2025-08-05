@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { ImageOffIcon, CircleOffIcon, DatabaseIcon, TriangleAlertIcon } from "lucide-vue-next"
+import adapter from 'webrtc-adapter';
+console.log(adapter);
 definePageMeta({
   layout: false,
 });
@@ -258,14 +260,14 @@ onMounted(() => {
             <section
               class="bg-gray-300/5 backdrop-blur-sm z-10 p-3 rounded-lg shadow-lg py-10 border-2 border-gray-400/40 p-4 m-4 min-w-1/3 md:w-fit w-full mx-auto rounded-lg shadow-lg backdrop-blur-sm gap-2 m-3"
             >
-              <img
-                :src="`http://${ipport}`"
+              <video
+              v-bind="videoSource"
                 class="rounded-xl"
                 v-on:error="getErrorHandlerImage"
                 v-if="hiddenPage === false"
               />
               <div class="text-red-500 text-bold flex flex-col justify-center text-center" v-if="hiddenPage">
-                <TriangleAlertIcon class="inline-block text-2xl w-12 h-12 p-1 text-center justify-center align-center align-middle" />
+                <TriangleAlertIcon class="text-2xl w-12 h-12 p-1 text-center justify-center align-center align-middle align-center m-auto" />
                 <span class="text-red-300 p-2">無法顯示圖片</span>
               </div>
             </section>
