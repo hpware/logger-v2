@@ -86,8 +86,9 @@ export default defineEventHandler(async (event) => {
   const create5 = await sql`
   create table if not exists device_status(
     device_uuid text primary key not null,
-    jistatus boolean not null,
-    lightstatus int not null
+    jistatus boolean not null default false,
+    lightstatus int not null default 0,
+    autocapture boolean not null default true
     )`;
   return {
     created: true,

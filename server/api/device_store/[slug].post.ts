@@ -197,5 +197,6 @@ export default defineEventHandler(async (event) => {
     success: true,
     jistatus: deviceData[0].jistatus,
     newledstatus: deviceData[0].lightstatus,
+    autocapture: deviceData[0].autocapture,
   };
 });
