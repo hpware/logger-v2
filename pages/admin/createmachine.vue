@@ -26,7 +26,7 @@ const createMachine = async () => {
       machine_name: machineName.value,
       machine_ip: camIp.value,
       password: password.value,
-      specified_uuid: specifiedUuid.value || '',
+      specified_uuid: specifiedUuid.value || "",
     }),
   });
   if (!res.ok) {

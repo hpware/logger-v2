@@ -1,6 +1,11 @@
 <script setup lang="ts">
-import { ImageOffIcon, CircleOffIcon, DatabaseIcon, TriangleAlertIcon } from "lucide-vue-next"
-import adapter from 'webrtc-adapter';
+import {
+  ImageOffIcon,
+  CircleOffIcon,
+  DatabaseIcon,
+  TriangleAlertIcon,
+} from "lucide-vue-next";
+import adapter from "webrtc-adapter";
 console.log(adapter);
 definePageMeta({
   layout: false,
@@ -54,15 +59,18 @@ onMounted(async () => {
     machineDoesNotExist.value = true;
     return;
   }
-})
+});
 
 const watchZeroCount = ref(false);
 const watchZeroCountMainValue = ref(0);
-watch(() => watchZeroCountMainValue.value, async () => {
-  if (watchZeroCountMainValue.value > 70) {
-    watchZeroCount.value = true;
-  }
-});
+watch(
+  () => watchZeroCountMainValue.value,
+  async () => {
+    if (watchZeroCountMainValue.value > 70) {
+      watchZeroCount.value = true;
+    }
+  },
+);
 
 const hiddenPage = ref(false);
 
@@ -187,22 +195,23 @@ onMounted(() => {
   // Fetch all images first
 });
 const changeJiStatus = () => {
-  clientUpdateValues.value.local_jistatus = !clientUpdateValues.value.local_jistatus;
-}
+  clientUpdateValues.value.local_jistatus =
+    !clientUpdateValues.value.local_jistatus;
+};
 
 // Update other values
 onMounted(() => {
   PullDataFromApiEndpointAboutGetDeviceStatus();
 
-  setInterval(PullDataFromApiEndpointAboutGetDeviceStatus, 100000)
-})
+  setInterval(PullDataFromApiEndpointAboutGetDeviceStatus, 100000);
+});
 
 const PullDataFromApiEndpointAboutGetDeviceStatus = async () => {
   const req = await fetch(`/api/getDeviceStatus/${deviceId}`);
   const res = await req.json();
   clientUpdateValues.value.local_jistatus = res.jistatus;
   clientUpdateValues.value.light = res.lightstatus;
-}
+};
 </script>
 
 <template>
@@ -212,40 +221,42 @@ const PullDataFromApiEndpointAboutGetDeviceStatus = async () => {
     ></div>
     <div class="relative z-[1] justify-center text-center">
       <div
-  v-if="
-    !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/.test(deviceId)"
-     class="h-screen flex items-center justify-center text-white text-bold text-xl backdrop-blur-lg rounded-lg flex flex-col"
+        v-if="
+          !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/.test(
+            deviceId,
+          )
+        "
+        class="h-screen flex items-center justify-center text-white text-bold text-xl backdrop-blur-lg rounded-lg flex flex-col"
       >
-      <CircleOffIcon class="inline-block text-white text-2xl w-12 h-12 p-1" />
+        <CircleOffIcon class="inline-block text-white text-2xl w-12 h-12 p-1" />
         <h3 class="text-gray-300">暫時無法顯示資料！</h3>
       </div>
-      <div
-      v-else>
+      <div v-else>
         <div
           v-if="dataId === 0"
           class="h-screen flex flex-col items-center justify-center gap-2 text-white backdrop-blur-lg rounded-lg"
         >
-        <svg
-              class="animate-spin -ml-1 mr-2 h-12 w-12 text-white justify-center align-center text-center"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-            >
-              <circle
-                class="opacity-25"
-                cx="12"
-                cy="12"
-                r="10"
-                stroke="currentColor"
-                stroke-width="4"
-              ></circle>
-              <path
-                class="opacity-75"
-                fill="currentColor"
-                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-              ></path>
-            </svg>    
-            <h3 class="text-lg">等待資料中</h3>
+          <svg
+            class="animate-spin -ml-1 mr-2 h-12 w-12 text-white justify-center align-center text-center"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+          >
+            <circle
+              class="opacity-25"
+              cx="12"
+              cy="12"
+              r="10"
+              stroke="currentColor"
+              stroke-width="4"
+            ></circle>
+            <path
+              class="opacity-75"
+              fill="currentColor"
+              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+            ></path>
+          </svg>
+          <h3 class="text-lg">等待資料中</h3>
           <span
             >請複製以下程式到 // API 網址底下:
             <br />
@@ -257,34 +268,40 @@ const PullDataFromApiEndpointAboutGetDeviceStatus = async () => {
           leave-active-class="animate__animated animate__fadeOut"
           appear
         >
-          <div
-            class="flex flex-col items-center justify-center"
-          >
-          <section
+          <div class="flex flex-col items-center justify-center">
+            <section
               class="bg-gray-300/5 p-2 m-0 backdrop-blur-sm z-10 flex flex-col rounded-lg min-w-1/3 md:w-fit w-full mx-auto rounded-lg shadow-lg backdrop-blur-sm m-3"
             >
-            <h1
-              class="text-4xl bg-white flex flex-row p-0 m-0 text-transparent text-center align-middle justify-center bg-clip-text flex flex-col"
-            >
-              <DatabaseIcon class="inline-block text-white text-2xl w-12 h-12 p-1" />&nbsp;顯示資料
-            </h1>
-            <div class="flex flex-row text-center justify-center">
-              <p class="text-white text-sm text-center">
-              ID: <span class="text-yellow-300 p-1 m-1">{{ deviceId }}</span>
-            </p>
-            </div>
+              <h1
+                class="text-4xl bg-white flex flex-row p-0 m-0 text-transparent text-center align-middle justify-center bg-clip-text flex flex-col"
+              >
+                <DatabaseIcon
+                  class="inline-block text-white text-2xl w-12 h-12 p-1"
+                />&nbsp;顯示資料
+              </h1>
+              <div class="flex flex-row text-center justify-center">
+                <p class="text-white text-sm text-center">
+                  ID:
+                  <span class="text-yellow-300 p-1 m-1">{{ deviceId }}</span>
+                </p>
+              </div>
             </section>
             <section
               class="bg-gray-300/5 backdrop-blur-sm z-10 p-3 rounded-lg shadow-lg py-10 border-2 border-gray-400/40 p-4 m-4 min-w-1/3 md:w-fit w-full mx-auto rounded-lg shadow-lg backdrop-blur-sm gap-2 m-3"
             >
               <video
-              v-bind="videoSource"
+                v-bind="videoSource"
                 class="rounded-xl"
                 v-on:error="getErrorHandlerImage"
                 v-if="hiddenPage === false"
               />
-              <div class="text-red-500 text-bold flex flex-col justify-center text-center" v-if="hiddenPage">
-                <TriangleAlertIcon class="text-2xl w-12 h-12 p-1 text-center justify-center align-center align-middle align-center m-auto" />
+              <div
+                class="text-red-500 text-bold flex flex-col justify-center text-center"
+                v-if="hiddenPage"
+              >
+                <TriangleAlertIcon
+                  class="text-2xl w-12 h-12 p-1 text-center justify-center align-center align-middle align-center m-auto"
+                />
                 <span class="text-red-300 p-2">無法顯示圖片</span>
               </div>
             </section>
@@ -409,7 +426,9 @@ const PullDataFromApiEndpointAboutGetDeviceStatus = async () => {
               <ul class="text-white">
                 <li v-if="detectedItems.length === 0">
                   <div class="text-gray-300/80 p-4 flex flex-col items-center">
-                    <ImageOffIcon class="inline-block text-gray-300/90 text-2xl w-12 h-12 p-1" />
+                    <ImageOffIcon
+                      class="inline-block text-gray-300/90 text-2xl w-12 h-12 p-1"
+                    />
                     <span>尚未有偵測紀錄</span>
                   </div>
                 </li>

@@ -2,7 +2,7 @@ import sql from "~/server/db/pg";
 export default defineEventHandler(async (event) => {
   const body = await readBody(event);
   const slug = getRouterParam(event, "slug");
-  
+
   // Validate slug
   if (!slug) {
     return {
@@ -10,7 +10,7 @@ export default defineEventHandler(async (event) => {
       error: "Device slug is required",
     };
   }
-  
+
   const { dataid } = body;
   try {
     // Get latest data

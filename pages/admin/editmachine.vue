@@ -164,7 +164,9 @@ onMounted(loadDevices);
               </select>
             </div>
 
-            <div v-if="loading" class="text-sm text-gray-200">Loading devices...</div>
+            <div v-if="loading" class="text-sm text-gray-200">
+              Loading devices...
+            </div>
 
             <div v-if="selectedUuid" class="space-y-6">
               <div>
@@ -197,20 +199,20 @@ onMounted(loadDevices);
                 />
               </div>
 
-            <div>
-              <label
-                for="adminPassword"
-                class="block text-sm font-medium text-white mb-2 text-left ml-3"
-                >管理密碼</label
-              >
-              <input
-                type="password"
-                id="adminPassword"
-                v-model="adminPassword"
-                class="mt-1 block w-full px-3 py-2 bg-gray-300/10 backdrop-blur-lg border border-gray-400/40 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-300 focus:border-yellow-300 sm:text-sm text-white"
-                required
-              />
-            </div>
+              <div>
+                <label
+                  for="adminPassword"
+                  class="block text-sm font-medium text-white mb-2 text-left ml-3"
+                  >管理密碼</label
+                >
+                <input
+                  type="password"
+                  id="adminPassword"
+                  v-model="adminPassword"
+                  class="mt-1 block w-full px-3 py-2 bg-gray-300/10 backdrop-blur-lg border border-gray-400/40 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-300 focus:border-yellow-300 sm:text-sm text-white"
+                  required
+                />
+              </div>
 
               <button
                 type="submit"
@@ -227,5 +229,4 @@ onMounted(loadDevices);
   </div>
 </template>
 
-<style scoped>
-</style>
+<style scoped></style>

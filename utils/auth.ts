@@ -1,15 +1,15 @@
 import { betterAuth } from "better-auth";
 import { Pool } from "pg";
- 
+
 export const auth = betterAuth({
-    database: new Pool({
-        connectionString: process.env.POSTGRES_URL,
-    }),
-    emailAndPassword: {
-        enabled: true,
-        requireEmailVerification: false,
-    },
-    session: {
-        expiresIn: 60 * 60 * 24 * 7,
-    },
-})
+  database: new Pool({
+    connectionString: process.env.POSTGRES_URL,
+  }),
+  emailAndPassword: {
+    enabled: true,
+    requireEmailVerification: false,
+  },
+  session: {
+    expiresIn: 60 * 60 * 24 * 7,
+  },
+});

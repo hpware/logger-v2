@@ -32,7 +32,11 @@ export default defineEventHandler(async (event) => {
   console.log(saveSomeMore);
   return {
     success: true,
-    uuid: /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/.test(specified_uuid) ? specified_uuid : uuid,
+    uuid: /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/.test(
+      specified_uuid,
+    )
+      ? specified_uuid
+      : uuid,
     message: "Machine created successfully",
   };
 });

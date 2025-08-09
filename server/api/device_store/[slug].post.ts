@@ -28,7 +28,7 @@ async function fastSave(slug: string, body: any) {
 
   // Handle undefined local_detect by providing a default value
   const detectData = local_detect || image || null;
-  
+
   const save = await sql`
       INSERT INTO logger (
           created_at,

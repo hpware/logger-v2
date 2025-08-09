@@ -7,8 +7,8 @@ definePageMeta({
 useSeoMeta({
   title: "AIOT 生態物種即時監測回報裝置網頁系統管理中心",
 });
-import { authClient } from "~/lib/auth-client"
-const session = authClient.useSession()
+import { authClient } from "~/lib/auth-client";
+const session = authClient.useSession();
 const signOutFlow = async () => {
   await authClient.signOut();
   navigateTo("/login");
@@ -20,9 +20,17 @@ const signOutFlow = async () => {
     <div
       class="fixed inset-0 w-full h-full bg-[url(https://raw.githubusercontent.com/hpware/esp32-postgres-logger-view-and-api/refs/heads/main/bg.jpg?raw=true)] bg-cover bg-no-repeat bg-center z-[-1]"
     ></div>
-    <div class="fixed bottom-0 right-0 m-2 p-2 z-50 backdrop-blur-xl bg-gray-300/30 border rounded-xl">            <button v-if="session.data" @click="signOutFlow" class="text-white hover:cursor-pointer flex flex-row">
-      <LogOutIcon /><span>&nbsp;登出</span>
-            </button></div>
+    <div
+      class="fixed bottom-0 right-0 m-2 p-2 z-50 backdrop-blur-xl bg-gray-300/30 border rounded-xl"
+    >
+      <button
+        v-if="session.data"
+        @click="signOutFlow"
+        class="text-white hover:cursor-pointer flex flex-row"
+      >
+        <LogOutIcon /><span>&nbsp;登出</span>
+      </button>
+    </div>
     <div class="relative z-[1] justify-center text-center">
       <div class="flex flex-col items-center justify-center min-h-screen">
         <div
@@ -60,7 +68,6 @@ const signOutFlow = async () => {
               <h2 class="text-xl font-semibold text-white">創立資料庫</h2>
               <p class="text-green-200 mt-2">初始化資料庫</p>
             </a>
-
           </div>
         </div>
       </div>

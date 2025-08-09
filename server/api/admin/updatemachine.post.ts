@@ -7,7 +7,9 @@ export default defineEventHandler(async (event) => {
 
     if (
       !uuid ||
-      !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/.test(uuid)
+      !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/.test(
+        uuid,
+      )
     ) {
       throw createError({
         statusCode: 400,
