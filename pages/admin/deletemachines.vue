@@ -1,6 +1,6 @@
 <script setup lang="ts">
 definePageMeta({
-  layout: false,
+  layout: "admin",
   middleware: "auth",
 });
 useSeoMeta({
@@ -67,9 +67,6 @@ const deleteMachine = async () => {
 
 <template>
   <div>
-    <div
-      class="fixed inset-0 w-full h-full bg-[url(https://raw.githubusercontent.com/hpware/esp32-postgres-logger-view-and-api/refs/heads/main/bg.jpg?raw=true)] bg-cover bg-no-repeat bg-center z-[-1]"
-    ></div>
     <div class="relative z-[1] justify-center text-center">
       <div class="flex flex-col items-center justify-center min-h-screen">
         <div

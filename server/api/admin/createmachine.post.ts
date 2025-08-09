@@ -1,6 +1,17 @@
 import sql from "~/server/db/pg";
 import { v4 as uuidv4 } from "uuid";
+import { auth } from "~/utils/auth";
+
 export default defineEventHandler(async (event) => {
+  const session = await auth.api.getSession({
+    headers: event.headers
+  });
+  if (!session) {
+    throw createError({
+      statusCode: 401,
+      statusMessage: "Unauthorized - No valid session"
+    });
+  }
   const body = await readBody(event);
   const { machine_name, machine_ip, password, specified_uuid } = body;
   const uuid = uuidv4();

@@ -1,41 +1,18 @@
+import { auth } from "~/utils/auth";
+
 import sql from "~/server/db/pg";
 
 export default defineEventHandler(async (event) => {
-  const authHeader = getRequestHeader(event, "authorization");
-
-  if (!process.env.ADMIN_USERNAME || !process.env.ADMIN_PASSWORD) {
-    throw createError({
-      statusCode: 500,
-      message: "Server configuration error: Missing credentials",
-    });
-  }
-
-  if (!authHeader || !authHeader.startsWith("Basic ")) {
-    setResponseHeader(event, "WWW-Authenticate", 'Basic realm="Admin Access"');
+  const session = await auth.api.getSession({
+    headers: event.headers
+  });
+  
+  if (!session) {
     throw createError({
       statusCode: 401,
-      message: "Authorization required",
+      statusMessage: "Unauthorized - No valid session"
     });
   }
-  const base64Credentials = authHeader.split(" ")[1];
-  const credentials = Buffer.from(base64Credentials, "base64").toString(
-    "utf-8",
-  );
-  const [username, password] = credentials.split(":");
-
-  if (
-    username !== process.env.ADMIN_USERNAME ||
-    password !== process.env.ADMIN_PASSWORD
-  ) {
-    throw createError({
-      statusCode: 401,
-      message: "Invalid credentials",
-      headers: {
-        "WWW-Authenticate": 'Basic realm="Admin Access"',
-      },
-    });
-  }
-
   const create1 = await sql`
   CREATE TABLE IF NOT EXISTS logger (
       id SERIAL PRIMARY KEY,
