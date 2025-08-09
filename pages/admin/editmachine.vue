@@ -1,6 +1,7 @@
 <script setup lang="ts">
 definePageMeta({
   layout: false,
+  middleware: "auth",
 });
 useSeoMeta({
   title: "AIOT 生態物種即時監測回報裝置網頁系統管理中心",
