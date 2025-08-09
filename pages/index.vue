@@ -76,7 +76,7 @@ onMounted(async () => {
       >
         AIOT 生態物種即時監測回報裝置網頁系統
       </h1>
-      <p class="text-lg text-white mb-8">歡迎使用管理系統</p>
+      <p class="text-lg text-white mb-2">歡迎使用系統</p>
       <div class="flex flex-col items-center">
         <select
           class="bg-white text-black border border-gray-300 rounded-md p-2 mb-4"

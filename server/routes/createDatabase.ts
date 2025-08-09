@@ -6,7 +6,7 @@ export default defineEventHandler(async (event) => {
   const session = await auth.api.getSession({
     headers: event.headers
   });
-  
+
   if (!session) {
     throw createError({
       statusCode: 401,
@@ -58,7 +58,8 @@ export default defineEventHandler(async (event) => {
       name text not null,
       created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
       ip text not null,
-      token text not null
+      token text not null,
+      adminonly boolean not null default false
   )`;
   const create5 = await sql`
   create table if not exists device_status(

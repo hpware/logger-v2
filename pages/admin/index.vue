@@ -18,7 +18,7 @@ useSeoMeta({
           <h1 class="text-4xl font-bold text-center text-white mb-8">
             管理中心
           </h1>
-          <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
             <NuxtLink
               to="/admin/createmachine"
               class="group block p-6 bg-blue-500/50 backdrop-blur-lg rounded-lg border-2 border-blue-400/40 hover:bg-blue-500/80 transition-all duration-300 ease-in-out transform hover:-translate-y-1"
@@ -39,6 +39,13 @@ useSeoMeta({
             >
               <h2 class="text-xl font-semibold text-white">編輯機器</h2>
               <p class="text-purple-200 mt-2">修改名稱、IP、密碼</p>
+            </NuxtLink>
+            <NuxtLink
+              to="/admin/signup"
+              class="group block p-6 bg-amber-500/50 backdrop-blur-lg rounded-lg border-2 border-amber-400/40 hover:bg-amber-500/80 transition-all duration-300 ease-in-out transform hover:-translate-y-1"
+            >
+              <h2 class="text-xl font-semibold text-white">增加管理者帳號</h2>
+              <p class="text-purple-200 mt-2">加入管理者</p>
             </NuxtLink>
             <a
               href="/createDatabase"
