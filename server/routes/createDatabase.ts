@@ -4,13 +4,13 @@ import sql from "~/server/db/pg";
 
 export default defineEventHandler(async (event) => {
   const session = await auth.api.getSession({
-    headers: event.headers
+    headers: event.headers,
   });
 
   if (!session) {
     throw createError({
       statusCode: 401,
-      statusMessage: "Unauthorized - No valid session"
+      statusMessage: "Unauthorized - No valid session",
     });
   }
   const create1 = await sql`
