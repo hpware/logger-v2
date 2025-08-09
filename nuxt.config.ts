@@ -8,4 +8,9 @@ export default defineNuxtConfig({
   vite: {
     plugins: [tailwindcss()],
   },
+  runtimeConfig: {
+    public: {
+      betterAuthUrl: process.env.BETTER_AUTH_URL || 'http://localhost:3000'
+    }
+  }
 });
