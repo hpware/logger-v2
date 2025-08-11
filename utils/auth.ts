@@ -1,5 +1,7 @@
 import { betterAuth } from "better-auth";
 import { Pool } from "pg";
+import { admin } from "better-auth/plugins"
+
 
 export const auth = betterAuth({
   database: new Pool({
@@ -12,4 +14,7 @@ export const auth = betterAuth({
   session: {
     expiresIn: 60 * 60 * 24 * 7,
   },
+  plugins: [
+    admin() 
+]
 });
