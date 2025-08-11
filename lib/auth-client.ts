@@ -3,7 +3,7 @@ const config = useRuntimeConfig();
 
 
 export const authClient = createAuthClient({
-  baseURL: config.public.betterAuthUrl,
+  baseURL: process.env.NUXT_PUBLIC_BETTER_AUTH_URL,
 });
 
 export const { signIn, signUp, useSession } = createAuthClient();
