@@ -95,8 +95,10 @@ const showPopup = ref(false);
 const popupImageUrl = ref("");
 // Fetch data functions
 const fetchDeviceData = async () => {
+  if (cannotDisplayContent.value) {
+    return;
+  }
   try {
-    // Replace with your actual API endpoint
     const res = await fetch(`/api/devicedata/${deviceId}`, {
       method: "POST",
       headers: {
@@ -112,10 +114,6 @@ const fetchDeviceData = async () => {
       throw new Error("Network response was not ok");
     }
 
-    /*if (response.newsItems) {
-      console.log("New items:", response.newsItems);
-      getDetectedItems();
-    }*/
     console.log(response);
     if (response.cached === true) {
       console.log("Using cached data");
@@ -170,6 +168,9 @@ const fetchDeviceData = async () => {
 };
 
 const onValueChange = async () => {
+  if (cannotDisplayContent.value && !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/.test(deviceId)) {
+    return;
+  }
   const req = await fetch("/api/update_device", {
     method: "POST",
     headers: {
@@ -202,7 +203,6 @@ const showImagePopup = (imageUrl: string) => {
 };
 
 onMounted(() => {
-  if (cannotDisplayContent) {
     fetchDeviceData();
     // Set up polling for real-time updates
     setInterval(fetchDeviceData, 3000);
@@ -210,7 +210,6 @@ onMounted(() => {
     PullDataFromApiEndpointAboutGetDeviceStatus();
 
     setInterval(PullDataFromApiEndpointAboutGetDeviceStatus, 100000);
-  }
 });
 const changeJiStatus = () => {
   clientUpdateValues.value.local_jistatus =
@@ -218,6 +217,9 @@ const changeJiStatus = () => {
 };
 
 const PullDataFromApiEndpointAboutGetDeviceStatus = async () => {
+  if (cannotDisplayContent.value) {
+    return;
+  }
   const req = await fetch(`/api/getDeviceStatus/${deviceId}`);
   const res = await req.json();
   clientUpdateValues.value.local_jistatus = res.jistatus;
