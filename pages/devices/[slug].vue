@@ -17,6 +17,17 @@ useSeoMeta({
 });
 import "animate.css";
 
+const cannotDisplayContent = ref(false);
+onMounted(() => {
+  if (
+    !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/.test(
+      deviceId,
+    )
+  ) {
+    cannotDisplayContent.value = true;
+  }
+});
+
 // Define the type for detected items
 interface DetectedItem {
   id: number;
@@ -191,22 +202,20 @@ const showImagePopup = (imageUrl: string) => {
 };
 
 onMounted(() => {
-  fetchDeviceData();
-  // Set up polling for real-time updates
-  setInterval(fetchDeviceData, 3000);
-  // Fetch all images first
+  if (cannotDisplayContent) {
+    fetchDeviceData();
+    // Set up polling for real-time updates
+    setInterval(fetchDeviceData, 3000);
+    // Fetch all images first
+    PullDataFromApiEndpointAboutGetDeviceStatus();
+
+    setInterval(PullDataFromApiEndpointAboutGetDeviceStatus, 100000);
+  }
 });
 const changeJiStatus = () => {
   clientUpdateValues.value.local_jistatus =
     !clientUpdateValues.value.local_jistatus;
 };
-
-// Update other values
-onMounted(() => {
-  PullDataFromApiEndpointAboutGetDeviceStatus();
-
-  setInterval(PullDataFromApiEndpointAboutGetDeviceStatus, 100000);
-});
 
 const PullDataFromApiEndpointAboutGetDeviceStatus = async () => {
   const req = await fetch(`/api/getDeviceStatus/${deviceId}`);
@@ -223,11 +232,7 @@ const PullDataFromApiEndpointAboutGetDeviceStatus = async () => {
     ></div>
     <div class="relative z-[1] justify-center text-center">
       <div
-        v-if="
-          !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/.test(
-            deviceId,
-          )
-        "
+        v-if="cannotDisplayContent"
         class="h-screen flex items-center justify-center text-white text-bold text-xl backdrop-blur-lg rounded-lg flex flex-col"
       >
         <CircleOffIcon class="inline-block text-white text-2xl w-12 h-12 p-1" />

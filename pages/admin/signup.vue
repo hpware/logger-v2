@@ -6,7 +6,7 @@ definePageMeta({
 useSeoMeta({
   title: "Better Auth 管理員註冊系統",
 });
-import { signUp } from "@/lib/auth-client";
+import { signUp, authClient } from "@/lib/auth-client";
 const username = ref("");
 const password = ref("");
 const name = ref("");
