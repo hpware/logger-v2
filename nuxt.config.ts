@@ -10,8 +10,8 @@ export default defineNuxtConfig({
   },
   runtimeConfig: {
     public: {
-      betterAuthUrl: process.env.NUXT_PUBLIC_BETTER_AUTH_URL || 'http://localhost:3000'
-    }
-  }
+      betterAuthUrl:
+        process.env.NUXT_PUBLIC_BETTER_AUTH_URL || "http://localhost:3000",
+    },
+  },
 });
-    

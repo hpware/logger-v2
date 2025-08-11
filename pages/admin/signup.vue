@@ -33,16 +33,16 @@ const signUpAction = async () => {
     <div class="relative z-[1] justify-center text-center">
       <div class="flex flex-col items-center justify-center min-h-screen">
         <div
-        <div
+          class="bg-gray-300/5 backdrop-blur-sm z-10 p-8 rounded-lg shadow-lg border-2 border-gray-400/40 w-full max-w-md"
+        >
+          <div
             v-if="errMessage.length !== 0 && compeleteRequest"
             class="bg-green-500/20 backdrop-blur-lg text-left border-l-4 border-green-500 text-green-200 p-4 mb-4 rounded-md"
           >
             <p class="font-bold text-green-300">成功</p>
-            <p class="text-white">管理者加入成功!
-            </p>
+            <p class="text-white">管理者加入成功!</p>
           </div>
-          class="bg-gray-300/5 backdrop-blur-sm z-10 p-8 rounded-lg shadow-lg border-2 border-gray-400/40 w-full max-w-md"
-        >
+
           <h1 class="text-4xl font-bold text-center text-white mb-8">
             增加管理者帳號
           </h1>
