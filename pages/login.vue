@@ -11,7 +11,10 @@ const password = ref("");
 const name = ref("");
 const login = async () => {
   try {
-    await signIn.email({ email: username.value, password: password.value });
+    const sigin = await signIn.email({ email: username.value, password: password.value });
+    if (!signin.token) {
+      alert(`Login Failed, ${signin.code}`);
+    }
     alert("Login successful!");
     const session = useSession();
     navigateTo("/admin");
