@@ -14,6 +14,7 @@ const login = async () => {
     const sigin = await signIn.email({ email: username.value, password: password.value });
     if (!signin.token) {
       alert(`Login Failed, ${signin.code}`);
+      return;
     }
     alert("Login successful!");
     const session = useSession();
