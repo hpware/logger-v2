@@ -11,8 +11,8 @@ const password = ref("");
 const name = ref("");
 const login = async () => {
   try {
-    const sigin = await signIn.email({ email: username.value, password: password.value });
-    if (!signin.token) {
+    const signin = await signIn.email({ email: username.value, password: password.value });
+    if (!signin.user) {
       alert(`Login Failed, ${signin.code}`);
       return;
     }
