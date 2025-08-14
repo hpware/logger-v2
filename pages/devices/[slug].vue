@@ -276,6 +276,7 @@ const PullDataFromApiEndpointAboutGetDeviceStatus = async () => {
           enter-active-class="animate__animated animate__fadeIn"
           leave-active-class="animate__animated animate__fadeOut"
           appear
+          v-else
         >
           <div class="flex flex-col items-center justify-center">
             <section
