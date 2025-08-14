@@ -461,6 +461,7 @@ const PullDataFromApiEndpointAboutGetDeviceStatus = async () => {
                 </li>
               </ul>
             </section>
+            <section id="ai"></section>
           </div>
         </Transition>
       </div>
