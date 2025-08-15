@@ -2,13 +2,16 @@
   "name": "nuxt-app",
   "private": true,
   "type": "module",
+  "version": "0.0.2",
   "scripts": {
     "build": "nuxt build",
     "dev": "nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
-    "start": "node .output/server/index.mjs"
+    "start": "node .output/server/index.mjs",
+    "version:main": "npm version patch --no-git-tag-version",
+    "version:feat": "npm version minor --no-git-tag-version"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.842.0",
