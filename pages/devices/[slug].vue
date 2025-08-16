@@ -312,7 +312,7 @@ const PullDataFromApiEndpointAboutGetDeviceStatus = async () => {
                 <TriangleAlertIcon
                   class="text-2xl w-12 h-12 p-1 text-center justify-center align-center align-middle align-center m-auto"
                 />
-                <span class="text-red-300 p-2">無法顯示圖片</span>
+                <span class="text-red-300 p-2">無法顯示串流</span>
               </div>
             </section>
             <section
