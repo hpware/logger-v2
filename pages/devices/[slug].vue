@@ -299,8 +299,8 @@ const PullDataFromApiEndpointAboutGetDeviceStatus = async () => {
             <section
               class="bg-gray-300/5 backdrop-blur-sm z-10 p-3 rounded-lg shadow-lg py-10 border-2 border-gray-400/40 p-4 m-4 min-w-1/3 md:w-fit w-full mx-auto rounded-lg shadow-lg backdrop-blur-sm gap-2 m-3"
             >
-              <video
-                v-bind="videoSource"
+              <img
+                :src="ipport"
                 class="rounded-xl"
                 v-on:error="getErrorHandlerImage"
                 v-if="hiddenPage === false"
