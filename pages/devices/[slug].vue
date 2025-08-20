@@ -7,8 +7,7 @@ import {
   DatabaseIcon,
   TriangleAlertIcon,
 } from "lucide-vue-next";
-import adapter from "webrtc-adapter";
-console.log(adapter);
+//import adapter from "webrtc-adapter";
 definePageMeta({
   layout: false,
 });
