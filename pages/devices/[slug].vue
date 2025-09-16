@@ -332,20 +332,23 @@ const PullDataFromApiEndpointAboutGetDeviceStatus = async () => {
             <section
               class="bg-gray-300/5 backdrop-blur-sm z-10 p-3 rounded-lg shadow-lg border-2 border-gray-400/40 p-4 m-4 min-w-1/3 md:w-fit w-full mx-auto rounded-lg shadow-lg backdrop-blur-sm gap-2 m-2"
             >
+              <div class="flex items-center justify-center text-white gap-1">
+                <span class="text-xl text-white">氣象局</span>
+                <div class="flex">
+                  <MapPinIcon class="text-white w-4 h-4 p-1" />
+                  <span class="text-xs">{{ weatherData.test_station }}</span>
+                </div>
+              </div>
               <div
                 class="flex items-center justify-center gap-2 p-2 text-white"
               >
-                <span>氣象局</span>
                 <div class="flex gap-1">
                   <SunIcon
                     class="text-white w-6 h-6"
                     v-if="weatherData.type === '晴'"
                   /><span class="text-md">{{ weatherData.type }}</span>
                 </div>
-                <div class="flex gap-1">
-                  <MapPinIcon class="text-white w-6 h-6" />
-                  <span class="text-md">{{ weatherData.test_station }}</span>
-                </div>
+
                 <div class="flex gap-1">
                   <ThermometerIcon class="text-white w-6 h-6" />
                   <span class="text-md">{{ weatherData.temp }}</span>
@@ -356,30 +359,28 @@ const PullDataFromApiEndpointAboutGetDeviceStatus = async () => {
                 </div>
               </div>
             </section>
-                        <section
-              class="bg-gray-300/5 backdrop-blur-sm z-10 p-3 rounded-lg shadow-lg py-10 border-2 border-gray-400/40 p-4 m-4 min-w-1/3 md:w-fit w-full mx-auto rounded-lg shadow-lg backdrop-blur-sm gap-2 m-3"
+            <section
+              class="bg-gray-300/5 backdrop-blur-sm z-10 p-3 rounded-lg shadow-lg border-2 border-gray-400/40 p-4 m-4 min-w-1/3 md:w-fit w-full mx-auto rounded-lg shadow-lg backdrop-blur-sm gap-2 m-2"
             >
-              <h3 class="text-3xl text-bold text-white">GPS 定位</h3>
-              <hr class="text-white" />
-              <p
-                class="bg-gray-300/5 backdrop-blur-lg rounded-lg shadow-lg p-2 border-2 border-gray-400/40 text-white m-2"
+              <span class="text-xl text-white">GPS 定位</span>
+              <div
+                class="flex items-center justify-center gap-2 p-2 text-white"
               >
-                經度: <span class="text-yellow-300">{{ gpsData.gps_lat }}</span>
-              </p>
-              <p
-                class="bg-gray-300/5 backdrop-blur-lg rounded-lg shadow-lg p-2 border-2 border-gray-400/40 text-white m-2"
-              >
-                緯度:
-                <span class="text-yellow-300">{{ gpsData.gps_long }}</span>
-              </p>
+                <div class="flex gap-1">
+                  <span class="text-md">經度: {{ gpsData.gps_lat }}</span>
+                </div>
+                <div class="flex gap-1">
+                  <span class="text-md">緯度: {{ gpsData.gps_long }}</span>
+                </div>
+              </div>
             </section>
             <section
               class="bg-gray-300/5 backdrop-blur-sm z-10 p-3 rounded-lg shadow-lg border-2 border-gray-400/40 p-4 m-4 min-w-1/3 md:w-fit w-full mx-auto rounded-lg shadow-lg backdrop-blur-sm gap-2 m-2"
             >
+              <span class="text-xl text-white">本地監測</span>
               <div
                 class="flex items-center justify-center gap-2 p-2 text-white"
               >
-                <span>監測</span>
                 <div class="flex gap-1">
                   <ThermometerIcon class="text-white w-6 h-6" />
                   <span class="text-md">{{ localData.local_temp }}</span>
@@ -403,7 +404,7 @@ const PullDataFromApiEndpointAboutGetDeviceStatus = async () => {
                 <button
                   @click="
                     () => {
-                      changeJiStatus();
+                      changeJiStatus(); 
                       onValueChange();
                     }
                   "
@@ -412,6 +413,19 @@ const PullDataFromApiEndpointAboutGetDeviceStatus = async () => {
                   {{ clientUpdateValues.local_jistatus ? "OFF" : "ON" }}
                 </button>
               </p>
+                蠕動馬達: {{ clientUpdateValues.local_jistatus ? "OFF" : "ON" }}
+                <button
+                  @click="
+                    () => {
+                      changeJiStatus();
+                      onValueChange();
+                    }
+                  "
+                  class="p-2 bg-white/70 m-1 transition-all duration-300 flex flex-col items-center justify-center rounded"
+                >
+                  <span :class="clientUpdateValues.local_jistatus && 'bg-green-500'" class="w-[20px] h-[20px] border rounded-full rounded-b-none border-b-0"></span>
+                  <span :class="!clientUpdateValues.local_jistatus && 'bg-red-500'" class="w-[20px] h-[20px] border rounded-full rounded-t-none border-t-0"></span>
+                </button>
               <p
                 class="bg-gray-300/5 backdrop-blur-lg rounded-lg shadow-lg p-2 border-2 border-gray-400/40 text-white m-2"
               >
