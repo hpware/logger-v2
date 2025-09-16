@@ -47,7 +47,7 @@ useSeoMeta({
               <h2 class="text-xl font-semibold text-white">增加管理者帳號</h2>
               <p class="text-purple-200 mt-2">加入管理者</p>
             </NuxtLink>
-                        <NuxtLink
+            <NuxtLink
               to="/admin/ai"
               class="group block p-6 bg-amber-500/50 backdrop-blur-lg rounded-lg border-2 border-amber-400/40 hover:bg-amber-500/80 transition-all duration-300 ease-in-out transform hover:-translate-y-1"
             >

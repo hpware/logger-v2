@@ -47,7 +47,7 @@ async function Decode_Image_File_And_Upload_To_S3(
           mimeType: "image/jpeg",
         },
       },
-    ];    
+    ];
     // Generate content analysis
     const response = await ai.models.generateContent({
       model: "gemini-2.5-flash",
@@ -129,6 +129,6 @@ export default defineEventHandler(async (event) => {
     };
   }
   return {
-    success: true
+    success: true,
   };
 });

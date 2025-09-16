@@ -20,14 +20,12 @@ export default defineNuxtConfig({
       htmlAttrs: {
         lang: "zh-Hant",
       },
-      link: [
-        { rel: "icon", type: "image/x-icon", href: "/favicon.svg" },
-      ],
+      link: [{ rel: "icon", type: "image/x-icon", href: "/favicon.svg" }],
       meta: [
         { charset: "utf-8" },
         { name: "viewport", content: "width=device-width, initial-scale=1" },
         { "http-equiv": "X-UA-Compatible", content: "IE=edge" },
-      ]
-    } 
-    }
+      ],
+    },
+  },
 });

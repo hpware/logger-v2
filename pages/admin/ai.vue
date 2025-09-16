@@ -6,8 +6,7 @@ interface AIUsageData {
   is_provisioning_key: boolean;
   limit_remaining: number;
   is_free_tier: boolean;
-  rate_limit: {  requests: number;
-  interval: string;};
+  rate_limit: { requests: number; interval: string };
 }
 definePageMeta({
   layout: "admin",
@@ -29,8 +28,8 @@ onMounted(async () => {
 </script>
 
 <template>
-    <div>
-            <div class="relative z-[1] justify-center text-center">
+  <div>
+    <div class="relative z-[1] justify-center text-center">
       <div class="flex flex-col items-center justify-center min-h-screen">
         <div
           class="bg-gray-300/5 backdrop-blur-sm z-10 p-8 rounded-lg shadow-lg border-2 border-gray-400/40 w-full max-w-md text-white"
@@ -39,11 +38,14 @@ onMounted(async () => {
           <section class="text-lg">
             <p>使用了 {{ data?.usage }} USD</p>
             <p>API 剩餘 {{ data?.limit_remaining }} USD</p>
-            <p>免費版: {{ data?.is_free_tier ? '是' : '否' }}</p>
-            <p>請求限制: 每 {{ data?.rate_limit.interval }} 可使用 {{ data?.rate_limit.requests }} 次</p>
+            <p>免費版: {{ data?.is_free_tier ? "是" : "否" }}</p>
+            <p>
+              請求限制: 每 {{ data?.rate_limit.interval }} 可使用
+              {{ data?.rate_limit.requests }} 次
+            </p>
           </section>
         </div>
       </div>
     </div>
-    </div>
+  </div>
 </template>

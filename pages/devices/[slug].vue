@@ -6,6 +6,14 @@ import {
   CircleOffIcon,
   DatabaseIcon,
   TriangleAlertIcon,
+  LocateIcon,
+  MapPinIcon,
+  ThermometerIcon,
+  DropletIcon,
+  PinIcon,
+  Thermometer,
+  Droplet,
+  SunIcon,
 } from "lucide-vue-next";
 //import adapter from "webrtc-adapter";
 definePageMeta({
@@ -167,7 +175,12 @@ const fetchDeviceData = async () => {
 };
 
 const onValueChange = async () => {
-  if (cannotDisplayContent.value && !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/.test(deviceId)) {
+  if (
+    cannotDisplayContent.value &&
+    !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/.test(
+      deviceId,
+    )
+  ) {
     return;
   }
   const req = await fetch("/api/update_device", {
@@ -202,13 +215,13 @@ const showImagePopup = (imageUrl: string) => {
 };
 
 onMounted(() => {
-    fetchDeviceData();
-    // Set up polling for real-time updates
-    setInterval(fetchDeviceData, 3000);
-    // Fetch all images first
-    PullDataFromApiEndpointAboutGetDeviceStatus();
+  fetchDeviceData();
+  // Set up polling for real-time updates
+  setInterval(fetchDeviceData, 3000);
+  // Fetch all images first
+  PullDataFromApiEndpointAboutGetDeviceStatus();
 
-    setInterval(PullDataFromApiEndpointAboutGetDeviceStatus, 100000);
+  setInterval(PullDataFromApiEndpointAboutGetDeviceStatus, 100000);
 });
 const changeJiStatus = () => {
   clientUpdateValues.value.local_jistatus =
@@ -236,8 +249,10 @@ const PullDataFromApiEndpointAboutGetDeviceStatus = async () => {
         v-if="cannotDisplayContent"
         class="h-screen flex items-center justify-center text-white text-bold text-xl backdrop-blur-lg rounded-lg flex flex-col"
       >
-        <CircleOffIcon class="inline-block text-white text-2xl w-12 h-12 p-1" />
-        <h3 class="text-gray-300">暫時無法顯示資料！</h3>
+        <TriangleAlertIcon
+          class="inline-block fill-red-500 stroke-white text-2xl w-[100px] h-[100px] p-1"
+        />
+        <h3 class="text-white">無法顯示資料</h3>
       </div>
       <div v-else>
         <div
@@ -305,78 +320,82 @@ const PullDataFromApiEndpointAboutGetDeviceStatus = async () => {
                 v-if="hiddenPage === false"
               />
               <div
-                class="text-red-500 text-bold flex flex-col justify-center text-center"
+                class="text-bold flex flex-col justify-center text-center"
                 v-if="hiddenPage"
               >
                 <TriangleAlertIcon
-                  class="text-2xl w-12 h-12 p-1 text-center justify-center align-center align-middle align-center m-auto"
+                  class="fill-red-500 stroke-white text-2xl w-12 h-12 p-1 text-center justify-center align-center align-middle align-center m-auto"
                 />
-                <span class="text-red-300 p-2">無法顯示串流</span>
+                <span class="text-white p-2 text-border">無法顯示串流</span>
               </div>
             </section>
             <section
+              class="bg-gray-300/5 backdrop-blur-sm z-10 p-3 rounded-lg shadow-lg border-2 border-gray-400/40 p-4 m-4 min-w-1/3 md:w-fit w-full mx-auto rounded-lg shadow-lg backdrop-blur-sm gap-2 m-2"
+            >
+              <div
+                class="flex items-center justify-center gap-2 p-2 text-white"
+              >
+                <span>氣象局</span>
+                <div class="flex gap-1">
+                  <SunIcon
+                    class="text-white w-6 h-6"
+                    v-if="weatherData.type === '晴'"
+                  /><span class="text-md">{{ weatherData.type }}</span>
+                </div>
+                <div class="flex gap-1">
+                  <MapPinIcon class="text-white w-6 h-6" />
+                  <span class="text-md">{{ weatherData.test_station }}</span>
+                </div>
+                <div class="flex gap-1">
+                  <ThermometerIcon class="text-white w-6 h-6" />
+                  <span class="text-md">{{ weatherData.temp }}</span>
+                </div>
+                <div class="flex gap-1">
+                  <DropletIcon class="text-white w-6 h-6" />
+                  <span class="text-md">{{ weatherData.hum }}</span>
+                </div>
+              </div>
+            </section>
+                        <section
               class="bg-gray-300/5 backdrop-blur-sm z-10 p-3 rounded-lg shadow-lg py-10 border-2 border-gray-400/40 p-4 m-4 min-w-1/3 md:w-fit w-full mx-auto rounded-lg shadow-lg backdrop-blur-sm gap-2 m-3"
             >
-              <h3 class="text-3xl text-bold text-white">氣象局</h3>
+              <h3 class="text-3xl text-bold text-white">GPS 定位</h3>
               <hr class="text-white" />
               <p
                 class="bg-gray-300/5 backdrop-blur-lg rounded-lg shadow-lg p-2 border-2 border-gray-400/40 text-white m-2"
               >
-                測站:
-                <span class="text-yellow-300">{{
-                  weatherData.test_station
-                }}</span>
+                經度: <span class="text-yellow-300">{{ gpsData.gps_lat }}</span>
               </p>
               <p
                 class="bg-gray-300/5 backdrop-blur-lg rounded-lg shadow-lg p-2 border-2 border-gray-400/40 text-white m-2"
               >
-                天氣狀態:
-                <span class="text-yellow-300">{{ weatherData.type }}</span>
+                緯度:
+                <span class="text-yellow-300">{{ gpsData.gps_long }}</span>
               </p>
-              <p
-                class="bg-gray-300/5 backdrop-blur-lg rounded-lg shadow-lg p-2 border-2 border-gray-400/40 text-white m-2"
+            </section>
+            <section
+              class="bg-gray-300/5 backdrop-blur-sm z-10 p-3 rounded-lg shadow-lg border-2 border-gray-400/40 p-4 m-4 min-w-1/3 md:w-fit w-full mx-auto rounded-lg shadow-lg backdrop-blur-sm gap-2 m-2"
+            >
+              <div
+                class="flex items-center justify-center gap-2 p-2 text-white"
               >
-                氣溫:
-                <span class="text-yellow-300">{{ weatherData.temp }}</span>
-              </p>
-              <p
-                class="bg-gray-300/5 backdrop-blur-lg rounded-lg shadow-lg p-2 border-2 border-gray-400/40 text-white m-2"
-              >
-                濕度: <span class="text-yellow-300">{{ weatherData.hum }}</span>
-              </p>
-              <p
-                class="bg-gray-300/5 backdrop-blur-lg rounded-lg shadow-lg p-2 border-2 border-gray-400/40 text-white m-2"
-              >
-                最高氣溫:
-                <span class="text-yellow-300">{{
-                  weatherData.daily_high
-                }}</span>
-              </p>
-              <p
-                class="bg-gray-300/5 backdrop-blur-lg rounded-lg shadow-lg p-2 border-2 border-gray-400/40 text-white m-2"
-              >
-                最低氣溫:
-                <span class="text-yellow-300">{{ weatherData.daily_low }}</span>
-              </p>
+                <span>監測</span>
+                <div class="flex gap-1">
+                  <ThermometerIcon class="text-white w-6 h-6" />
+                  <span class="text-md">{{ localData.local_temp }}</span>
+                </div>
+                <div class="flex gap-1">
+                  <DropletIcon class="text-white w-6 h-6" />
+                  <span class="text-md">{{ localData.local_hum }}</span>
+                </div>
+              </div>
             </section>
 
             <section
               class="bg-gray-300/5 backdrop-blur-sm z-10 p-3 rounded-lg shadow-lg py-10 border-2 border-gray-400/40 p-4 m-4 min-w-1/3 md:w-fit w-full mx-auto rounded-lg shadow-lg backdrop-blur-sm gap-2 m-3"
             >
-              <h3 class="text-3xl text-bold text-white">本地</h3>
+              <h3 class="text-3xl text-bold text-white">控制</h3>
               <hr class="text-white" />
-              <p
-                class="bg-gray-300/5 backdrop-blur-lg rounded-lg shadow-lg p-2 border-2 border-gray-400/40 text-white m-2"
-              >
-                氣溫:
-                <span class="text-yellow-300">{{ localData.local_temp }}</span>
-              </p>
-              <p
-                class="bg-gray-300/5 backdrop-blur-lg rounded-lg shadow-lg p-2 border-2 border-gray-400/40 text-white m-2"
-              >
-                濕度:
-                <span class="text-yellow-300">{{ localData.local_hum }}</span>
-              </p>
               <p
                 class="bg-gray-300/5 backdrop-blur-lg rounded-lg shadow-lg p-2 border-2 border-gray-400/40 text-white m-2"
               >
@@ -412,31 +431,13 @@ const PullDataFromApiEndpointAboutGetDeviceStatus = async () => {
             <section
               class="bg-gray-300/5 backdrop-blur-sm z-10 p-3 rounded-lg shadow-lg py-10 border-2 border-gray-400/40 p-4 m-4 min-w-1/3 md:w-fit w-full mx-auto rounded-lg shadow-lg backdrop-blur-sm gap-2 m-3"
             >
-              <h3 class="text-3xl text-bold text-white">GPS 定位</h3>
-              <hr class="text-white" />
-              <p
-                class="bg-gray-300/5 backdrop-blur-lg rounded-lg shadow-lg p-2 border-2 border-gray-400/40 text-white m-2"
-              >
-                經度: <span class="text-yellow-300">{{ gpsData.gps_lat }}</span>
-              </p>
-              <p
-                class="bg-gray-300/5 backdrop-blur-lg rounded-lg shadow-lg p-2 border-2 border-gray-400/40 text-white m-2"
-              >
-                緯度:
-                <span class="text-yellow-300">{{ gpsData.gps_long }}</span>
-              </p>
-            </section>
-
-            <section
-              class="bg-gray-300/5 backdrop-blur-sm z-10 p-3 rounded-lg shadow-lg py-10 border-2 border-gray-400/40 p-4 m-4 min-w-1/3 md:w-fit w-full mx-auto rounded-lg shadow-lg backdrop-blur-sm gap-2 m-3"
-            >
               <h3 class="text-3xl text-bold text-white">偵測紀錄</h3>
               <hr class="text-white" />
               <ul class="text-white">
                 <li v-if="detectedItems.length === 0">
                   <div class="text-gray-300/80 p-4 flex flex-col items-center">
                     <ImageOffIcon
-                      class="inline-block text-gray-300/90 text-2xl w-12 h-12 p-1"
+                      class="inline-block stroke-text-gray-300/50 text-2xl w-12 h-12 p-1"
                     />
                     <span>尚未有偵測紀錄</span>
                   </div>

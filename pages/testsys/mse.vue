@@ -8,8 +8,8 @@ interface Props {
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  videoClass: 'rounded-xl w-full max-w-md',
-  mimeType: 'video/mp4; codecs="avc1.42E01E"'
+  videoClass: "rounded-xl w-full max-w-md",
+  mimeType: 'video/mp4; codecs="avc1.42E01E"',
 });
 
 const videoElement = ref<HTMLVideoElement>();
@@ -17,16 +17,16 @@ const mediaSource = ref<MediaSource>();
 const sourceBuffer = ref<SourceBuffer>();
 const websocket = ref<WebSocket>();
 const isLoading = ref(false);
-const error = ref('');
+const error = ref("");
 
 const handleVideoError = (event: Event) => {
-  console.error('Video error:', event);
-  error.value = 'Failed to load video stream';
+  console.error("Video error:", event);
+  error.value = "Failed to load video stream";
 };
 
 const handleLoadStart = () => {
   isLoading.value = true;
-  error.value = '';
+  error.value = "";
 };
 
 const handleCanPlay = () => {
@@ -38,8 +38,8 @@ const initMSE = async () => {
 
   try {
     // Check MSE support
-    if (!('MediaSource' in window)) {
-      throw new Error('MSE not supported');
+    if (!("MediaSource" in window)) {
+      throw new Error("MSE not supported");
     }
 
     // Check codec support
@@ -50,55 +50,54 @@ const initMSE = async () => {
     mediaSource.value = new MediaSource();
     videoElement.value.src = URL.createObjectURL(mediaSource.value);
 
-    mediaSource.value.addEventListener('sourceopen', () => {
+    mediaSource.value.addEventListener("sourceopen", () => {
       try {
         if (!mediaSource.value) return;
 
         sourceBuffer.value = mediaSource.value.addSourceBuffer(props.mimeType);
-        
-        sourceBuffer.value.addEventListener('updateend', () => {
-          console.log('Source buffer updated');
+
+        sourceBuffer.value.addEventListener("updateend", () => {
+          console.log("Source buffer updated");
         });
 
-        sourceBuffer.value.addEventListener('error', (e) => {
-          console.error('SourceBuffer error:', e);
-          error.value = 'Source buffer error';
+        sourceBuffer.value.addEventListener("error", (e) => {
+          console.error("SourceBuffer error:", e);
+          error.value = "Source buffer error";
         });
 
         // Connect WebSocket after MediaSource is ready
         connectWebSocket();
       } catch (err) {
-        console.error('Error setting up source buffer:', err);
+        console.error("Error setting up source buffer:", err);
         error.value = `Failed to initialize video stream: ${err}`;
       }
     });
 
-    mediaSource.value.addEventListener('sourceended', () => {
-      console.log('MediaSource ended');
+    mediaSource.value.addEventListener("sourceended", () => {
+      console.log("MediaSource ended");
     });
 
-    mediaSource.value.addEventListener('error', (e) => {
-      console.error('MediaSource error:', e);
-      error.value = 'MediaSource error';
+    mediaSource.value.addEventListener("error", (e) => {
+      console.error("MediaSource error:", e);
+      error.value = "MediaSource error";
     });
-
   } catch (err) {
-    console.error('MSE initialization error:', err);
+    console.error("MSE initialization error:", err);
     error.value = `MSE error: ${err}`;
   }
 };
 
 const connectWebSocket = () => {
   try {
-    console.log('Connecting to WebSocket:', props.streamUrl);
-    
+    console.log("Connecting to WebSocket:", props.streamUrl);
+
     websocket.value = new WebSocket(props.streamUrl);
-    websocket.value.binaryType = 'arraybuffer';
+    websocket.value.binaryType = "arraybuffer";
 
     websocket.value.onopen = () => {
-      console.log('WebSocket connected successfully');
+      console.log("WebSocket connected successfully");
       isLoading.value = false;
-      error.value = '';
+      error.value = "";
     };
 
     websocket.value.onmessage = (event) => {
@@ -109,7 +108,7 @@ const connectWebSocket = () => {
             sourceBuffer.value.appendBuffer(event.data);
           } else {
             // Queue the data if sourceBuffer is busy
-            console.log('SourceBuffer busy, queuing data');
+            console.log("SourceBuffer busy, queuing data");
             setTimeout(() => {
               if (sourceBuffer.value && !sourceBuffer.value.updating) {
                 sourceBuffer.value.appendBuffer(event.data);
@@ -117,53 +116,54 @@ const connectWebSocket = () => {
             }, 10);
           }
         } catch (err) {
-          console.error('Error appending buffer:', err);
+          console.error("Error appending buffer:", err);
         }
       }
     };
 
     websocket.value.onerror = (error) => {
-      console.error('WebSocket error:', error);
-      error.value = 'WebSocket connection failed - check if the server is running';
+      console.error("WebSocket error:", error);
+      error.value =
+        "WebSocket connection failed - check if the server is running";
       isLoading.value = false;
     };
 
     websocket.value.onclose = (event) => {
-      console.log('WebSocket closed:', event.code, event.reason);
-      if (event.code !== 1000) { // 1000 is normal closure
+      console.log("WebSocket closed:", event.code, event.reason);
+      if (event.code !== 1000) {
+        // 1000 is normal closure
         error.value = `Connection closed unexpectedly (${event.code})`;
       }
       isLoading.value = false;
     };
-
   } catch (err) {
-    console.error('WebSocket connection error:', err);
-    error.value = 'Failed to create WebSocket connection';
+    console.error("WebSocket connection error:", err);
+    error.value = "Failed to create WebSocket connection";
     isLoading.value = false;
   }
 };
 
 const cleanup = () => {
   if (websocket.value) {
-    console.log('Closing WebSocket connection');
+    console.log("Closing WebSocket connection");
     websocket.value.close();
     websocket.value = undefined;
   }
-  
+
   if (sourceBuffer.value) {
     try {
       sourceBuffer.value.abort();
     } catch (err) {
-      console.log('Error aborting source buffer:', err);
+      console.log("Error aborting source buffer:", err);
     }
   }
-  
+
   if (mediaSource.value) {
-    if (mediaSource.value.readyState === 'open') {
+    if (mediaSource.value.readyState === "open") {
       try {
         mediaSource.value.endOfStream();
       } catch (err) {
-        console.log('Error ending MediaSource stream:', err);
+        console.log("Error ending MediaSource stream:", err);
       }
     }
     if (videoElement.value?.src) {
@@ -182,14 +182,17 @@ onUnmounted(() => {
   cleanup();
 });
 
-watch(() => props.streamUrl, (newUrl) => {
-  if (newUrl) {
-    cleanup();
-    nextTick(() => {
-      initMSE();
-    });
-  }
-});
+watch(
+  () => props.streamUrl,
+  (newUrl) => {
+    if (newUrl) {
+      cleanup();
+      nextTick(() => {
+        initMSE();
+      });
+    }
+  },
+);
 </script>
 
 <!-- Template remains the same -->
@@ -209,9 +212,25 @@ watch(() => props.streamUrl, (newUrl) => {
       Your browser does not support MSE video streaming.
     </video>
     <div v-if="isLoading" class="loading-overlay">
-      <svg class="animate-spin h-8 w-8 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+      <svg
+        class="animate-spin h-8 w-8 text-white"
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+      >
+        <circle
+          class="opacity-25"
+          cx="12"
+          cy="12"
+          r="10"
+          stroke="currentColor"
+          stroke-width="4"
+        ></circle>
+        <path
+          class="opacity-75"
+          fill="currentColor"
+          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+        ></path>
       </svg>
       <span class="ml-2">Loading stream...</span>
     </div>

@@ -9,7 +9,7 @@ interface RetryOptions {
 
 export async function withRetry<T>(
   fn: () => Promise<T>,
-  options: RetryOptions = {}
+  options: RetryOptions = {},
 ): Promise<T> {
   const {
     maxRetries = 3,
@@ -17,48 +17,49 @@ export async function withRetry<T>(
     backoffMultiplier = 2,
     exponentialBackoff = false,
     retryableErrors = [],
-    onRetry
+    onRetry,
   } = options;
 
   let lastError: Error;
-  
+
   for (let attempt = 0; attempt <= maxRetries; attempt++) {
     try {
       return await fn();
     } catch (error) {
       lastError = error as Error;
-      
+
       // Check if error is retryable
-      const isRetryable = retryableErrors.length === 0 || 
-        retryableErrors.some(err => lastError.message.includes(err));
-      
+      const isRetryable =
+        retryableErrors.length === 0 ||
+        retryableErrors.some((err) => lastError.message.includes(err));
+
       // If this was the last attempt or error is not retryable, throw the error
       if (attempt === maxRetries || !isRetryable) {
         throw lastError;
       }
-      
+
       // Calculate delay for next attempt
-      const nextDelay = exponentialBackoff 
+      const nextDelay = exponentialBackoff
         ? delay * Math.pow(backoffMultiplier, attempt)
         : delay;
-      
+
       // Call onRetry callback if provided
       if (onRetry) {
         onRetry(attempt + 1, lastError, nextDelay);
       }
-      
+
       // Wait before retrying
-      await new Promise(resolve => setTimeout(resolve, nextDelay));
+      await new Promise((resolve) => setTimeout(resolve, nextDelay));
     }
   }
-  
+
   throw lastError!;
 }
 
 // Specialized retry function for database operations
 export async function withDatabaseRetry<T>(
   fn: () => Promise<T>,
-  options: RetryOptions = {}
+  options: RetryOptions = {},
 ): Promise<T> {
   const dbRetryOptions: RetryOptions = {
     maxRetries: 3,
@@ -71,18 +72,18 @@ export async function withDatabaseRetry<T>(
       "timeout",
       "ENOTFOUND",
       "ECONNREFUSED",
-      "ECONNRESET"
+      "ECONNRESET",
     ],
-    ...options
+    ...options,
   };
-  
+
   return withRetry(fn, dbRetryOptions);
 }
 
 // Specialized retry function for network operations
 export async function withNetworkRetry<T>(
   fn: () => Promise<T>,
-  options: RetryOptions = {}
+  options: RetryOptions = {},
 ): Promise<T> {
   const networkRetryOptions: RetryOptions = {
     maxRetries: 3,
@@ -96,10 +97,10 @@ export async function withNetworkRetry<T>(
       "ECONNRESET",
       "ENOTFOUND",
       "Failed to fetch",
-      "Network response was not ok"
+      "Network response was not ok",
     ],
-    ...options
+    ...options,
   };
-  
+
   return withRetry(fn, networkRetryOptions);
 }

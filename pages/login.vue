@@ -11,7 +11,10 @@ const password = ref("");
 const name = ref("");
 const login = async () => {
   try {
-    const signin = await signIn.email({ email: username.value, password: password.value });
+    const signin = await signIn.email({
+      email: username.value,
+      password: password.value,
+    });
     alert("Login successful!");
     const session = useSession();
     navigateTo("/admin");
