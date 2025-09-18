@@ -292,26 +292,9 @@ const PullDataFromApiEndpointAboutGetDeviceStatus = async () => {
           appear
           v-else
         >
-          <div class="flex flex-col items-center justify-center">
+          <div>
             <section
-              class="bg-gray-300/5 p-2 m-0 backdrop-blur-sm z-10 flex flex-col rounded-lg min-w-1/3 md:w-fit w-full mx-auto rounded-lg shadow-lg backdrop-blur-sm m-3"
-            >
-              <h1
-                class="text-4xl bg-white flex flex-row p-0 m-0 text-transparent text-center align-middle justify-center bg-clip-text flex flex-col"
-              >
-                <DatabaseIcon
-                  class="inline-block text-white text-2xl w-12 h-12 p-1"
-                />&nbsp;顯示資料
-              </h1>
-              <div class="flex flex-row text-center justify-center">
-                <p class="text-white text-sm text-center">
-                  ID:
-                  <span class="text-yellow-300 p-1 m-1">{{ deviceId }}</span>
-                </p>
-              </div>
-            </section>
-            <section
-              class="bg-gray-300/5 backdrop-blur-sm z-10 p-3 rounded-lg shadow-lg py-10 border-2 border-gray-400/40 p-4 m-4 min-w-1/3 md:w-fit w-full mx-auto rounded-lg shadow-lg backdrop-blur-sm gap-2 m-3"
+              class="fixed inset-0 h-screen bg-gray-300/5 backdrop-blur-sm z-5 p-5 border-2 border-gray-400/4 w-full mx-auto rounded-lg shadow-lg backdrop-blur-sm gap-2 justify-center flex items-center flex-col"
             >
               <img
                 :src="ipport"
@@ -324,13 +307,15 @@ const PullDataFromApiEndpointAboutGetDeviceStatus = async () => {
                 v-if="hiddenPage"
               >
                 <TriangleAlertIcon
-                  class="fill-red-500 stroke-white text-2xl w-12 h-12 p-1 text-center justify-center align-center align-middle align-center m-auto"
+                  class="fill-red-500 stroke-white text-2xl w-[100px] h-[100px] p-1 text-center justify-center align-center align-middle align-center m-auto"
                 />
-                <span class="text-white p-2 text-border">無法顯示串流</span>
+                <span class="text-white text-2xl p-2 text-border"
+                  >無法顯示串流</span
+                >
               </div>
             </section>
             <section
-              class="bg-gray-300/5 backdrop-blur-sm z-10 p-3 rounded-lg shadow-lg border-2 border-gray-400/40 p-4 m-4 min-w-1/3 md:w-fit w-full mx-auto rounded-lg shadow-lg backdrop-blur-sm gap-2 m-2"
+              class="flex flex-row fixed top-0 left-0 w-full bg-gray-300/5 backdrop-blur-sm z-10 rounded-lg shadow-lg border-2 border-gray-400/40 p-1 m-1 rounded-lg shadow-lg backdrop-blur-sm gap-2"
             >
               <div class="flex items-center justify-center text-white gap-1">
                 <span class="text-xl text-white">氣象局</span>
@@ -358,36 +343,34 @@ const PullDataFromApiEndpointAboutGetDeviceStatus = async () => {
                   <span class="text-md">{{ weatherData.hum }}</span>
                 </div>
               </div>
-            </section>
-            <section
-              class="bg-gray-300/5 backdrop-blur-sm z-10 p-3 rounded-lg shadow-lg border-2 border-gray-400/40 p-4 m-4 min-w-1/3 md:w-fit w-full mx-auto rounded-lg shadow-lg backdrop-blur-sm gap-2 m-2"
-            >
-              <span class="text-xl text-white">GPS 定位</span>
-              <div
-                class="flex items-center justify-center gap-2 p-2 text-white"
-              >
-                <div class="flex gap-1">
-                  <span class="text-md">經度: {{ gpsData.gps_lat }}</span>
-                </div>
-                <div class="flex gap-1">
-                  <span class="text-md">緯度: {{ gpsData.gps_long }}</span>
+              <span class="text-xl text-white p-1">|</span>
+              <div class="flex">
+                <span class="text-xl text-white p-1">GPS 定位</span>
+                <div
+                  class="flex items-center justify-center gap-2 p-2 text-white"
+                >
+                  <div class="flex gap-1">
+                    <span class="text-md">經度: {{ gpsData.gps_lat }}</span>
+                  </div>
+                  <div class="flex gap-1">
+                    <span class="text-md">緯度: {{ gpsData.gps_long }}</span>
+                  </div>
                 </div>
               </div>
-            </section>
-            <section
-              class="bg-gray-300/5 backdrop-blur-sm z-10 p-3 rounded-lg shadow-lg border-2 border-gray-400/40 p-4 m-4 min-w-1/3 md:w-fit w-full mx-auto rounded-lg shadow-lg backdrop-blur-sm gap-2 m-2"
-            >
-              <span class="text-xl text-white">本地監測</span>
-              <div
-                class="flex items-center justify-center gap-2 p-2 text-white"
-              >
-                <div class="flex gap-1">
-                  <ThermometerIcon class="text-white w-6 h-6" />
-                  <span class="text-md">{{ localData.local_temp }}</span>
-                </div>
-                <div class="flex gap-1">
-                  <DropletIcon class="text-white w-6 h-6" />
-                  <span class="text-md">{{ localData.local_hum }}</span>
+              <span class="text-xl text-white p-1">|</span>
+              <div class="flex">
+                <span class="text-xl text-white p-1">本地監測</span>
+                <div
+                  class="flex items-center justify-center gap-2 p-2 text-white"
+                >
+                  <div class="flex gap-1">
+                    <ThermometerIcon class="text-white w-6 h-6" />
+                    <span class="text-md">{{ localData.local_temp }}</span>
+                  </div>
+                  <div class="flex gap-1">
+                    <DropletIcon class="text-white w-6 h-6" />
+                    <span class="text-md">{{ localData.local_hum }}</span>
+                  </div>
                 </div>
               </div>
             </section>
@@ -449,17 +432,17 @@ const PullDataFromApiEndpointAboutGetDeviceStatus = async () => {
             </section>
 
             <section
-              class="bg-gray-300/5 backdrop-blur-sm z-10 p-3 rounded-lg shadow-lg py-10 border-2 border-gray-400/40 p-4 m-4 min-w-1/3 md:w-fit w-full mx-auto rounded-lg shadow-lg backdrop-blur-sm gap-2 m-3"
+              class="fixed bottom-0 right-0 bg-gray-300/5 backdrop-blur-sm z-10 mr-2 rounded-lg shadow-lg py-10 border-2 border-gray-400/40 rounded-lg shadow-lg backdrop-blur-sm gap-2 w-fit p-4 min-w-1/4 min-h-1/2"
             >
               <h3 class="text-3xl text-bold text-white">偵測紀錄</h3>
               <hr class="text-white" />
               <ul class="text-white">
-                <li v-if="detectedItems.length === 0">
-                  <div class="text-gray-300/80 p-4 flex flex-col items-center">
+                <li v-if="detectedItems.length === 0" class="flex flex-col items-center text-center justify-center flex flex-col absolute inset-0">
+                  <div class="text-gray-300/80 p-3 flex flex-col items-center">
                     <ImageOffIcon
-                      class="inline-block stroke-text-gray-300/50 text-2xl w-12 h-12 p-1"
+                      class="inline-block stroke-text-gray-300/50 text-2xl w-[50px] h-[50px] p-1"
                     />
-                    <span>尚未有偵測紀錄</span>
+                    <span class="text-lg">尚未有偵測紀錄</span>
                   </div>
                 </li>
 
@@ -481,7 +464,6 @@ const PullDataFromApiEndpointAboutGetDeviceStatus = async () => {
                 </li>
               </ul>
             </section>
-            <section id="ai"></section>
           </div>
         </Transition>
       </div>

@@ -77,7 +77,7 @@ async function Decode_Image_File_And_Upload_To_S3(
       success: true,
     });
     return;*/
-        const imageUrl = `${process.env.R2_URL}/${deviceId}/${fileName}`;
+    const imageUrl = `${process.env.R2_URL}/${deviceId}/${fileName}`;
 
     // Prepare image data for Gemini
     const imageParts = [
