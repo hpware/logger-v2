@@ -16,7 +16,7 @@ async function Decode_Image_File_And_Upload_To_S3(
 
   try {
     const s3Client = new S3Client({
-      region: "tw-home-1",
+      region: "auto",
       endpoint: process.env.MINIO_ENDPOINT,
       credentials: {
         accessKeyId: process.env.MINIO_ACCESS_KEY!,
@@ -37,7 +37,47 @@ async function Decode_Image_File_And_Upload_To_S3(
     });
 
     await upload.done();
-    const imageUrl = `${process.env.MINIO_ENDPOINT}/${process.env.MINIO_BUCKET_NAME}/uploads/${fileName}`;
+    /*const imageUrl = `${process.env.MINIO_ENDPOINT}/${process.env.MINIO_BUCKET_NAME}/uploads/${fileName}`;
+
+    // Prepare image data for Gemini
+    const imageParts = [
+      {
+        inlineData: {
+          data: base64Data,
+          mimeType: "image/jpeg",
+        },
+      },
+    ];
+    // Generate content analysis
+    const response = await ai.models.generateContent({
+      model: "gemini-2.5-flash",
+      contents: [
+        `What animals do you see in this image? Please be specific but concise, and it REQUIRES to be an animal, no trees, no branches. And return with the JSON format, { "item": "scientific_name", "chinese_name": "chinese_name", "found_timestamp": "the_current_time" }, the current time is aprox: ${new Date().toUTCString()}, and JUST RETURN THE JSON FILE, NO OTHER TEXT, AND NO MARKDOWN. If you cannot find anything, please just return null on the item json.`,
+        ...imageParts,
+      ],
+    });
+    const analysis = response.text;
+    console.log(analysis);
+    const jsonRes = JSON.parse(analysis || "{}");
+    if (!jsonRes.item) {
+      throw new Error("No animal found in the image.");
+    }
+    if (!deviceId || !fileName || !imageUrl || !jsonRes.item) { 
+      throw new Error("One or more required values are undefined.");
+    }
+    await sql`
+    INSERT INTO detect (device_id, imageURL, item, detected_at)
+    VALUES (${deviceId}, ${imageUrl}, ${jsonRes.item}, ${date})
+    `;
+    console.log({
+      fileName,
+      imageUrl,
+      analysis,
+      jsonRes,
+      success: true,
+    });
+    return;*/
+        const imageUrl = `${process.env.R2_URL}/${deviceId}/${fileName}`;
 
     // Prepare image data for Gemini
     const imageParts = [
@@ -61,13 +101,6 @@ async function Decode_Image_File_And_Upload_To_S3(
     if (!jsonRes.item) {
       throw new Error("No animal found in the image.");
     }
-    if (!deviceId || !fileName || !imageUrl || !jsonRes.item || !jsonRes.date) {
-      throw new Error("One or more required values are undefined.");
-    }
-    await sql`
-    INSERT INTO detect (device_id, imageURL, item, detected_at)
-    VALUES (${deviceId}, ${fileName}, ${imageUrl}, ${jsonRes.item}, ${date})
-    `;
     console.log({
       fileName,
       imageUrl,
@@ -75,6 +108,19 @@ async function Decode_Image_File_And_Upload_To_S3(
       jsonRes,
       success: true,
     });
+    await sql`
+    INSERT INTO detect (
+      device_id,
+      item,
+      imageurl,
+      detected_at
+      )
+      VALUES (
+      ${deviceId},
+      ${jsonRes.item},
+      ${imageUrl},
+      ${new Date().toISOString()}
+    )`;
     return;
   } catch (error: any) {
     console.error("Error analyzing image with Gemini:", error);
