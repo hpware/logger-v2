@@ -14,6 +14,11 @@ import {
   Thermometer,
   Droplet,
   SunIcon,
+  BatteryFullIcon,
+  BatteryMediumIcon,
+  BatteryLowIcon,
+  BatteryChargingIcon,
+  MonitorDotIcon
 } from "lucide-vue-next";
 //import adapter from "webrtc-adapter";
 definePageMeta({
@@ -297,7 +302,7 @@ const PullDataFromApiEndpointAboutGetDeviceStatus = async () => {
               class="bg-gray-300/5 p-2 m-0 backdrop-blur-sm z-10 flex flex-col rounded-lg min-w-1/3 md:w-fit w-full mx-auto rounded-lg shadow-lg backdrop-blur-sm m-3"
             >
               <h1
-                class="text-4xl bg-white flex flex-row p-0 m-0 text-transparent text-center align-middle justify-center bg-clip-text flex flex-col"
+                class="text-4xl bg-white flex flex-row p-0 m-0 text-transparent text-center align-middle justify-center bg-clip-text flex flex-col gap-1"
               >
                 <DatabaseIcon
                   class="inline-block text-white text-2xl w-12 h-12 p-1"
@@ -308,6 +313,10 @@ const PullDataFromApiEndpointAboutGetDeviceStatus = async () => {
                   ID:
                   <span class="text-yellow-300 p-1 m-1">{{ deviceId }}</span>
                 </p>
+                <span class="text-green-400 flex flex-row text-center justify-center text-sm"><BatteryMediumIcon class="w-5 h-5"/><span>&nbsp; 58%</span></span>
+                <NuxtLink :href="`/devices/desktop/${deviceId}`" class="md:block hidden">
+                  <span class="text-white flex flex-row text-center justify-center text-sm ml-2"><MonitorDotIcon class="w-5 h-5"/><span>&nbsp; 桌面版</span></span>
+                </NuxtLink>
               </div>
             </section>
             <section
@@ -413,7 +422,7 @@ const PullDataFromApiEndpointAboutGetDeviceStatus = async () => {
                   {{ clientUpdateValues.local_jistatus ? "OFF" : "ON" }}
                 </button>
               </p>
-              蠕動馬達: {{ clientUpdateValues.local_jistatus ? "OFF" : "ON" }}
+<!--              蠕動馬達: {{ clientUpdateValues.local_jistatus ? "OFF" : "ON" }}
               <button
                 @click="
                   () => {
@@ -431,7 +440,7 @@ const PullDataFromApiEndpointAboutGetDeviceStatus = async () => {
                   :class="!clientUpdateValues.local_jistatus && 'bg-red-500'"
                   class="w-[20px] h-[20px] border rounded-full rounded-t-none border-t-0"
                 ></span>
-              </button>
+              </button>-->
               <p
                 class="bg-gray-300/5 backdrop-blur-lg rounded-lg shadow-lg p-2 border-2 border-gray-400/40 text-white m-2"
               >

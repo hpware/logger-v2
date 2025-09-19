@@ -298,7 +298,8 @@ const PullDataFromApiEndpointAboutGetDeviceStatus = async () => {
             >
               <img
                 :src="ipport"
-                class="rounded-xl"
+                class="rounded-xl selection-none p-1 m-1"
+                draggable="false"
                 v-on:error="getErrorHandlerImage"
                 v-if="hiddenPage === false"
               />
@@ -315,7 +316,7 @@ const PullDataFromApiEndpointAboutGetDeviceStatus = async () => {
               </div>
             </section>
             <section
-              class="flex flex-row fixed top-0 left-0 w-full bg-gray-300/5 backdrop-blur-sm z-10 rounded-lg shadow-lg border-2 border-gray-400/40 p-1 m-1 rounded-lg shadow-lg backdrop-blur-sm gap-2"
+              class="flex flex-row fixed top-0 w-fit left-0 right-0 mx-auto bg-gray-600/40 backdrop-blur-xl z-10 rounded-lg shadow-lg border-2 border-gray-400/40 p-1 pl-4 m-1 rounded-lg shadow-lg backdrop-blur-sm gap-2"
             >
               <div class="flex items-center justify-center text-white gap-1">
                 <span class="text-xl text-white">氣象局</span>
@@ -432,7 +433,7 @@ const PullDataFromApiEndpointAboutGetDeviceStatus = async () => {
             </section>
 
             <section
-              class="fixed bottom-0 right-0 bg-gray-300/5 backdrop-blur-sm z-10 mr-2 rounded-lg shadow-lg py-10 border-2 border-gray-400/40 rounded-lg shadow-lg backdrop-blur-sm gap-2 w-fit p-4 min-w-1/4 min-h-1/2"
+              class="fixed bottom-0 right-0 bg-gray-300/5 backdrop-blur-sm z-10 mr-2 rounded-lg shadow-lg py-10 border-2 border-gray-400/40 rounded-lg shadow-lg backdrop-blur-sm gap-2 w-fit p-4 min-w-1/4 min-h-1/2 max-h-1/2 overflow-y-auto m-3 scrollbar-hide"
             >
               <h3 class="text-3xl text-bold text-white">偵測紀錄</h3>
               <hr class="text-white" />
