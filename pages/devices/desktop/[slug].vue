@@ -44,7 +44,7 @@ interface DetectedItem {
     imageurl: string;
 }
 const route = useRoute();
-const deviceId = route.params.slug;
+const deviceId = Array.isArray(route.params.slug) ? route.params.slug[0] : route.params.slug;
 const dataId = ref(0);
 // Reactive data
 const weatherData = ref({
@@ -65,6 +65,8 @@ const clientUpdateValues = ref({
     local_jistatus: false,
     light: 0,
 });
+
+const appVersion = ref("0.0.0");
 
 const gpsData = ref({
     gps_lat: "N/A",
@@ -219,6 +221,7 @@ const showImagePopup = (imageUrl: string) => {
 
 onMounted(() => {
     fetchDeviceData();
+    fetchAppVersion();
     // Set up polling for real-time updates
     setInterval(fetchDeviceData, 3000);
     // Fetch all images first
@@ -239,6 +242,17 @@ const PullDataFromApiEndpointAboutGetDeviceStatus = async () => {
     const res = await req.json();
     clientUpdateValues.value.local_jistatus = res.jistatus;
     clientUpdateValues.value.light = res.lightstatus;
+};
+
+const fetchAppVersion = async () => {
+    try {
+        const req = await fetch('/api/version');
+        const res = await req.json();
+        appVersion.value = res.version;
+    } catch (error) {
+        console.error('Failed to fetch app version:', error);
+        appVersion.value = '0.0.0';
+    }
 };
 </script>
 
@@ -425,6 +439,9 @@ const PullDataFromApiEndpointAboutGetDeviceStatus = async () => {
                         >
                             <h3 class="text-3xl text-bold text-white">控制</h3>
                             <hr class="text-white" />
+                            <div class="text-center text-white mb-4">
+                                <span class="text-sm">版本: {{ appVersion }}</span>
+                            </div>
                             <p
                                 class="bg-gray-300/5 backdrop-blur-lg rounded-lg shadow-lg p-2 border-2 border-gray-400/40 text-white m-2"
                             >

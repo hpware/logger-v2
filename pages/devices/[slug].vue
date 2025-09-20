@@ -308,7 +308,7 @@ const PullDataFromApiEndpointAboutGetDeviceStatus = async () => {
                   class="inline-block text-white text-2xl w-12 h-12 p-1"
                 />&nbsp;顯示資料
               </h1>
-              <div class="flex flex-row text-center justify-center">
+              <div class="flex flex-col md:flex-row text-center justify-center">
                 <p class="text-white text-sm text-center">
                   ID:
                   <span class="text-yellow-300 p-1 m-1">{{ deviceId }}</span>
@@ -410,6 +410,7 @@ const PullDataFromApiEndpointAboutGetDeviceStatus = async () => {
                 class="bg-gray-300/5 backdrop-blur-lg rounded-lg shadow-lg p-2 border-2 border-gray-400/40 text-white m-2"
               >
                 蠕動馬達
+                <span class="gap-1 flex flex-col"><input type="number" class="w-12 border"/><span>秒</span></span>
                 <button
                   @click="
                     () => {
@@ -419,7 +420,7 @@ const PullDataFromApiEndpointAboutGetDeviceStatus = async () => {
                   "
                   class="p-2 bg-yellow-300/50 hover:bg-yellow-300/80 rounded-xl m-1 transition-all duration-300"
                 >
-                  {{ clientUpdateValues.local_jistatus ? "OFF" : "ON" }}
+                  確認
                 </button>
               </p>
 <!--              蠕動馬達: {{ clientUpdateValues.local_jistatus ? "OFF" : "ON" }}
