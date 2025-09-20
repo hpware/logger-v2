@@ -15,7 +15,7 @@ export default defineEventHandler(async (event) => {
   try {
     // Get latest data
     const latestData = await sql`
-      SELECT * FROM logger 
+      SELECT * FROM logger
       WHERE device_uuid = ${slug}
       ORDER BY id DESC 
       LIMIT 1
@@ -44,7 +44,7 @@ export default defineEventHandler(async (event) => {
 
     // Get detected items
     const detectedItems = await sql`
-      SELECT * FROM detect 
+      SELECT * FROM detect
       WHERE device_id = ${slug}
       ORDER BY detected_at DESC
     `;
