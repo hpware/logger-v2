@@ -1,6 +1,9 @@
 import sql from "~/server/db/pg";
 export default defineEventHandler(async (event) => {
   const slug = getRouterParam(event, "slug");
+  if (!slug) {
+    return {};
+  }
   const getData = await sql`
     SELECT * from device_status
     WHERE device_uuid = ${slug}

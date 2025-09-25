@@ -46,6 +46,36 @@ export default defineEventHandler(async (event) => {
     }
   }
 
+  if (slug === "jistatus_timer") {
+    const { timer } = body;
+    if (typeof timer !== "number" || timer < 0) {
+      throw createError({
+        statusCode: 400,
+        message: "Timer must be a positive number",
+      });
+    }
+
+    try {
+      await sql`
+        UPDATE device_status
+        SET jistatus_timer = ${timer}
+        WHERE device_uuid = ${deviceId}
+      `;
+
+      return {
+        success: true,
+        message: `JI timer updated to: ${timer}`,
+        jistatus_timer: timer,
+      };
+    } catch (error) {
+      console.error("Database error updating JI timer:", error);
+      throw createError({
+        statusCode: 500,
+        message: "Failed to update JI timer",
+      });
+    }
+  }
+
   if (slug === "ledstatus") {
     const { ledStatus } = body;
     if (typeof ledStatus !== "number" || ledStatus < 0 || ledStatus > 8) {

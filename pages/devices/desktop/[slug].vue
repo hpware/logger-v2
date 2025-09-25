@@ -63,6 +63,7 @@ const localData = ref({
 
 const clientUpdateValues = ref({
     local_jistatus: false,
+    local_jistatus_timer: 0,
     light: 0,
 });
 
@@ -234,6 +235,33 @@ const changeJiStatus = () => {
         !clientUpdateValues.value.local_jistatus;
 };
 
+const onTimerChange = async () => {
+    if (
+        cannotDisplayContent.value &&
+        !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/.test(
+            deviceId,
+        )
+    ) {
+        return;
+    }
+    const req = await fetch("/api/deviceaction/jistatus_timer", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+            deviceId: deviceId,
+            timer: clientUpdateValues.value.local_jistatus_timer,
+        }),
+    });
+    const res = await req.json();
+    if (!req.ok || !res.success) {
+        alert("定時器設定失敗，請稍後再試");
+        return;
+    }
+    alert(`定時器已設定為 ${clientUpdateValues.value.local_jistatus_timer} 秒`);
+};
+
 const PullDataFromApiEndpointAboutGetDeviceStatus = async () => {
     if (cannotDisplayContent.value) {
         return;
@@ -241,6 +269,7 @@ const PullDataFromApiEndpointAboutGetDeviceStatus = async () => {
     const req = await fetch(`/api/getDeviceStatus/${deviceId}`);
     const res = await req.json();
     clientUpdateValues.value.local_jistatus = res.jistatus;
+    clientUpdateValues.value.local_jistatus_timer = res.jistatus_timer || 0;
     clientUpdateValues.value.light = res.lightstatus;
 };
 
@@ -311,7 +340,7 @@ const fetchAppVersion = async () => {
                 >
                     <div>
                         <section
-                            class="fixed inset-0 h-screen bg-gray-300/5 z-5 p-5 border-2 border-gray-400/4 w-full mx-auto rounded-lg shadow-lg backdrop-blur-sm gap-2 justify-center flex items-center flex-col"
+                            class="fixed inset-0 h-screen bg-gray-300/5 z-0 p-5 border-2 border-gray-400/4 w-full mx-auto rounded-lg shadow-lg backdrop-blur-sm gap-2 justify-center flex items-center flex-col"
                         >
                             <img
                                 :src="ipport"
@@ -490,6 +519,24 @@ const fetchAppVersion = async () => {
                                     class="w-[20px] h-[20px] border rounded-full rounded-t-none border-t-0"
                                 ></span>
                             </button>
+                            <p
+                                class="bg-gray-300/5 backdrop-blur-lg rounded-lg shadow-lg p-2 border-2 border-gray-400/40 text-white m-2"
+                            >
+                                蠕動馬達定時器 (秒)
+                                <input
+                                    type="number"
+                                    min="0"
+                                    v-model="clientUpdateValues.local_jistatus_timer"
+                                    @change="onTimerChange"
+                                    class="w-full p-2 bg-gray-300/80 rounded-lg accent-yellow-300 hover:border-none transition-all duration-300"
+                                />
+                                <button
+                                    @click="onTimerChange"
+                                    class="p-2 bg-blue-500/50 hover:bg-blue-500/80 rounded-xl m-1 transition-all duration-300"
+                                >
+                                    設定定時器
+                                </button>
+                            </p>
                             <p
                                 class="bg-gray-300/5 backdrop-blur-lg rounded-lg shadow-lg p-2 border-2 border-gray-400/40 text-white m-2"
                             >
