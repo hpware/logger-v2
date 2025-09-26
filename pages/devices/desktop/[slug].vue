@@ -68,6 +68,8 @@ const clientUpdateValues = ref({
 });
 
 const appVersion = ref("0.0.0");
+const showControls = ref(false);
+const showDetectionRecords = ref(false);
 
 const gpsData = ref({
     gps_lat: "N/A",
@@ -456,14 +458,37 @@ const fetchAppVersion = async () => {
                                     <span
                                         class="text-green-400 flex flex-row text-center justify-center text-sm ml-5"
                                         ><BatteryMediumIcon
-                                            class="w-5 h-5"
-                                        /><span>&nbsp; 58%</span></span
+                                            class="w-7 h-7"
+                                        /></span
                                     >
                                 </div>
                             </div>
                         </section>
 
+                        <!-- Control Toggle Bar -->
+                        <div 
+                            class="fixed bottom-0 left-0 right-0 bg-gray-800/80 backdrop-blur-lg z-20 p-2 border-t-2 border-gray-400/40 cursor-pointer"
+                            @click="showControls = !showControls"
+                        >
+                            <div class="flex items-center justify-center text-white">
+                                <span class="text-sm">
+                                    {{ showControls ? '隱藏控制面板' : '顯示控制面板' }}
+                                </span>
+                                <svg 
+                                    :class="showControls ? 'rotate-180' : 'rotate-0'"
+                                    class="w-4 h-4 ml-2 transition-transform duration-300"
+                                    fill="none" 
+                                    stroke="currentColor" 
+                                    viewBox="0 0 24 24"
+                                >
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                                </svg>
+                            </div>
+                        </div>
+
+                        <!-- Hidden Controls Panel -->
                         <section
+                            v-show="showControls"
                             class="bg-gray-300/5 backdrop-blur-sm z-10 p-3 rounded-lg shadow-lg py-10 border-2 border-gray-400/40 p-4 m-4 min-w-1/3 md:w-fit w-full mx-auto rounded-lg shadow-lg backdrop-blur-sm gap-2 m-3"
                         >
                             <h3 class="text-3xl text-bold text-white">控制</h3>
@@ -553,7 +578,30 @@ const fetchAppVersion = async () => {
                             </p>
                         </section>
 
+                        <!-- Detection Records Toggle -->
+                        <div 
+                            class="fixed bottom-0 right-0 bg-gray-800/80 backdrop-blur-lg z-20 p-2 border-t-2 border-gray-400/40 cursor-pointer"
+                            @click="showDetectionRecords = !showDetectionRecords"
+                        >
+                            <div class="flex items-center justify-center text-white">
+                                <span class="text-sm">
+                                    {{ showDetectionRecords ? '隱藏偵測紀錄' : '顯示偵測紀錄' }}
+                                </span>
+                                <svg 
+                                    :class="showDetectionRecords ? 'rotate-180' : 'rotate-0'"
+                                    class="w-4 h-4 ml-2 transition-transform duration-300"
+                                    fill="none" 
+                                    stroke="currentColor" 
+                                    viewBox="0 0 24 24"
+                                >
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                                </svg>
+                            </div>
+                        </div>
+
+                        <!-- Hidden Detection Records Panel -->
                         <section
+                            v-show="showDetectionRecords"
                             class="fixed bottom-0 right-0 bg-gray-300/5 backdrop-blur-sm z-10 mr-2 rounded-lg shadow-lg py-10 border-2 border-gray-400/40 rounded-lg shadow-lg backdrop-blur-sm gap-2 w-fit p-4 min-w-1/4 min-h-1/2 max-h-1/2 overflow-y-auto m-3 scrollbar-hide"
                         >
                             <h3 class="text-3xl text-bold text-white">
