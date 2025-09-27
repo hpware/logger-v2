@@ -5,6 +5,7 @@ import OpenAI from "openai";
 import { S3Client } from "@aws-sdk/client-s3";
 import { Upload } from "@aws-sdk/lib-storage";
 import { v4 as uuidv4 } from "uuid";
+import { dev } from "process";
 
 async function fastSave(slug: string, body: any) {
   const {
@@ -212,10 +213,11 @@ export default defineEventHandler(async (event) => {
       message: "Device not found",
     };
   }
+  console.log(deviceData);
   return {
     success: true,
     jistatus: deviceData[0].jistatus,
-    jistatustimer: deviceData[0].jistatustimer,
+    jinewstatus: deviceData[0].jistatustimer,
     newledstatus: deviceData[0].lightstatus,
     autocapture: deviceData[0].autocapture,
   };

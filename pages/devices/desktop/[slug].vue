@@ -264,7 +264,31 @@ const onTimerChange = async () => {
     return;
   }
   if (clientUpdateValues.value.local_jistatus_timer === 0) {
-    clientUpdateValues.value.local_jistatus = !clientUpdateValues.value.local_jistatus;
+    const req = await fetch(`/api/deviceaction/${deviceId}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        action: "jistatus",
+        status: clientUpdateValues.value.local_jistatus,
+      }),
+    });
+
+    const res = await req.json();
+    if (!req.ok || !res.success) {
+      toast.error("定時器設定失敗，請稍後再試");
+      return;
+    }
+    clientUpdateValues.value.local_jistatus = res.jistatus;
+    toast.success(
+      `繼電器已` +
+        (clientUpdateValues.value.local_jistatus ? "開啟" : "關閉"),
+    );
+    clientUpdateValues.value.local_jistatus_timer = 0;
+    clientUpdateValues.value.local_jistatus =
+      !clientUpdateValues.value.local_jistatus;
+    return;
   }
   const req = await fetch(`/api/deviceaction/${deviceId}`, {
     method: "POST",
@@ -274,17 +298,19 @@ const onTimerChange = async () => {
     body: JSON.stringify({
       action: "jistatus_timer",
       timer: clientUpdateValues.value.local_jistatus_timer,
-      static_value: clientUpdateValues.value.local_jistatus
+      static_value: clientUpdateValues.value.local_jistatus,
     }),
   });
-  
+
   const res = await req.json();
   if (!req.ok || !res.success) {
     toast.error("定時器設定失敗，請稍後再試");
     return;
   }
   clientUpdateValues.value.local_jistatus = res.jistatus;
-  toast.success(`定時器已設定為 ${clientUpdateValues.value.local_jistatus_timer} 秒`);
+  toast.success(
+    `定時器已設定為 ${clientUpdateValues.value.local_jistatus_timer} 秒`,
+  );
   clientUpdateValues.value.local_jistatus_timer = 0;
 };
 
@@ -297,14 +323,16 @@ const PullDataFromApiEndpointAboutGetDeviceStatus = async () => {
   clientUpdateValues.value.local_jistatus = res.jistatus;
   clientUpdateValues.value.light = res.lightstatus;
   console.log(clientUpdateValues.value.local_jistatus);
-
 };
 
-import { computed } from 'vue';
+import { computed } from "vue";
 import { Transition } from "vue";
 const buttonText = computed(() => {
   console.log(clientUpdateValues.value.local_jistatus);
-  if (clientUpdateValues.value.local_jistatus && clientUpdateValues.value.local_jistatus_timer === 0) {
+  if (
+    clientUpdateValues.value.local_jistatus &&
+    clientUpdateValues.value.local_jistatus_timer === 0
+  ) {
     return "開啟";
   }
   if (clientUpdateValues.value.local_jistatus_timer === 0) {
@@ -477,16 +505,17 @@ const fetchAppVersion = async () => {
                     class="border rounded shadow-lg w-12 text-center"
                     max="99"
                     v-model.number="clientUpdateValues.local_jistatus_timer"
-                    :disabled="!clientUpdateValues.local_jistatus"
-                     /></span
+                    :disabled="!clientUpdateValues.local_jistatus" /></span
                 ><button
                   class="ml-2 bg-gray-500 hover:bg-gray-700 text-white font-bold py-1 px-2 rounded cursor-pointer transition-all duration-300"
                   @click="onTimerChange"
                 >
                   {{ buttonText }}
-                </button>   
+                </button>
               </div>
-              <div class="flex flex-row gap-1 items-center justify-center text-white">
+              <div
+                class="flex flex-row gap-1 items-center justify-center text-white"
+              >
                 <span>燈光:</span>
                 <input
                   type="range"
@@ -501,75 +530,76 @@ const fetchAppVersion = async () => {
             </div>
 
             <!-- Detection Records Toggle -->
-             <div class="flex flex-col">
-                          <div
-              class="mr-2 text-center justify-center items-center align-middle min-w-1/4 text-nowrap fixed bottom-0 right-0 backdrop-blur-lg z-20 p-2 flex flex-row ml-2 mb-4 mx-auto bg-gray-600/40 backdrop-blur-xl z-10 rounded-lg shadow-lg border-2 border-gray-400/40 p-1 pl-4 m-1 rounded-lg shadow-lg backdrop-blur-sm gap-2"
-                          @click="showDetectionRecords = !showDetectionRecords"
-            >
-              <div class="flex items-center justify-center text-white text-center cursor-pointer">
-                <span class="text-sm text-center">
-                  偵測紀錄
-                </span>
-                <svg
-                  :class="showDetectionRecords ? 'rotate-180' : 'rotate-0'"
-                  class="w-4 h-4 ml-2 transition-transform duration-300"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
+            <div class="flex flex-col">
+              <div
+                class="mr-2 text-center justify-center items-center align-middle min-w-1/4 text-nowrap fixed bottom-0 right-0 backdrop-blur-lg z-20 p-2 flex flex-row ml-2 mb-4 mx-auto bg-gray-600/40 backdrop-blur-xl z-10 rounded-lg shadow-lg border-2 border-gray-400/40 p-1 pl-4 m-1 rounded-lg shadow-lg backdrop-blur-sm gap-2"
+                @click="showDetectionRecords = !showDetectionRecords"
+              >
+                <div
+                  class="flex items-center justify-center text-white text-center cursor-pointer"
                 >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M19 9l-7 7-7-7"
-                  />
-                </svg>
+                  <span class="text-sm text-center"> 偵測紀錄 </span>
+                  <svg
+                    :class="showDetectionRecords ? 'rotate-180' : 'rotate-0'"
+                    class="w-4 h-4 ml-2 transition-transform duration-300"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M19 9l-7 7-7-7"
+                    />
+                  </svg>
+                </div>
               </div>
-            </div>
               <Transition
                 enter-active-class="animate__animated animate__fadeInUp"
                 leave-active-class="animate__animated animate__fadeOutDown"
                 appear
+              >
+                <section
+                  v-show="showDetectionRecords"
+                  class="fixed bottom-0 right-0 mb-[60px] bg-gray-300/5 backdrop-blur-xl z-10 mr-2 rounded-lg shadow-lg py-10 border-2 border-gray-400/40 rounded-lg shadow-lg backdrop-blur-sm gap-2 w-fit p-4 min-w-1/4 min-h-1/2 max-h-1/2 overflow-y-auto m-3 scrollbar-hide"
                 >
-               <section
-              v-show="showDetectionRecords"
-              class="fixed bottom-0 right-0 mb-[60px] bg-gray-300/5 backdrop-blur-xl z-10 mr-2 rounded-lg shadow-lg py-10 border-2 border-gray-400/40 rounded-lg shadow-lg backdrop-blur-sm gap-2 w-fit p-4 min-w-1/4 min-h-1/2 max-h-1/2 overflow-y-auto m-3 scrollbar-hide"
-            >
-              <ul class="text-white">
-                <li
-                  v-if="detectedItems.length === 0"
-                  class="items-center text-center justify-center flex flex-col absolute inset-0"
-                >
-                  <div class="text-gray-300/80 p-3 flex flex-col items-center">
-                    <ImageOffIcon
-                      class="inline-block stroke-text-gray-300/50 text-2xl w-[50px] h-[50px] p-1"
-                    />
-                    <span class="text-lg">尚未有偵測紀錄</span>
-                  </div>
-                </li>
+                  <ul class="text-white">
+                    <li
+                      v-if="detectedItems.length === 0"
+                      class="items-center text-center justify-center flex flex-col absolute inset-0"
+                    >
+                      <div
+                        class="text-gray-300/80 p-3 flex flex-col items-center"
+                      >
+                        <ImageOffIcon
+                          class="inline-block stroke-text-gray-300/50 text-2xl w-[50px] h-[50px] p-1"
+                        />
+                        <span class="text-lg">尚未有偵測紀錄</span>
+                      </div>
+                    </li>
 
-                <li
-                  v-for="item in detectedItems"
-                  :key="item.id"
-                  class="bg-gray-300/5 backdrop-blur-lg rounded-lg shadow-lg p-2 border-2 border-gray-400/40 text-white m-2 hover:bg-gray-400/20 transition-all duration-500"
-                >
-                  <div
-                    @click="showImagePopup(item.imageurl)"
-                    class="cursor-pointer"
-                  >
-                    <div>
-                      <span>{{ item.item }}</span>
-                      <br />
-                      偵測時間:
-                      {{ formatTime(item.detected_at) }}
-                    </div>
-                  </div>
-                </li>
-              </ul>
-            </section>
-                </Transition>
-             </div>
-
+                    <li
+                      v-for="item in detectedItems"
+                      :key="item.id"
+                      class="bg-gray-300/5 backdrop-blur-lg rounded-lg shadow-lg p-2 border-2 border-gray-400/40 text-white m-2 hover:bg-gray-400/20 transition-all duration-500"
+                    >
+                      <div
+                        @click="showImagePopup(item.imageurl)"
+                        class="cursor-pointer"
+                      >
+                        <div>
+                          <span>{{ item.item }}</span>
+                          <br />
+                          偵測時間:
+                          {{ formatTime(item.detected_at) }}
+                        </div>
+                      </div>
+                    </li>
+                  </ul>
+                </section>
+              </Transition>
+            </div>
           </div>
         </Transition>
       </div>
