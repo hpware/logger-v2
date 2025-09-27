@@ -10,6 +10,7 @@ import "vue-sonner/style.css";
       closeButtonPosition="top-right"
       position="top-right"
       :expand="false"
+      richColors
     />
   </NuxtLayout>
 </template>
