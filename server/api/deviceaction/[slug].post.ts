@@ -2,8 +2,7 @@ import sql from "~/server/db/pg";
 
 export default defineEventHandler(async (event) => {
   const body = await readBody(event);
-  const slug = getRouterParam(event, "slug");
-  const deviceId = body.deviceId;
+  const deviceId = getRouterParam(event, "slug");
 
   if (!deviceId) {
     throw createError({
@@ -12,7 +11,16 @@ export default defineEventHandler(async (event) => {
     });
   }
 
-  if (slug === "jistatus") {
+  const action = body.action;
+
+  if (!action) {
+    throw createError({
+      statusCode: 400,
+      message: "action is required",
+    });
+  }
+
+  if (action === "jistatus") {
     const { status } = body;
     if (typeof status !== "boolean") {
       throw createError({
@@ -46,37 +54,47 @@ export default defineEventHandler(async (event) => {
     }
   }
 
-  if (slug === "jistatus_timer") {
-    const { timer } = body;
+  if (action === "jistatus_timer") {
+    const { timer, static_value } = body;
     if (typeof timer !== "number" || timer < 0) {
       throw createError({
         statusCode: 400,
-        message: "Timer must be a positive number",
+        message: "Timer must be a non-negative number",
+      });
+    }
+    if (typeof static_value !== "boolean") {
+      throw createError({
+        statusCode: 400,
+        message: "static_value must be a boolean",
       });
     }
 
     try {
       await sql`
         UPDATE device_status
-        SET jistatus_timer = ${timer}
+        SET jistatustimer = ${timer}, jistatus = ${static_value}
         WHERE device_uuid = ${deviceId}
       `;
 
+      // Also update the quick access cache
+      const { setJiStatus } = await import("~/server/saveQuickAccess/jistatus");
+      setJiStatus(static_value);
+
       return {
         success: true,
-        message: `JI timer updated to: ${timer}`,
-        jistatus_timer: timer,
+        message: `JI timer and status updated`,
+        jistatus: static_value,
       };
     } catch (error) {
-      console.error("Database error updating JI timer:", error);
+      console.error("Database error updating JI timer and status:", error);
       throw createError({
         statusCode: 500,
-        message: "Failed to update JI timer",
+        message: "Failed to update JI timer and status",
       });
     }
   }
 
-  if (slug === "ledstatus") {
+  if (action === "ledstatus") {
     const { ledStatus } = body;
     if (typeof ledStatus !== "number" || ledStatus < 0 || ledStatus > 8) {
       throw createError({
@@ -112,7 +130,7 @@ export default defineEventHandler(async (event) => {
     }
   }
 
-  if (slug === "status") {
+  if (action === "status") {
     try {
       const status = await sql`
         SELECT * FROM device_status
@@ -142,6 +160,6 @@ export default defineEventHandler(async (event) => {
 
   throw createError({
     statusCode: 400,
-    message: `Invalid action: ${slug}`,
+    message: `Invalid action: ${action}`,
   });
 });

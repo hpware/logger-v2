@@ -181,12 +181,14 @@ async function uploadImages(body: any, slug: string) {
   }
 }
 
-async function resetJiStatus(slug: string) {
-  await sql`
-    UPDATE device_status
-    SET jistatus_timer = 0
-    WHERE device_uuid = ${slug};
-  `;
+async function resetJiStatus(slug: string, jistatus: boolean) {
+  if (jistatus) {
+    await sql`
+      UPDATE device_status
+      SET jistatustimer = 0
+      WHERE device_uuid = ${slug};
+    `;
+  }
 }
 
 export default defineEventHandler(async (event) => {
@@ -203,7 +205,7 @@ export default defineEventHandler(async (event) => {
 
   const deviceData = await sql`
     SELECT * FROM device_status WHERE device_uuid = ${slug} LIMIT 1;`;
-  resetJiStatus(slug);
+  resetJiStatus(slug, body.local_jistatus || false);
   if (deviceData.length === 0) {
     return {
       success: false,
@@ -213,6 +215,7 @@ export default defineEventHandler(async (event) => {
   return {
     success: true,
     jistatus: deviceData[0].jistatus,
+    jistatustimer: deviceData[0].jistatustimer,
     newledstatus: deviceData[0].lightstatus,
     autocapture: deviceData[0].autocapture,
   };

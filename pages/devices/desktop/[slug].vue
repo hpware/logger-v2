@@ -186,7 +186,7 @@ const fetchDeviceData = async () => {
           const img = new Image();
           img.src = item.imageurl;
           img.onload = () => {
-            console.log(`Image loaded: ${item.imageurl}`);
+            //console.log(`Image loaded: ${item.imageurl}`);
           };
           img.onerror = () => {
             console.error(`Error loading image: ${item.imageurl}`);
@@ -266,13 +266,13 @@ const onTimerChange = async () => {
   if (clientUpdateValues.value.local_jistatus_timer === 0) {
     clientUpdateValues.value.local_jistatus = !clientUpdateValues.value.local_jistatus;
   }
-  const req = await fetch("/api/deviceaction/jistatus_timer", {
+  const req = await fetch(`/api/deviceaction/${deviceId}`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      deviceId: deviceId,
+      action: "jistatus_timer",
       timer: clientUpdateValues.value.local_jistatus_timer,
       static_value: clientUpdateValues.value.local_jistatus
     }),
@@ -280,7 +280,7 @@ const onTimerChange = async () => {
   
   const res = await req.json();
   if (!req.ok || !res.success) {
-    alert("定時器設定失敗，請稍後再試");
+    toast.error("定時器設定失敗，請稍後再試");
     return;
   }
   clientUpdateValues.value.local_jistatus = res.jistatus;
@@ -296,7 +296,22 @@ const PullDataFromApiEndpointAboutGetDeviceStatus = async () => {
   const res = await req.json();
   clientUpdateValues.value.local_jistatus = res.jistatus;
   clientUpdateValues.value.light = res.lightstatus;
+  console.log(clientUpdateValues.value.local_jistatus);
+
 };
+
+import { computed } from 'vue';
+import { Transition } from "vue";
+const buttonText = computed(() => {
+  console.log(clientUpdateValues.value.local_jistatus);
+  if (clientUpdateValues.value.local_jistatus && clientUpdateValues.value.local_jistatus_timer === 0) {
+    return "開啟";
+  }
+  if (clientUpdateValues.value.local_jistatus_timer === 0) {
+    return "關閉";
+  }
+  return "確認";
+});
 
 const fetchAppVersion = async () => {
   try {
@@ -311,7 +326,7 @@ const fetchAppVersion = async () => {
 </script>
 
 <template>
-  <div>
+  <div class="select-none">
     <div
       class="fixed inset-0 w-full h-full bg-[url(https://raw.githubusercontent.com/hpware/esp32-postgres-logger-view-and-api/refs/heads/main/bg.jpg?raw=true)] bg-cover bg-no-repeat bg-center z-[-1]"
     ></div>
@@ -462,13 +477,14 @@ const fetchAppVersion = async () => {
                     class="border rounded shadow-lg w-12 text-center"
                     max="99"
                     v-model.number="clientUpdateValues.local_jistatus_timer"
+                    :disabled="!clientUpdateValues.local_jistatus"
                      /></span
                 ><button
                   class="ml-2 bg-gray-500 hover:bg-gray-700 text-white font-bold py-1 px-2 rounded cursor-pointer transition-all duration-300"
-                  :onClick="onTimerChange"
+                  @click="onTimerChange"
                 >
-                  {{ clientUpdateValues.local_jistatus_timer === 0 ? clientUpdateValues.local_jistatus ? "開啟" : "關閉" : "確認" }}
-                </button>
+                  {{ buttonText }}
+                </button>   
               </div>
               <div class="flex flex-row gap-1 items-center justify-center text-white">
                 <span>燈光:</span>
@@ -485,13 +501,14 @@ const fetchAppVersion = async () => {
             </div>
 
             <!-- Detection Records Toggle -->
-            <div
-              class="fixed bottom-0 right-0 bg-gray-800/80 backdrop-blur-lg z-20 p-2 border-t-2 border-gray-400/40 cursor-pointer"
-              @click="showDetectionRecords = !showDetectionRecords"
+             <div class="flex flex-col">
+                          <div
+              class="mr-2 text-center justify-center items-center align-middle min-w-1/4 text-nowrap fixed bottom-0 right-0 backdrop-blur-lg z-20 p-2 flex flex-row ml-2 mb-4 mx-auto bg-gray-600/40 backdrop-blur-xl z-10 rounded-lg shadow-lg border-2 border-gray-400/40 p-1 pl-4 m-1 rounded-lg shadow-lg backdrop-blur-sm gap-2"
+                          @click="showDetectionRecords = !showDetectionRecords"
             >
-              <div class="flex items-center justify-center text-white">
-                <span class="text-sm">
-                  {{ showDetectionRecords ? "隱藏偵測紀錄" : "顯示偵測紀錄" }}
+              <div class="flex items-center justify-center text-white text-center cursor-pointer">
+                <span class="text-sm text-center">
+                  偵測紀錄
                 </span>
                 <svg
                   :class="showDetectionRecords ? 'rotate-180' : 'rotate-0'"
@@ -509,14 +526,15 @@ const fetchAppVersion = async () => {
                 </svg>
               </div>
             </div>
-
-            <!-- Hidden Detection Records Panel -->
-            <section
+              <Transition
+                enter-active-class="animate__animated animate__fadeInUp"
+                leave-active-class="animate__animated animate__fadeOutDown"
+                appear
+                >
+               <section
               v-show="showDetectionRecords"
-              class="fixed bottom-0 right-0 bg-gray-300/5 backdrop-blur-sm z-10 mr-2 rounded-lg shadow-lg py-10 border-2 border-gray-400/40 rounded-lg shadow-lg backdrop-blur-sm gap-2 w-fit p-4 min-w-1/4 min-h-1/2 max-h-1/2 overflow-y-auto m-3 scrollbar-hide"
+              class="fixed bottom-0 right-0 mb-[60px] bg-gray-300/5 backdrop-blur-xl z-10 mr-2 rounded-lg shadow-lg py-10 border-2 border-gray-400/40 rounded-lg shadow-lg backdrop-blur-sm gap-2 w-fit p-4 min-w-1/4 min-h-1/2 max-h-1/2 overflow-y-auto m-3 scrollbar-hide"
             >
-              <h3 class="text-3xl text-bold text-white">偵測紀錄</h3>
-              <hr class="text-white" />
               <ul class="text-white">
                 <li
                   v-if="detectedItems.length === 0"
@@ -549,6 +567,9 @@ const fetchAppVersion = async () => {
                 </li>
               </ul>
             </section>
+                </Transition>
+             </div>
+
           </div>
         </Transition>
       </div>
