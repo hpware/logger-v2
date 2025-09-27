@@ -114,16 +114,16 @@ async function Decode_Image_File_And_Upload_To_S3(
           content: [
             {
               type: "text",
-              text: `What animals do you see in this image? Please be specific but concise, and it REQUIRES to be an animal, no trees, no branches. And return with the JSON format, { "item": "scientific_name", "chinese_name": "chinese_name", "found_timestamp": "the_current_time" }, the current time is aprox: ${new Date().toUTCString()}, and JUST RETURN THE JSON FILE, NO OTHER TEXT, AND NO MARKDOWN. If you cannot find anything, please just return null on the item json.`
+              text: `What animals do you see in this image? Please be specific but concise, and it REQUIRES to be an animal, no trees, no branches. And return with the JSON format, { "item": "scientific_name", "chinese_name": "chinese_name", "found_timestamp": "the_current_time" }, the current time is aprox: ${new Date().toUTCString()}, and JUST RETURN THE JSON FILE, NO OTHER TEXT, AND NO MARKDOWN. If you cannot find anything, please just return null on the item json.`,
             },
             {
               type: "image_url",
               image_url: {
-                url: `data:image/jpeg;base64,${base64Data}`
-              }
-            }
-          ]
-        }
+                url: `data:image/jpeg;base64,${base64Data}`,
+              },
+            },
+          ],
+        },
       ],
       max_tokens: 300,
     });
@@ -201,7 +201,6 @@ export default defineEventHandler(async (event) => {
   fastSave(slug, body);
   uploadImages(body, slug);
 
-
   const deviceData = await sql`
     SELECT * FROM device_status WHERE device_uuid = ${slug} LIMIT 1;`;
   resetJiStatus(slug);
@@ -213,8 +212,7 @@ export default defineEventHandler(async (event) => {
   }
   return {
     success: true,
-   // jistatus: deviceData[0].jistatus,
-    newjistatus: deviceData[0].jistatus_timer,
+    jistatus: deviceData[0].jistatus,
     newledstatus: deviceData[0].lightstatus,
     autocapture: deviceData[0].autocapture,
   };

@@ -44,30 +44,31 @@ async function Decode_Image_File_And_Upload_To_S3(
 
     // Generate content analysis using OpenRouter/OpenAI
     const response = await openai.chat.completions.create({
-      model: "openai/gpt-4o-mini", // You can change this to other models like "openai/gpt-4-vision-preview"
+      model: "x-ai/grok-4-fast:free",
       messages: [
         {
           role: "user",
           content: [
             {
               type: "text",
-              text: `What animals do you see in this image? Please be specific but concise, and it REQUIRES to be an animal, no trees, no branches. And return with the JSON format, { "item": "scientific_name", "chinese_name": "chinese_name", "found_timestamp": "the_current_time" }, the current time is aprox: ${new Date().toUTCString()}, and JUST RETURN THE JSON FILE, NO OTHER TEXT, AND NO MARKDOWN. If you cannot find anything, please just return null on the item json.`
+              text: `What animals do you see in this image? Please be specific but concise, and it REQUIRES to be an animal, no trees, no branches. And return with the JSON format, { "item": "scientific_name", "chinese_name": "chinese_name", "found_timestamp": "the_current_time" }, the current time is aprox: ${new Date().toUTCString()}, and JUST RETURN THE JSON FILE, NO OTHER TEXT, AND NO MARKDOWN. If you cannot find anything, please just return null on the item json.`,
             },
             {
               type: "image_url",
               image_url: {
-                url: `data:image/jpeg;base64,${base64Data}`
-              }
-            }
-          ]
-        }
+                url: `data:image/jpeg;base64,${base64Data}`,
+              },
+            },
+          ],
+        },
       ],
       max_tokens: 300,
     });
-
+    console.log(response.choices[0]);
     const analysis = response.choices[0]?.message?.content || "";
     const jsonRes = JSON.parse(analysis || "{}");
     if (!jsonRes.item) {
+      console.log("hummm");
       throw new Error("No animal found in the image.");
     }
     console.log({

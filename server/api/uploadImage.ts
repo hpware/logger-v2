@@ -1,5 +1,5 @@
 import sql from "~/server/db/pg";
-import OpenAI from "openai";
+import { GoogleGenAI } from "@google/genai";
 import { S3Client } from "@aws-sdk/client-s3";
 import { Upload } from "@aws-sdk/lib-storage";
 import { v4 as uuidv4 } from "uuid";
@@ -9,10 +9,7 @@ async function Decode_Image_File_And_Upload_To_S3(
   date: string,
   deviceId: string,
 ) {
-  const openai = new OpenAI({
-    apiKey: process.env.OPENROUTER_API_KEY,
-    baseURL: process.env.OPENROUTER_API_URL,
-  });
+  const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
   const base64Data = base64ImageString.replace(/^data:image\/\w+;base64,/, "");
   const buffer = Buffer.from(base64Data, "base64");
   const fileName = `image_${uuidv4()}.jpg`;
@@ -42,29 +39,24 @@ async function Decode_Image_File_And_Upload_To_S3(
     await upload.done();
     /*const imageUrl = `${process.env.MINIO_ENDPOINT}/${process.env.MINIO_BUCKET_NAME}/uploads/${fileName}`;
 
-    // Generate content analysis using OpenRouter/OpenAI
-    const response = await openai.chat.completions.create({
-      model: "openai/gpt-4o-mini",
-      messages: [
-        {
-          role: "user",
-          content: [
-            {
-              type: "text",
-              text: `What animals do you see in this image? Please be specific but concise, and it REQUIRES to be an animal, no trees, no branches. And return with the JSON format, { "item": "scientific_name", "chinese_name": "chinese_name", "found_timestamp": "the_current_time" }, the current time is aprox: ${new Date().toUTCString()}, and JUST RETURN THE JSON FILE, NO OTHER TEXT, AND NO MARKDOWN. If you cannot find anything, please just return null on the item json.`
-            },
-            {
-              type: "image_url",
-              image_url: {
-                url: `data:image/jpeg;base64,${base64Data}`
-              }
-            }
-          ]
-        }
+    // Prepare image data for Gemini
+    const imageParts = [
+      {
+        inlineData: {
+          data: base64Data,
+          mimeType: "image/jpeg",
+        },
+      },
+    ];
+    // Generate content analysis
+    const response = await ai.models.generateContent({
+      model: "gemini-2.5-flash",
+      contents: [
+        `What animals do you see in this image? Please be specific but concise, and it REQUIRES to be an animal, no trees, no branches. And return with the JSON format, { "item": "scientific_name", "chinese_name": "chinese_name", "found_timestamp": "the_current_time" }, the current time is aprox: ${new Date().toUTCString()}, and JUST RETURN THE JSON FILE, NO OTHER TEXT, AND NO MARKDOWN. If you cannot find anything, please just return null on the item json.`,
+        ...imageParts,
       ],
-      max_tokens: 300,
     });
-    const analysis = response.choices[0]?.message?.content || "";
+    const analysis = response.text;
     console.log(analysis);
     const jsonRes = JSON.parse(analysis || "{}");
     if (!jsonRes.item) {
@@ -87,30 +79,24 @@ async function Decode_Image_File_And_Upload_To_S3(
     return;*/
     const imageUrl = `${process.env.R2_URL}/${deviceId}/${fileName}`;
 
-    // Generate content analysis using OpenRouter/OpenAI
-    const response = await openai.chat.completions.create({
-      model: "x-ai/grok-4-fast:free", // You can change this to other models like "openai/gpt-4-vision-preview"
-      messages: [
-        {
-          role: "user",
-          content: [
-            {
-              type: "text",
-              text: `What animals do you see in this image? Please be specific but concise, and it REQUIRES to be an animal, no trees, no branches. And return with the JSON format, { "item": "scientific_name", "chinese_name": "chinese_name", "found_timestamp": "the_current_time" }, the current time is aprox: ${new Date().toUTCString()}, and JUST RETURN THE JSON FILE, NO OTHER TEXT, AND NO MARKDOWN. If you cannot find anything, please just return null on the item json.`
-            },
-            {
-              type: "image_url",
-              image_url: {
-                url: `data:image/jpeg;base64,${base64Data}`
-              }
-            }
-          ]
-        }
+    // Prepare image data for Gemini
+    const imageParts = [
+      {
+        inlineData: {
+          data: base64Data,
+          mimeType: "image/jpeg",
+        },
+      },
+    ];
+    // Generate content analysis
+    const response = await ai.models.generateContent({
+      model: "gemini-2.5-flash",
+      contents: [
+        `What animals do you see in this image? Please be specific but concise, and it REQUIRES to be an animal, no trees, no branches. And return with the JSON format, { "item": "scientific_name", "chinese_name": "chinese_name", "found_timestamp": "the_current_time" }, the current time is aprox: ${new Date().toUTCString()}, and JUST RETURN THE JSON FILE, NO OTHER TEXT, AND NO MARKDOWN. If you cannot find anything, please just return null on the item json.`,
+        ...imageParts,
       ],
-      max_tokens: 300,
     });
-
-    const analysis = response.choices[0]?.message?.content || "";
+    const analysis = response.text;
     const jsonRes = JSON.parse(analysis || "{}");
     if (!jsonRes.item) {
       throw new Error("No animal found in the image.");
@@ -137,7 +123,7 @@ async function Decode_Image_File_And_Upload_To_S3(
     )`;
     return;
   } catch (error: any) {
-    console.error("Error analyzing image with OpenRouter:", error);
+    console.error("Error analyzing image with Gemini:", error);
     console.log({
       fileName,
       imageUrl: null,

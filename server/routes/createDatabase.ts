@@ -65,7 +65,7 @@ export default defineEventHandler(async (event) => {
   create table if not exists device_status(
     device_uuid text primary key not null,
     jistatus boolean not null default false,
-    jistatus_timer int not null default 0,
+    jistatus_timer TIMESTAMP not null,
     lightstatus int not null default 0,
     autocapture boolean not null default true
     )`;

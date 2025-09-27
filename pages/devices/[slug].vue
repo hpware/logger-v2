@@ -18,7 +18,7 @@ import {
   BatteryMediumIcon,
   BatteryLowIcon,
   BatteryChargingIcon,
-  MonitorDotIcon
+  MonitorDotIcon,
 } from "lucide-vue-next";
 //import adapter from "webrtc-adapter";
 definePageMeta({
@@ -48,7 +48,9 @@ interface DetectedItem {
   imageurl: string;
 }
 const route = useRoute();
-const deviceId = Array.isArray(route.params.slug) ? route.params.slug[0] : route.params.slug;
+const deviceId = Array.isArray(route.params.slug)
+  ? route.params.slug[0]
+  : route.params.slug;
 const dataId = ref(0);
 // Reactive data
 const weatherData = ref({
@@ -342,9 +344,22 @@ const PullDataFromApiEndpointAboutGetDeviceStatus = async () => {
                   ID:
                   <span class="text-yellow-300 p-1 m-1">{{ deviceId }}</span>
                 </p>
-                <span class="text-green-400 flex flex-row text-center justify-center text-sm"><BatteryMediumIcon class="w-5 h-5"/><span>&nbsp; 58%</span></span>
-                <NuxtLink :href="`/devices/desktop/${deviceId}`" class="md:block hidden">
-                  <span class="text-white flex flex-row text-center justify-center text-sm ml-2"><MonitorDotIcon class="w-5 h-5"/><span>&nbsp; 桌面版</span></span>
+                <span
+                  class="text-green-400 flex flex-row text-center justify-center text-sm"
+                  ><BatteryMediumIcon class="w-5 h-5" /><span
+                    >&nbsp; 58%</span
+                  ></span
+                >
+                <NuxtLink
+                  :href="`/devices/desktop/${deviceId}`"
+                  class="md:block hidden"
+                >
+                  <span
+                    class="text-white flex flex-row text-center justify-center text-sm ml-2"
+                    ><MonitorDotIcon class="w-5 h-5" /><span
+                      >&nbsp; 桌面版</span
+                    ></span
+                  >
                 </NuxtLink>
               </div>
             </section>
@@ -448,17 +463,11 @@ const PullDataFromApiEndpointAboutGetDeviceStatus = async () => {
                   "
                   class="p-2 bg-yellow-300/50 hover:bg-yellow-300/80 rounded-xl m-1 transition-all duration-300"
                 >
-                  {{
-                    clientUpdateValues.local_jistatus
-                      ? "OFF"
-                      : "ON"
-                  }}
+                  {{ clientUpdateValues.local_jistatus ? "OFF" : "ON" }}
                 </button>
               </p>
               蠕動馬達:
-              {{
-                clientUpdateValues.local_jistatus ? "OFF" : "ON"
-              }}
+              {{ clientUpdateValues.local_jistatus ? "OFF" : "ON" }}
               <button
                 @click="
                   () => {
