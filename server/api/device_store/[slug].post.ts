@@ -182,14 +182,12 @@ async function uploadImages(body: any, slug: string) {
   }
 }
 
-async function resetJiStatus(slug: string, jistatus: boolean) {
-  if (jistatus) {
+async function resetJiStatus(slug: string) {
     await sql`
       UPDATE device_status
       SET jistatustimer = 0
       WHERE device_uuid = ${slug};
     `;
-  }
 }
 
 export default defineEventHandler(async (event) => {
@@ -206,14 +204,15 @@ export default defineEventHandler(async (event) => {
 
   const deviceData = await sql`
     SELECT * FROM device_status WHERE device_uuid = ${slug} LIMIT 1;`;
-  resetJiStatus(slug, body.local_jistatus || false);
   if (deviceData.length === 0) {
     return {
       success: false,
       message: "Device not found",
     };
   }
-  console.log(deviceData);
+  if (deviceData[0].jistatustimer > 0) {
+    resetJiStatus(slug);
+  }
   return {
     success: true,
     jistatus: deviceData[0].jistatus,

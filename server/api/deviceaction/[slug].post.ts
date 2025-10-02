@@ -1,4 +1,5 @@
 import sql from "~/server/db/pg";
+import mqtt from 'mqtt';
 
 export default defineEventHandler(async (event) => {
   const body = await readBody(event);
@@ -40,6 +41,20 @@ export default defineEventHandler(async (event) => {
       const { setJiStatus } = await import("~/server/saveQuickAccess/jistatus");
       setJiStatus(status);
 
+      // Publish to MQTT
+      if (process.env.MQTT_BROKER_URL) {
+        const mqttClient = mqtt.connect(process.env.MQTT_BROKER_URL);
+        mqttClient.on('connect', () => {
+          mqttClient.publish(`camera_${deviceId}/jipower`, JSON.stringify(status));
+          mqttClient.end();
+        });
+        mqttClient.on('error', (err) => {
+          console.error('MQTT publish error:', err);
+        });
+      } else {
+        console.warn('MQTT_BROKER_URL not set, skipping publish');
+      }
+
       return {
         success: true,
         message: `JI status updated to: ${status}`,
@@ -80,6 +95,21 @@ export default defineEventHandler(async (event) => {
       const { setJiStatus } = await import("~/server/saveQuickAccess/jistatus");
       setJiStatus(static_value);
 
+      // Publish to MQTT
+      if (process.env.MQTT_BROKER_URL) {
+        const mqttClient = mqtt.connect(process.env.MQTT_BROKER_URL);
+        mqttClient.on('connect', () => {
+          mqttClient.publish(`camera_${deviceId}/jipower_timer`, JSON.stringify(timer));
+          mqttClient.publish(`camera_${deviceId}/jipower`, JSON.stringify(static_value));
+          mqttClient.end();
+        });
+        mqttClient.on('error', (err) => {
+          console.error('MQTT publish error:', err);
+        });
+      } else {
+        console.warn('MQTT_BROKER_URL not set, skipping publish');
+      }
+
       return {
         success: true,
         message: `JI timer and status updated`,
@@ -115,6 +145,20 @@ export default defineEventHandler(async (event) => {
         "~/server/saveQuickAccess/ledstatus"
       );
       setLedStatus(ledStatus > 0);
+
+      // Publish to MQTT
+      if (process.env.MQTT_BROKER_URL) {
+        const mqttClient = mqtt.connect(process.env.MQTT_BROKER_URL);
+        mqttClient.on('connect', () => {
+          mqttClient.publish(`camera_${deviceId}/led`, JSON.stringify(ledStatus));
+          mqttClient.end();
+        });
+        mqttClient.on('error', (err) => {
+          console.error('MQTT publish error:', err);
+        });
+      } else {
+        console.warn('MQTT_BROKER_URL not set, skipping publish');
+      }
 
       return {
         success: true,
