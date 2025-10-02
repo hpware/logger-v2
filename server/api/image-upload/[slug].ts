@@ -44,7 +44,7 @@ async function Decode_Image_File_And_Upload_To_S3(
 
     // Generate content analysis using OpenRouter/OpenAI
     const response = await openai.chat.completions.create({
-      model: "x-ai/grok-4-fast:free",
+      model: process.env.AI_MODEL || "x-ai/grok-4-fast:free",
       messages: [
         {
           role: "user",
@@ -56,7 +56,7 @@ async function Decode_Image_File_And_Upload_To_S3(
             {
               type: "image_url",
               image_url: {
-                url: `data:image/jpeg;base64,${base64Data}`,
+                url: imageUrl,
               },
             },
           ],
