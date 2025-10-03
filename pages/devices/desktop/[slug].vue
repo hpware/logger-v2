@@ -432,15 +432,15 @@ const fetchAppVersion = async () => {
             <section
               class="flex flex-row fixed top-0 w-fit left-0 right-0 mx-auto bg-gray-600/40 backdrop-blur-xl z-10 rounded-lg shadow-lg border-2 border-gray-400/40 p-1 pl-4 m-1 rounded-lg shadow-lg backdrop-blur-sm gap-2"
             >
-              <div class="flex items-center justify-center text-white gap-1">
+              <div class="items-center justify-center text-white gap-1">
                 <span class="text-xl text-white">氣象局</span>
-                <div class="flex">
+                <div class="">
                   <MapPinIcon class="text-white w-4 h-4 p-1" />
                   <span class="text-xs">{{ weatherData.test_station }}</span>
                 </div>
               </div>
               <div
-                class="flex items-center justify-center gap-2 p-2 text-white"
+                class="items-center justify-center gap-2 p-2 text-white"
               >
                 <div class="flex gap-1">
                   <SunIcon
@@ -459,30 +459,30 @@ const fetchAppVersion = async () => {
                 </div>
               </div>
               <span class="text-xl text-white p-1">|</span>
-              <div class="flex items-center justify-center text-white gap-1">
+              <div class="items-center justify-center text-white gap-1">
                 <span class="text-xl text-white p-1">GPS 定位</span>
                 <div
-                  class="flex items-center justify-center gap-2 p-2 text-white"
+                  class="items-center justify-center gap-2 p-2 text-white"
                 >
-                  <div class="flex gap-1">
+                  <div class="gap-1">
                     <span class="text-md">經度: {{ gpsData.gps_lat }}</span>
                   </div>
-                  <div class="flex gap-1">
+                  <div class="gap-1">
                     <span class="text-md">緯度: {{ gpsData.gps_long }}</span>
                   </div>
                 </div>
               </div>
               <span class="text-xl text-white p-1">|</span>
-              <div class="flex items-center justify-center text-white gap-1">
+              <div class="items-center justify-center text-white gap-1">
                 <span class="text-xl text-white p-1">本地監測</span>
                 <div
-                  class="flex items-center justify-center gap-2 p-2 text-white"
+                  class="items-center justify-center gap-2 p-2 text-white"
                 >
-                  <div class="flex gap-1">
+                  <div class="gap-1">
                     <ThermometerIcon class="text-white w-6 h-6" />
                     <span class="text-md">{{ localData.local_temp }}</span>
                   </div>
-                  <div class="flex gap-1">
+                  <div class="gap-1">
                     <DropletIcon class="text-white w-6 h-6" />
                     <span class="text-md">{{ localData.local_hum }}</span>
                   </div>
