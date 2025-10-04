@@ -1,7 +1,6 @@
 <script setup lang="ts">
 definePageMeta({
   layout: "admin",
-  middleware: "auth",
 });
 useSeoMeta({
   title: "Better Auth 管理員註冊系統",
@@ -21,13 +20,9 @@ const signUpAction = async () => {
       password: password.value,
     });
     alert("Sign up successful! You can now log in.");
-  } catch (error: any) {
+  } catch (error) {
     console.error("Sign up failed:", error);
-    if (error.statusMessage && error.statusMessage.includes("administrator account")) {
-      alert("An administrator account already exists. Please log in instead.");
-    } else {
-      alert("Sign up failed. Please try again.");
-    }
+    alert("Sign up failed. Please try again.");
   }
   compeleteRequest.value = true;
 };

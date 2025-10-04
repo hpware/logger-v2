@@ -353,6 +353,36 @@ const fetchAppVersion = async () => {
 };
 </script>
 
+<style scoped>
+@media (max-width: 1024px) and (orientation: portrait) {
+  section.fixed.inset-0.h-screen {
+    padding: 0.5rem;
+  }
+  
+  img.rounded-xl.selection-none {
+    max-height: calc(100vh - 150px);
+  }
+}
+
+@media (max-width: 768px) {
+  .text-xl {
+    font-size: 1.125rem;
+  }
+  
+  .text-md {
+    font-size: 0.875rem;
+  }
+  
+  .p-3 {
+    padding: 0.5rem;
+  }
+  
+  .gap-3 {
+    gap: 0.5rem;
+  }
+}
+</style>
+
 <template>
   <div class="select-none">
     <div
@@ -412,7 +442,7 @@ const fetchAppVersion = async () => {
             >
               <img
                 :src="ipport"
-                class="rounded-xl selection-none p-1 m-1"
+                class="rounded-xl selection-none p-1 m-1 max-w-full max-h-[calc(100vh-200px)] object-contain"
                 draggable="false"
                 v-on:error="getErrorHandlerImage"
                 v-if="hiddenPage === false"
@@ -430,7 +460,7 @@ const fetchAppVersion = async () => {
               </div>
             </section>
             <section
-              class="flex flex-row fixed top-0 w-fit left-0 right-0 mx-auto bg-gray-600/40 backdrop-blur-xl z-10 rounded-lg shadow-lg border-2 border-gray-400/40 p-1 pl-4 m-1 rounded-lg shadow-lg backdrop-blur-sm gap-2"
+              class="flex flex-row fixed top-0 w-full left-0 right-0 mx-auto bg-gray-600/40 backdrop-blur-xl z-10 rounded-lg shadow-lg border-2 border-gray-400/40 p-1 pl-4 m-1 rounded-lg shadow-lg backdrop-blur-sm gap-2 whitespace-nowrap overflow-x-auto"
             >
               <div class="flex items-center justify-center text-white gap-1">
                 <span class="text-xl text-white">氣象局</span>
@@ -442,23 +472,22 @@ const fetchAppVersion = async () => {
               <div
                 class="flex items-center justify-center gap-2 p-2 text-white"
               >
-                <div class="flex gap-1">
+                <div class="flex gap-1 items-center">
                   <SunIcon
                     class="text-white w-6 h-6"
                     v-if="weatherData.type === '晴'"
                   /><span class="text-md">{{ weatherData.type }}</span>
                 </div>
 
-                <div class="flex gap-1">
+                <div class="flex gap-1 items-center">
                   <ThermometerIcon class="text-white w-6 h-6" />
                   <span class="text-md">{{ weatherData.temp }}</span>
                 </div>
-                <div class="flex gap-1">
+                <div class="flex gap-1 items-center">
                   <DropletIcon class="text-white w-6 h-6" />
                   <span class="text-md">{{ weatherData.hum }}</span>
                 </div>
               </div>
-              <span class="text-xl text-white p-1">|</span>
               <div class="flex items-center justify-center text-white gap-1">
                 <span class="text-xl text-white p-1">GPS 定位</span>
                 <div
@@ -472,22 +501,21 @@ const fetchAppVersion = async () => {
                   </div>
                 </div>
               </div>
-              <span class="text-xl text-white p-1">|</span>
               <div class="flex items-center justify-center text-white gap-1">
                 <span class="text-xl text-white p-1">本地監測</span>
                 <div
                   class="flex items-center justify-center gap-2 p-2 text-white"
                 >
-                  <div class="flex gap-1">
+                  <div class="flex gap-1 items-center">
                     <ThermometerIcon class="text-white w-6 h-6" />
                     <span class="text-md">{{ localData.local_temp }}</span>
                   </div>
-                  <div class="flex gap-1">
+                  <div class="flex gap-1 items-center">
                     <DropletIcon class="text-white w-6 h-6" />
                     <span class="text-md">{{ localData.local_hum }}</span>
                   </div>
                   <span
-                    class="text-green-400 flex flex-row text-center justify-center text-sm ml-5"
+                    class="text-green-400 flex flex-row text-center justify-center text-sm ml-5 items-center"
                     ><BatteryMediumIcon class="w-7 h-7"
                   /></span>
                 </div>
@@ -495,28 +523,27 @@ const fetchAppVersion = async () => {
             </section>
 
             <div
-              class="text-nowrap fixed bottom-0 left-0 backdrop-blur-lg z-20 p-2 flex flex-row ml-2 mb-4 mx-auto bg-gray-600/40 backdrop-blur-xl z-10 rounded-lg shadow-lg border-2 border-gray-400/40 p-1 pl-4 m-1 rounded-lg shadow-lg backdrop-blur-sm gap-2"
+              class="text-nowrap fixed bottom-0 left-0 backdrop-blur-lg z-20 p-1 flex flex-row ml-2 mb-4 mx-auto bg-gray-600/40 backdrop-blur-xl z-10 rounded-lg shadow-lg border-2 border-gray-400/40 p-2 pl-4 m-1 rounded-lg shadow-lg backdrop-blur-sm gap-3 whitespace-nowrap overflow-x-auto"
             >
-              <div class="flex items-center justify-center text-white">
-                <span
-                  >繼電器開啟時間 (s):
-                  <input
-                    type="number"
-                    class="border rounded shadow-lg w-12 text-center"
-                    max="99"
-                    v-model.number="clientUpdateValues.local_jistatus_timer"
-                    :disabled="!clientUpdateValues.local_jistatus" /></span
-                ><button
-                  class="ml-2 bg-gray-500 hover:bg-gray-700 text-white font-bold py-1 px-2 rounded cursor-pointer transition-all duration-300"
+              <div class="flex items-center justify-center text-white gap-2">
+                <span class="text-sm md:text-base">繼電器開啟時間 (s):</span>
+                <input
+                  type="number"
+                  class="border rounded shadow-lg w-16 text-center py-1 px-2 text-sm"
+                  max="99"
+                  v-model.number="clientUpdateValues.local_jistatus_timer"
+                  :disabled="!clientUpdateValues.local_jistatus" />
+                <button
+                  class="ml-2 bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-3 rounded cursor-pointer transition-all duration-300 text-sm min-w-[60px] min-h-[40px]"
                   @click="onTimerChange"
                 >
                   {{ buttonText }}
                 </button>
               </div>
               <div
-                class="flex flex-row gap-1 items-center justify-center text-white"
+                class="flex flex-row gap-2 items-center justify-center text-white"
               >
-                <span>燈光:</span>
+                <span class="text-sm md:text-base">燈光:</span>
                 <input
                   type="range"
                   min="0"
@@ -524,8 +551,9 @@ const fetchAppVersion = async () => {
                   step="1"
                   v-model="clientUpdateValues.light"
                   @change="onValueChange"
-                  class="w-full h-2 bg-gray-300/80 rounded-lg accent-yellow-300 hover:border-none transition-all duration-300"
+                  class="w-full h-3 bg-gray-300/80 rounded-lg accent-yellow-300 hover:border-none transition-all duration-300"
                 />
+                <span class="text-sm w-6 text-center">{{ clientUpdateValues.light }}</span>
               </div>
             </div>
 
@@ -636,7 +664,7 @@ const fetchAppVersion = async () => {
             </button>
             <img
               :src="popupImageUrl"
-              class="max-w-screen-md max-h-screen-md object-contain p-1"
+              class="max-w-full max-h-[90vh] object-contain p-1"
             />
           </div>
         </div>
