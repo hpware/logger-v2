@@ -38,10 +38,7 @@ export async function sendNtfyNotification(
       async () => {
         const response = await fetch(`${NTFY_URL}/${payload.topic}`, {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(payload),
+          body: payload.message,
         });
 
         if (!response.ok) {

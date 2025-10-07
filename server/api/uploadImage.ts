@@ -1,15 +1,24 @@
 import sql from "~/server/db/pg";
 import { GoogleGenAI } from "@google/genai";
+import OpenAI from "openai";
+
 import { S3Client } from "@aws-sdk/client-s3";
 import { Upload } from "@aws-sdk/lib-storage";
 import { v4 as uuidv4 } from "uuid";
+import { sendDetectionNotification } from "~/utils/ntfy";
 
 async function Decode_Image_File_And_Upload_To_S3(
   base64ImageString: string,
   date: string,
   deviceId: string,
 ) {
-  const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+  //const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+    const openai = new OpenAI({
+      apiKey: process.env.OPENROUTER_API_KEY,
+      baseURL: process.env.OPENROUTER_API_URL,
+    });
+    console.log(process.env.OPENROUTER_API_KEY);
+    console.log(process.env.OPENROUTER_API_URL);
   const base64Data = base64ImageString.replace(/^data:image\/\w+;base64,/, "");
   const buffer = Buffer.from(base64Data, "base64");
   const fileName = `image_${uuidv4()}.jpg`;
@@ -98,6 +107,19 @@ async function Decode_Image_File_And_Upload_To_S3(
     });
     const analysis = response.text;
     const jsonRes = JSON.parse(analysis || "{}");
+/**        const response = await openai.chat.completions.create({
+      model: process.env.NUXT_PUBLIC_AI_MODEL || "openai/gpt-oss-20b",
+      stream: false,
+      messages: [
+        {
+          role: "user",
+          content: `What animals do you see in this image? Please be specific but concise, and it REQUIRES to be an animal, no trees, no branches. And return with the JSON format, { "item": "scientific_name", "chinese_name": "chinese_name", "found_timestamp": "the_current_time" }, the current time is aprox: ${new Date().toUTCString()}, and JUST RETURN THE JSON FILE, NO OTHER TEXT, AND NO MARKDOWN. If you cannot find anything, please just return null on the item json. Image URL: ${imageUrl} and RETURN NOTHING`,
+        },
+      ],
+    });
+    console.log(response.choices[0]);
+    const analysis = response.choices[0]?.message?.content || "";
+    const jsonRes = JSON.parse(analysis || "{}"); */
     if (!jsonRes.item) {
       throw new Error("No animal found in the image.");
     }
@@ -121,6 +143,9 @@ async function Decode_Image_File_And_Upload_To_S3(
       ${imageUrl},
       ${new Date().toISOString()}
     )`;
+        if (jsonRes.item) {
+          await sendDetectionNotification(deviceId, jsonRes.item, new Date().toISOString(), imageUrl);
+        }
     return;
   } catch (error: any) {
     console.error("Error analyzing image with Gemini:", error);
