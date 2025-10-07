@@ -157,8 +157,8 @@ async function Decode_Image_File_And_Upload_To_S3(
     ) RETURNING id`;
     
     // Send NTFY notification for the detection
-    if (result && result[0]) {
-      await sendDetectionNotification(deviceId, jsonRes.item, imageUrl);
+    if (jsonRes.item) {
+      await sendDetectionNotification(deviceId, jsonRes.item, new Date().toISOString(), imageUrl);
     }
   } catch (error: any) {
     console.error("Error analyzing image with OpenRouter:", error);

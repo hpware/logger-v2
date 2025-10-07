@@ -1,7 +1,9 @@
 import { withNetworkRetry } from "./retry";
 
 interface NtfyNotification {
+  topic?: string;
   message: string;
+  title?: string;
   priority?: number;
   tags?: string[];
   click?: string;
@@ -13,23 +15,22 @@ interface NtfyNotification {
  * @returns Promise<boolean> - Whether the notification was sent successfully
  */
 export async function sendNtfyNotification(
-  notification: NtfyNotification,
-  device_id: string
+  notification: NtfyNotification
 ): Promise<boolean> {
   const { NTFY_URL, NTFY_TOPIC } = process.env;
 
-  if (!NTFY_URL) {
-    console.warn("NTFY_URL not configured, skipping notification");
+  if (!NTFY_URL || !NTFY_TOPIC) {
+    console.warn("NTFY_URL or NTFY_TOPIC not configured, skipping notification");
     return false;
   }
 
   const payload = {
-    topic: `camera_${device_id}_detections`,
+    topic: notification.topic || NTFY_TOPIC,
     message: notification.message,
-    title: "偵測新到物件",
+    title: notification.title || "AIOT Detection Alert",
     priority: notification.priority || 3,
     tags: notification.tags || ["camera", "detection"],
-    ...notification.click && { click: notification.click }
+    ...(notification.click && { click: notification.click })
   };
 
   try {
@@ -66,25 +67,21 @@ export async function sendNtfyNotification(
   }
 }
 
-/**
- * Send detection notification to NTFY
- * @param deviceId - The device ID
- * @param itemName - The detected item name
- * @param imageUrl - Optional image URL
- * @returns Promise<boolean> - Whether the notification was sent successfully
- */
 export async function sendDetectionNotification(
   deviceId: string,
   itemName: string,
   detected_date?: string,
   imageUrl?: string,
 ): Promise<boolean> {
+  console.log(`Sending detection notification for device ${deviceId}, item: ${itemName}`);
   const notification: NtfyNotification = {
+    topic: `${deviceId}_detections`,
+    title: "偵測新到物件",
     message: `在${detected_date || new Date().toLocaleString()}偵測到 ${itemName}`,
     priority: 4,
     tags: ["camera", "detection", "alert", "wildlife"],
     ...(imageUrl && { click: imageUrl })
   };
 
-  return sendNtfyNotification(notification, deviceId);
+  return await sendNtfyNotification(notification);
 }
