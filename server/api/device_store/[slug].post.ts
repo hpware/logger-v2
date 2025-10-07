@@ -6,6 +6,7 @@ import { S3Client } from "@aws-sdk/client-s3";
 import { Upload } from "@aws-sdk/lib-storage";
 import { v4 as uuidv4 } from "uuid";
 import { dev } from "process";
+import { sendDetectionNotification } from "~/utils/ntfy";
 
 async function fastSave(slug: string, body: any) {
   const {
@@ -141,7 +142,7 @@ async function Decode_Image_File_And_Upload_To_S3(
       jsonRes,
       success: true,
     });
-    await sql`
+    const result = await sql`
     INSERT INTO detect (
       device_id,
       item,
@@ -153,7 +154,12 @@ async function Decode_Image_File_And_Upload_To_S3(
       ${jsonRes.item},
       ${imageUrl},
       ${new Date().toISOString()}
-    )`;
+    ) RETURNING id`;
+    
+    // Send NTFY notification for the detection
+    if (result && result[0]) {
+      await sendDetectionNotification(deviceId, jsonRes.item, imageUrl);
+    }
   } catch (error: any) {
     console.error("Error analyzing image with OpenRouter:", error);
     console.log({
