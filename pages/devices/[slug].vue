@@ -368,7 +368,7 @@ const PullDataFromApiEndpointAboutGetDeviceStatus = async () => {
             >
               <img
                 :src="ipport"
-                class="rounded-xl"
+                class="rounded-xl w-full max-w-2xl h-auto object-contain"
                 v-on:error="getErrorHandlerImage"
                 v-if="hiddenPage === false"
               />

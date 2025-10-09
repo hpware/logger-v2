@@ -5,24 +5,25 @@ definePageMeta({
 useSeoMeta({
   title: "Better Auth 管理員註冊系統",
 });
-import { signUp, authClient } from "@/lib/auth-client";
+import { useAuth } from "~/composables/useAuth";
+
+const { signUp } = useAuth();
 const username = ref("");
 const password = ref("");
 const name = ref("");
 const compeleteRequest = ref(false);
 const errMessage = ref("");
+
 const signUpAction = async () => {
   compeleteRequest.value = false;
   try {
-    await signUp.email({
-      email: username.value,
-      name: name.value,
-      password: password.value,
-    });
-    alert("Sign up successful! You can now log in.");
-  } catch (error) {
+    await signUp(name.value, username.value, password.value);
+    errMessage.value = "管理者加入成功";
+    // Redirect to login after successful signup
+    await navigateTo("/login");
+  } catch (error: any) {
     console.error("Sign up failed:", error);
-    alert("Sign up failed. Please try again.");
+    errMessage.value = error.data?.message || "註冊失敗，請稍後再試";
   }
   compeleteRequest.value = true;
 };

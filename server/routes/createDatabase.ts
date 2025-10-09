@@ -1,4 +1,4 @@
-import * as jose from "jose";
+import * as jose from "jose"
 import { auth } from "~/utils/auth";
 
 import sql from "~/server/db/pg";

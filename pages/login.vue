@@ -3,31 +3,38 @@ definePageMeta({
   layout: "admin",
 });
 useSeoMeta({
-  title: "Better Auth 登入系統",
+  title: "登入系統",
 });
-import { signIn, useSession, authClient } from "@/lib/auth-client";
+import { useAuth } from "~/composables/useAuth";
+
+const { isAuthenticated, signIn: authSignIn, checkSession } = useAuth();
 const username = ref("");
 const password = ref("");
-const name = ref("");
+
 const login = async () => {
   try {
-    const signin = await signIn.email({
-      email: username.value,
-      password: password.value,
-    });
-    alert("Login successful!");
-    const session = useSession();
-    navigateTo("/admin");
-  } catch (error) {
+    const result = await authSignIn(username.value, password.value);
+    console.log("Login successful!", result);
+  } catch (error: any) {
     console.error("Login failed:", error);
-    alert("Login failed. Please check your credentials.");
+
+    // Show error message based on error type
+    if (error.response?.status === 401) {
+      alert("登入失敗，請檢查帳號密碼。");
+    } else {
+      alert("登入失敗，請稍後再試。");
+    }
   }
 };
-const session = authClient.useSession();
 
-onMounted(() => {
-  if (session) {
-    navigateTo("/admin");
+onMounted(async () => {
+  try {
+    await checkSession();
+    if (isAuthenticated.value) {
+      navigateTo("/admin");
+    }
+  } catch (error) {
+    // Session check failed, user needs to log in
   }
 });
 </script>

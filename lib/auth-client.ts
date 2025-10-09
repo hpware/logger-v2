@@ -1,7 +1,10 @@
-import { createAuthClient } from "better-auth/vue";
+import { useAuth } from "~/composables/useAuth";
 
-export const authClient = createAuthClient({
-  baseURL: process.env.NUXT_PUBLIC_BETTER_AUTH_URL,
-});
+export const { signIn, signUp, useSession, session, isAuthenticated, user } = useAuth();
 
-export const { signIn, signUp, useSession } = createAuthClient();
+export const authClient = {
+  useSession: () => ({
+    data: { value: useSession().session.value?.user },
+    isPending: computed(() => false),
+  }),
+};
