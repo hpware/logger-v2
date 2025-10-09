@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { signIn, useSession, authClient } from "@/lib/auth-client";
 
 import {
   ImageOffIcon,
