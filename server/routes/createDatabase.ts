@@ -4,9 +4,7 @@ import { auth } from "~/utils/auth";
 import sql from "~/server/db/pg";
 
 export default defineEventHandler(async (event) => {
-  const session = await auth.api.getSession({
-    headers: event.headers,
-  });
+ 
 
   if (!session) {
     throw createError({

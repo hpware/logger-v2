@@ -1,7 +1,7 @@
 <script setup lang="ts">
 definePageMeta({
   layout: "admin",
-  middleware: "auth",
+   
 });
 useSeoMeta({
   title: "Better Auth 管理員註冊系統",

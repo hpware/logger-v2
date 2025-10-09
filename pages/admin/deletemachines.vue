@@ -1,7 +1,7 @@
 <script setup lang="ts">
 definePageMeta({
   layout: "admin",
-  middleware: "auth",
+   
 });
 useSeoMeta({
   title: "管理中心",

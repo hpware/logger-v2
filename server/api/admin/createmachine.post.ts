@@ -3,9 +3,7 @@ import { v4 as uuidv4 } from "uuid";
 import { auth } from "~/utils/auth";
 
 export default defineEventHandler(async (event) => {
-  const session = await auth.api.getSession({
-    headers: event.headers,
-  });
+ 
   if (!session) {
     throw createError({
       statusCode: 401,
