@@ -10,7 +10,6 @@ interface AIUsageData {
 }
 definePageMeta({
   layout: "admin",
-   
 });
 useSeoMeta({
   title: "管理中心",
