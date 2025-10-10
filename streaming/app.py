@@ -16,7 +16,13 @@ source_mjpeg_url = os.getenv("HTTP_SOURCE")
 api_url = os.getenv("API_URL")
 camera_uuid = os.getenv("CAMERA_ID")
 mqtt_server = os.getenv("MQTT_SERVER")
-mqtt_port = 1883
+mqtt_port = int(os.getenv("MQTT_PORT", 1883))
+
+print(f"Using MJPEG source: {source_mjpeg_url}")
+print(f"Using API URL: {api_url}")
+print(f"Using Camera ID: {camera_uuid}")
+print(f"Using MQTT server: {mqtt_server}:{mqtt_port}")
+
 
 frame = None
 lock = threading.Lock()
