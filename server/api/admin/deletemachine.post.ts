@@ -1,5 +1,4 @@
 import sql from "~/server/db/pg";
-import { auth } from "~/utils/auth";
 
 export default defineEventHandler(async (event) => {
  

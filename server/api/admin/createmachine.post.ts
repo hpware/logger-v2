@@ -1,6 +1,5 @@
 import sql from "~/server/db/pg";
 import { v4 as uuidv4 } from "uuid";
-import { auth } from "~/utils/auth";
 
 export default defineEventHandler(async (event) => {
  
