@@ -163,6 +163,9 @@ const fetchDeviceData = async () => {
       local_hum: response.local_hum ? `${response.local_hum}%` : "N/A%",
     };
 
+    clientUpdateValues.value.local_jistatus = !!response.local_jistatus;
+    clientUpdateValues.value.light = response.local_light || 0;
+
     gpsData.value = {
       gps_lat: response.local_gps_lat || "N/A",
       gps_long: response.local_gps_long || "N/A",

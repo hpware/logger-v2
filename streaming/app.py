@@ -91,6 +91,7 @@ def post_frame_to_api(b64str):
 
 def on_mqtt_message(client, userdata, msg):
     val = msg.payload.decode()
+    print("MQTT message received:", val)
     if val == "1":
         with lock:
             if frame is not None:
@@ -114,6 +115,7 @@ def mqtt_sub_thread():
             client.on_disconnect = on_mqtt_disconnect
             client.connect(mqtt_server, mqtt_port, 60)
             client.subscribe(topic)
+            client.publish(f"camera_{camera_uuid}/reciver_status", "online")
             client.loop_forever()
         except Exception as e:
             print("MQTT thread error:", e)
