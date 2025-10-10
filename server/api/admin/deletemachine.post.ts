@@ -3,12 +3,7 @@ import { auth } from "~/utils/auth";
 
 export default defineEventHandler(async (event) => {
  
-  if (!session) {
-    throw createError({
-      statusCode: 401,
-      statusMessage: "Unauthorized - No valid session",
-    });
-  }
+   
   const body = await readBody(event);
   const { machine_uuid, password } = body;
 

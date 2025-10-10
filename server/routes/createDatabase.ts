@@ -4,14 +4,6 @@ import { auth } from "~/utils/auth";
 import sql from "~/server/db/pg";
 
 export default defineEventHandler(async (event) => {
- 
-
-  if (!session) {
-    throw createError({
-      statusCode: 401,
-      statusMessage: "Unauthorized - No valid session",
-    });
-  }
   const create1 = await sql`
   CREATE TABLE IF NOT EXISTS logger (
       id SERIAL PRIMARY KEY,

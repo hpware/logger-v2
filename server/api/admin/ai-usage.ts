@@ -2,12 +2,7 @@ import { auth } from "~/utils/auth";
 
 export default defineEventHandler(async (event) => {
  
-  if (!session) {
-    throw createError({
-      statusCode: 401,
-      statusMessage: "Unauthorized - No valid session",
-    });
-  }
+   
   const req = await fetch("https://openrouter.ai/api/v1/key", {
     method: "GET",
     headers: {
