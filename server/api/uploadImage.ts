@@ -12,7 +12,7 @@ async function Decode_Image_File_And_Upload_To_S3(
   date: string,
   deviceId: string,
 ) {
-  //const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+  const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
     const openai = new OpenAI({
       apiKey: process.env.OPENROUTER_API_KEY,
       baseURL: process.env.OPENROUTER_API_URL,
