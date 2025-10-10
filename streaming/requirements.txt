@@ -1,3 +1,4 @@
 python-dotenv
 flask
-opencv2
+requests
+paho-mqtt
