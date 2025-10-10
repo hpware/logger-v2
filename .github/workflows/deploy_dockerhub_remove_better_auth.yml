@@ -10,7 +10,7 @@ env:
   REGISTRY: docker.io
   IMAGE_NAME: yoinkedu/logger-v2
 
-jobs:
+jobs: 
   build-and-push-arm:
     runs-on: ubuntu-latest
     permissions:
