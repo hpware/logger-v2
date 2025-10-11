@@ -127,7 +127,7 @@ def mqtt_sub_thread():
             client.on_disconnect = on_mqtt_disconnect
             client.connect(mqtt_server, mqtt_port, 60)
             client.subscribe(topic)
-            client.publish(f"camera_{camera_uuid}/reciver_status", "online")
+            client.publish(f"camera_{camera_uuid}/receiver_status", "online")
             client.loop_forever()
         except Exception as e:
             print("MQTT thread error:", e)
