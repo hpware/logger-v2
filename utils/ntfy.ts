@@ -74,7 +74,7 @@ export async function sendDetectionNotification(
   const notification: NtfyNotification = {
     topic: `${deviceId}_detections`,
     title: "偵測新到物件",
-    message: `在${detected_date || new Date().toLocaleString()}偵測到 ${itemName}`,
+    message: `在${new Date(detected_date || Date.now()).toLocaleString("zh-TW")}偵測到 ${itemName}`,
     priority: 4,
     tags: ["camera", "detection", "alert", "wildlife"],
     ...(imageUrl && { click: imageUrl })
