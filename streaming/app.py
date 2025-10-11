@@ -24,6 +24,12 @@ print(f"Using Camera ID: {camera_uuid}")
 print(f"Using MQTT server: {mqtt_server}:{mqtt_port}")
 
 
+if isinstance(mqtt_port, int):
+    print("MQTT port is an integer.")
+else:
+    print("MQTT port is not an integer.")
+
+
 frame = None
 lock = threading.Lock()
 frame_available = threading.Condition(lock)
