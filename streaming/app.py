@@ -152,6 +152,15 @@ def generate_frames():
 def video_feed():
     return Response(generate_frames(), mimetype="multipart/x-mixed-replace; boundary=frame")
 
+def autoPublishStatus(interval=60):
+    global client
+    while True:
+        try:
+            client.publish(f"camera_{camera_uuid}/receiver_status", "online")
+        except Exception as e:
+            print("Status publish error:", e)
+        time.sleep(interval)
+
 def autocleanup(interval=300):
     """
     Periodically clears the global frame if it's older than a set duration
@@ -178,6 +187,7 @@ def autocleanup(interval=300):
             frame_stale = time.time() - last_frame_time[0] > frame_age_limit
             if frame is not None and frame_stale:
                 print("Autocleanup: clearing stale frame from memory.")
+                client.publish(f"camera_{camera_uuid}/receiver_status", "cleaning_up")
                 frame = None
         # Additional cleanup can be added here if needed
         #time.sleep(interval)
